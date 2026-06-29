@@ -43,7 +43,14 @@
       "Bash(python3 \"/private/tmp/claude-501/-Users-nikitasazonov-Desktop------------------/ff903b5d-360a-49c1-9e34-8e1dba2e0936/scratchpad/dl_images.py\")",
       "Bash(rm -f agzs.html)",
       "Bash(rm -rf images/agzs)",
-      "Bash(git commit -q -m 'Полный каталог АЗС.online: 1170 товаров, дерево категорий, фильтры, конфигуратор пистолетов по диаметру/скобе *)"
+      "Bash(git commit -q -m 'Полный каталог АЗС.online: 1170 товаров, дерево категорий, фильтры, конфигуратор пистолетов по диаметру/скобе *)",
+      "Bash(command -v sips)",
+      "Bash(echo \"sips: $\\(command -v sips || echo NET\\)\")",
+      "Bash(command -v cwebp)",
+      "Bash(echo \"cwebp: $\\(command -v cwebp || echo NET\\)\")",
+      "Bash(command -v magick convert)",
+      "Bash(python3 gen2.py)",
+      "Bash(git commit -q -m 'Карточка товара \\(модалка\\) + конфигуратор внутри + рабочая форма + сжатие фото *)"
     ]
   }
 }
