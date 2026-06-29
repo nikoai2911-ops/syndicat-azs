@@ -81,7 +81,7 @@
 
   /* ---------- CATEGORIES ---------- */
   .cats-feature{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-  .cats-rest{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .cats-rest{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
   .cat{background:var(--dark-cork);border-radius:12px;padding:28px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .25s ease}
   .cats-rest .cat{min-height:210px}
   .cat:hover{transform:translateY(-4px)}
@@ -290,6 +290,15 @@
             <div class="num">06</div>
             <h3>Топливораздаточные колонки</h3>
             <p>ТРК для бензина, дизеля и СУГ.</p>
+            <span class="more">Смотреть →</span>
+          </div>
+        </a>
+        <a href="catalog.html?cat=toplivorazdatochnoe-oborudovanie/metrologicheskoe-oborudovanie" class="cat">
+          <div class="ico">📏</div>
+          <div>
+            <div class="num">07</div>
+            <h3>Метрология</h3>
+            <p>Метроштоки, рулетки, мерники, пробоотборники, ареометры.</p>
             <span class="more">Смотреть →</span>
           </div>
         </a>
