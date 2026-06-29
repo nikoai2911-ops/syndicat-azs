@@ -265,15 +265,16 @@
     var secName=state.section==='azs'?'Топливораздаточное оборудование':'Газораздаточное оборудование';
     var secTag=state.section==='azs'?'АЗС':'АГЗС';
     var h1=document.querySelector('.page-head h1'), cr=document.querySelector('.crumbs'), lead=document.querySelector('.page-head .lead');
+    var tabs=document.getElementById('sectabs');
+    if(lead) lead.style.display='none';
+    if(tabs) tabs.style.display = state.cat ? 'none' : 'flex';   // вкладки разделов только на входе, не внутри категории
     if(state.cat){
       var c=cats.filter(function(x){return x.u===state.cat})[0];
       h1.textContent=c?c.n:secName;
-      cr.innerHTML='<a href="index.html">Главная</a> / Каталог / '+esc(secName)+' ('+secTag+') / '+esc(c?c.n:'');
-      if(lead) lead.style.display='none';
+      cr.innerHTML='<a href="index.html">Главная</a> / <a href="catalog.html">Каталог</a> / <a href="#" class="cr-sec">'+esc(secName)+' ('+secTag+')</a> / '+esc(c?c.n:'');
     } else {
       h1.textContent=secName;
-      cr.innerHTML='<a href="index.html">Главная</a> / Каталог / '+esc(secName)+' ('+secTag+')';
-      if(lead) lead.style.display='none';
+      cr.innerHTML='<a href="index.html">Главная</a> / <a href="catalog.html">Каталог</a> / '+esc(secName)+' ('+secTag+')';
     }
   }
   function buildSide(){
@@ -418,6 +419,11 @@
       buildSide(); render();
       window.scrollTo({top:document.querySelector('.sectabs').offsetTop-70,behavior:'smooth'});
     });
+  });
+
+  document.querySelector('.crumbs').addEventListener('click',function(e){
+    var s=e.target.closest('.cr-sec');
+    if(s){ e.preventDefault(); state.cat=""; state.brand=""; state.q=""; state.limit=PAGE; bsel.value=""; document.getElementById('search').value=""; buildSide(); render(); window.scrollTo({top:0,behavior:'smooth'}); }
   });
 
   // deep-link from homepage: ?sec=azs|agzs  or  ?cat=<category-key>
