@@ -35,7 +35,15 @@
       "Bash(printf '%s\\\\n' 'node_modules/' '.DS_Store' 'gas.html' '*.cp1251.html')",
       "Bash(git commit -q -m 'Каталог АГЗС: страница agzs.html с 14 товарами и фото, связана с главной *)",
       "Bash(python3 \"/private/tmp/claude-501/-Users-nikitasazonov-Desktop------------------/ff903b5d-360a-49c1-9e34-8e1dba2e0936/scratchpad/gen.py\")",
-      "Bash(python3 -)"
+      "Bash(python3 -)",
+      "Bash(curl -sk -A 'Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15\\) AppleWebKit/537.36 Chrome/120' https://xn--80ao4a.online/toplivorazdatochnoe-oborudovanie/ -o /private/tmp/claude-501/-Users-nikitasazonov-Desktop------------------/ff903b5d-360a-49c1-9e34-8e1dba2e0936/scratchpad/trk.raw.html -w 'HTTP %{http_code} | %{size_download}b | %{content_type} | redirect=%{redirect_url}\\\\n')",
+      "Bash(curl -sk -A 'Mozilla/5.0 Chrome/120' https://xn--80ao4a.online/toplivorazdatochnoe-oborudovanie/toplivorazdatochnye-pistolety/ -o /private/tmp/claude-501/-Users-nikitasazonov-Desktop------------------/ff903b5d-360a-49c1-9e34-8e1dba2e0936/scratchpad/pist.html -w 'HTTP %{http_code} %{size_download}b\\\\n')",
+      "Bash(python3 crawl_urls.py)",
+      "Bash(python3 scrape_products.py)",
+      "Bash(python3 \"/private/tmp/claude-501/-Users-nikitasazonov-Desktop------------------/ff903b5d-360a-49c1-9e34-8e1dba2e0936/scratchpad/dl_images.py\")",
+      "Bash(rm -f agzs.html)",
+      "Bash(rm -rf images/agzs)",
+      "Bash(git commit -q -m 'Полный каталог АЗС.online: 1170 товаров, дерево категорий, фильтры, конфигуратор пистолетов по диаметру/скобе *)"
     ]
   }
 }

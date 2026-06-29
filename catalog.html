@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Каталог оборудования для АЗС и АГЗС | SYNDICAT</title>
+<meta name="description" content="Каталог оборудования и комплектующих для АЗС и АГЗС: топливораздаточные пистолеты, колонки ТРК, насосы, рукава, счётчики, газовое оборудование. Подбор пистолета по диаметру и скобе." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --studio-black:#100904;--warm-cream:#ffedd7;--cork-shadow:#40372e;
+    --dark-cork:#382416;--burnt-sienna:#dc5000;--grey-brown:#6c5f51;
+    --font:'Figtree',ui-sans-serif,system-ui,-apple-system,sans-serif;--maxw:1280px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--studio-black);color:var(--warm-cream);font-family:var(--font);line-height:1.4;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+  header{position:sticky;top:0;z-index:100;border-bottom:1px solid var(--cork-shadow);background:rgba(16,9,4,0.86);backdrop-filter:blur(10px)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .brand{font-size:18px;font-weight:600;letter-spacing:1.5px}
+  .brand b{color:var(--burnt-sienna)}
+  .nav-right{display:flex;align-items:center;gap:22px}
+  .nav-right a{font-size:12px;letter-spacing:1px;transition:color .25s ease}
+  .nav-right a:hover{color:var(--burnt-sienna)}
+  .nav-phone{font-size:13px;font-weight:500}
+
+  .page-head{padding:36px 0 22px}
+  .crumbs{font-size:12px;color:var(--grey-brown);margin-bottom:16px}
+  .crumbs a:hover{color:var(--burnt-sienna)}
+  .page-head h1{font-size:clamp(28px,4vw,42px);font-weight:600;letter-spacing:-0.5px}
+  .page-head .lead{margin-top:10px;font-size:15px;color:var(--grey-brown);max-width:640px}
+
+  /* configurator */
+  .config{border:1px solid var(--burnt-sienna);border-radius:14px;padding:22px 24px;margin:24px 0 8px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:18px}
+  .config .ctitle{flex-basis:100%;font-size:16px;font-weight:500;margin-bottom:2px;display:flex;align-items:center;gap:10px}
+  .config .ctitle small{color:var(--grey-brown);font-size:12px;font-weight:400;letter-spacing:.3px}
+  .fld{display:flex;flex-direction:column;gap:6px;min-width:170px}
+  .fld label{font-size:11px;letter-spacing:1px;color:var(--grey-brown)}
+  select,.searchbox input{background:var(--studio-black);color:var(--warm-cream);border:1px solid var(--cork-shadow);border-radius:8px;padding:11px 12px;font-family:var(--font);font-size:14px;outline:none}
+  select:focus,.searchbox input:focus{border-color:var(--burnt-sienna)}
+  .btn{background:var(--dark-cork);color:var(--warm-cream);border:1px solid var(--dark-cork);border-radius:36px;padding:11px 22px;font-size:13px;font-weight:500;cursor:pointer;transition:border-color .25s ease}
+  .btn:hover{border-color:var(--burnt-sienna)}
+  .btn-ghost{background:transparent;border:1px solid var(--warm-cream);border-radius:36px;padding:10px 18px;font-size:12px;cursor:pointer;color:var(--warm-cream);transition:border-color .25s ease,color .25s ease}
+  .btn-ghost:hover{border-color:var(--burnt-sienna);color:var(--burnt-sienna)}
+
+  .toolbar{display:flex;gap:14px;align-items:center;margin:18px 0;flex-wrap:wrap}
+  .searchbox{flex:1;min-width:220px;display:flex}
+  .searchbox input{width:100%}
+  .count{font-size:12px;color:var(--grey-brown);letter-spacing:.5px;white-space:nowrap}
+  .cat-toggle{display:none}
+
+  .layout{display:grid;grid-template-columns:280px 1fr;gap:28px;padding-bottom:60px;align-items:start}
+  /* sidebar */
+  .side{position:sticky;top:76px;max-height:calc(100vh-96px);overflow-y:auto;padding-right:8px}
+  .side::-webkit-scrollbar{width:6px}.side::-webkit-scrollbar-thumb{background:var(--cork-shadow);border-radius:3px}
+  .cat-item{display:block;width:100%;text-align:left;background:none;border:none;color:var(--warm-cream);font-family:var(--font);font-size:13.5px;padding:7px 10px;border-radius:8px;cursor:pointer;line-height:1.3;transition:background .15s ease,color .15s ease}
+  .cat-item:hover{background:var(--dark-cork)}
+  .cat-item.active{background:var(--dark-cork);color:var(--burnt-sienna)}
+  .cat-sec{font-size:11px;letter-spacing:1.5px;color:var(--grey-brown);margin:16px 0 6px 10px}
+  .cat-item.lvl2{padding-left:22px;font-size:13px;color:#cbb9a3}
+  .cat-item.lvl3{padding-left:34px;font-size:12.5px;color:var(--grey-brown)}
+
+  /* grid */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+  .prod{background:var(--dark-cork);border-radius:12px;padding:12px;display:flex;flex-direction:column;transition:transform .2s ease}
+  .prod:hover{transform:translateY(-3px)}
+  .ph{background:var(--warm-cream);border-radius:8px;height:150px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:12px}
+  .ph img{width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply}
+  .ph.empty{background:var(--studio-black);color:var(--burnt-sienna);font-size:30px}
+  .prod h3{font-size:13.5px;font-weight:500;line-height:1.3;margin-bottom:6px;flex:1}
+  .prod .b{font-size:11px;letter-spacing:.4px;color:var(--grey-brown);margin-bottom:10px}
+  .prod .ask{font-size:12px;border:1px solid var(--warm-cream);border-radius:22.5px;padding:8px 0;text-align:center;transition:border-color .25s ease,color .25s ease}
+  .prod .ask:hover{border-color:var(--burnt-sienna);color:var(--burnt-sienna)}
+  .more-wrap{text-align:center;padding:34px 0}
+  .empty-msg{padding:50px 0;text-align:center;color:var(--grey-brown)}
+
+  footer{padding:36px 0;border-top:1px dashed var(--cork-shadow);font-size:12px;color:var(--grey-brown);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  footer a:hover{color:var(--burnt-sienna)}
+
+  @media(max-width:900px){
+    .wrap{padding:0 16px}
+    .nav-right a:not(.nav-phone){display:none}
+    .layout{grid-template-columns:1fr;gap:0}
+    .side{position:fixed;inset:60px 0 0 0;background:var(--studio-black);z-index:90;max-height:none;height:calc(100vh - 60px);overflow-y:auto;padding:18px;display:none;border-top:1px solid var(--cork-shadow)}
+    .side.open{display:block}
+    .cat-toggle{display:inline-flex;align-items:center;gap:8px}
+    .grid{grid-template-columns:1fr 1fr;gap:10px}
+    .config{padding:18px}
+    .fld{min-width:140px;flex:1}
+  }
+  @media(max-width:420px){
+    .ph{height:130px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="index.html" class="brand">SYNDI<b>CAT</b></a>
+    <div class="nav-right">
+      <a href="index.html">← На главную</a>
+      <a href="tel:+73432664066" class="nav-phone">+7 343 266-40-66</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <div class="crumbs"><a href="index.html">Главная</a> / Каталог</div>
+    <h1>Каталог оборудования</h1>
+    <p class="lead">Оборудование и комплектующие для АЗС и АГЗС. Подберите раздаточный пистолет по диаметру и скобе или выберите раздел слева.</p>
+  </div>
+
+  <div class="config" id="config">
+    <div class="ctitle">Подбор раздаточного пистолета <small>выберите параметры — не нужно копаться в каталоге</small></div>
+    <div class="fld">
+      <label>ДИАМЕТР НОСИКА</label>
+      <select id="cf-dia"><option value="">Любой</option></select>
+    </div>
+    <div class="fld">
+      <label>ТИП СКОБЫ</label>
+      <select id="cf-skoba"><option value="">Любая</option></select>
+    </div>
+    <button class="btn" id="cf-go">Подобрать</button>
+    <button class="btn-ghost" id="cf-reset">Сбросить</button>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn-ghost cat-toggle" id="catToggle">☰ Категории</button>
+    <div class="searchbox"><input id="search" type="text" placeholder="Поиск по названию или бренду…"></div>
+    <select id="brand" style="min-width:180px"><option value="">Все бренды</option></select>
+    <span class="count" id="count"></span>
+  </div>
+
+  <div class="layout">
+    <aside class="side" id="side"></aside>
+    <section>
+      <div class="grid" id="grid"></div>
+      <div class="more-wrap" id="moreWrap" style="display:none"><button class="btn-ghost" id="more">Показать ещё</button></div>
+      <div class="empty-msg" id="emptyMsg" style="display:none">По вашему запросу ничего не найдено. <a href="index.html#contact" style="border-bottom:1px solid var(--warm-cream)">Оставьте заявку</a> — подберём.</div>
+    </section>
+  </div>
+</main>
+
+<footer class="wrap">
+  <span>© 2026 SYNDICAT · sd-kt.ru · Екатеринбург, ул. Окружная, 88</span>
+  <span><a href="tel:+73432664066">+7 343 266-40-66</a> · <a href="mailto:ekb@sd-kt.ru">ekb@sd-kt.ru</a></span>
+</footer>
+
+<script src="catalog-data.js"></script>
+<script>
+(function(){
+  var C = window.CATALOG, cats = C.cats, prods = C.products;
+  var PAGE = 48;
+  var state = { cat:"", brand:"", q:"", limit:PAGE, dia:"", skoba:"" };
+  var PIST = "toplivorazdatochnoe-oborudovanie/toplivorazdatochnye-pistolety";
+
+  function esc(s){return (s||"").replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+  // ---- sidebar ----
+  var side = document.getElementById('side');
+  function buildSide(){
+    var html = '<button class="cat-item active" data-cat="">Все товары ('+prods.length+')</button>';
+    ['azs','agzs'].forEach(function(sec){
+      var roots = cats.filter(function(c){return c.s===sec && c.u.indexOf('/')===-1});
+      roots.forEach(function(r){
+        html += '<div class="cat-sec">'+esc(r.n).toUpperCase()+'</div>';
+        html += '<button class="cat-item" data-cat="'+r.u+'">Все: '+esc(r.n)+'</button>';
+        var lvl2 = cats.filter(function(c){return c.p===r.u});
+        lvl2.forEach(function(c2){
+          html += '<button class="cat-item lvl2" data-cat="'+c2.u+'">'+esc(c2.n)+'</button>';
+          var lvl3 = cats.filter(function(c){return c.p===c2.u});
+          lvl3.forEach(function(c3){
+            html += '<button class="cat-item lvl3" data-cat="'+c3.u+'">'+esc(c3.n)+'</button>';
+          });
+        });
+      });
+    });
+    side.innerHTML = html;
+    side.querySelectorAll('.cat-item').forEach(function(b){
+      b.addEventListener('click', function(){
+        state.cat = b.dataset.cat; state.limit = PAGE;
+        side.querySelectorAll('.cat-item').forEach(function(x){x.classList.remove('active')});
+        b.classList.add('active');
+        side.classList.remove('open');
+        render();
+        window.scrollTo({top:document.querySelector('.toolbar').offsetTop-70,behavior:'smooth'});
+      });
+    });
+  }
+
+  // ---- brand filter ----
+  var brands = {};
+  prods.forEach(function(p){ if(p.b) brands[p.b]=(brands[p.b]||0)+1; });
+  var bsel = document.getElementById('brand');
+  Object.keys(brands).sort().forEach(function(b){
+    var o=document.createElement('option'); o.value=b; o.textContent=b+' ('+brands[b]+')'; bsel.appendChild(o);
+  });
+
+  // ---- configurator selects ----
+  function uniqFeat(key){
+    var s={};
+    prods.forEach(function(p){ if(p.c.indexOf(PIST)===0 && p.f[key]) s[p.f[key]]=1; });
+    return Object.keys(s).sort();
+  }
+  function fillSel(id,key){
+    var sel=document.getElementById(id);
+    uniqFeat(key).forEach(function(v){var o=document.createElement('option');o.value=v;o.textContent=v;sel.appendChild(o)});
+  }
+  fillSel('cf-dia','Диаметр носика');
+  fillSel('cf-skoba','Тип скобы');
+
+  // ---- filtering ----
+  function match(p){
+    if(state.dia || state.skoba){
+      if(p.c.indexOf(PIST)!==0) return false;
+      if(state.dia && p.f['Диаметр носика']!==state.dia) return false;
+      if(state.skoba && p.f['Тип скобы']!==state.skoba) return false;
+      return true;
+    }
+    if(state.cat && p.c!==state.cat && p.c.indexOf(state.cat+'/')!==0) return false;
+    if(state.brand && p.b!==state.brand) return false;
+    if(state.q){
+      var q=state.q.toLowerCase();
+      if((p.n||'').toLowerCase().indexOf(q)<0 && (p.b||'').toLowerCase().indexOf(q)<0) return false;
+    }
+    return true;
+  }
+
+  var grid=document.getElementById('grid'), countEl=document.getElementById('count'),
+      moreWrap=document.getElementById('moreWrap'), emptyMsg=document.getElementById('emptyMsg');
+
+  function card(p){
+    var ph = p.img ? '<div class="ph"><img loading="lazy" src="'+esc(p.img)+'" alt="'+esc(p.n)+'"></div>'
+                   : '<div class="ph empty">⛽</div>';
+    return '<div class="prod">'+ph+'<h3>'+esc(p.n)+'</h3>'+
+           (p.b?'<div class="b">'+esc(p.b)+'</div>':'<div class="b"></div>')+
+           '<a class="ask" href="index.html#contact">Запросить цену</a></div>';
+  }
+
+  function render(){
+    var list = prods.filter(match);
+    countEl.textContent = list.length + ' поз.';
+    if(list.length===0){ grid.innerHTML=''; emptyMsg.style.display='block'; moreWrap.style.display='none'; return; }
+    emptyMsg.style.display='none';
+    var shown = list.slice(0, state.limit);
+    grid.innerHTML = shown.map(card).join('');
+    moreWrap.style.display = list.length>state.limit ? 'block' : 'none';
+  }
+
+  // ---- events ----
+  document.getElementById('more').addEventListener('click',function(){ state.limit+=PAGE; render(); });
+  var st;
+  document.getElementById('search').addEventListener('input',function(e){
+    clearTimeout(st); var v=e.target.value;
+    st=setTimeout(function(){ state.q=v; state.limit=PAGE; render(); },180);
+  });
+  bsel.addEventListener('change',function(e){ state.brand=e.target.value; state.limit=PAGE; render(); });
+  document.getElementById('cf-go').addEventListener('click',function(){
+    state.dia=document.getElementById('cf-dia').value;
+    state.skoba=document.getElementById('cf-skoba').value;
+    state.cat=''; state.brand=''; bsel.value=''; state.limit=PAGE;
+    side.querySelectorAll('.cat-item').forEach(function(x){x.classList.remove('active')});
+    render();
+    window.scrollTo({top:document.querySelector('.toolbar').offsetTop-70,behavior:'smooth'});
+  });
+  document.getElementById('cf-reset').addEventListener('click',function(){
+    state.dia=''; state.skoba=''; document.getElementById('cf-dia').value=''; document.getElementById('cf-skoba').value='';
+    render();
+  });
+  document.getElementById('catToggle').addEventListener('click',function(){ side.classList.toggle('open'); });
+
+  buildSide();
+  render();
+})();
+</script>
+</body>
+</html>
