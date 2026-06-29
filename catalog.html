@@ -256,12 +256,13 @@
   function buildSide(){
     var sec=state.section;
     var secCount=prods.filter(function(p){return p.c.indexOf(SECROOT[sec])===0}).length;
-    var html='<button class="cat-item active" data-cat="">Все в разделе ('+secCount+')</button>';
+    function act(cat){return cat===state.cat?' active':''}
+    var html='<button class="cat-item'+act('')+'" data-cat="">Все в разделе ('+secCount+')</button>';
     cats.filter(function(c){return c.s===sec && c.u.indexOf('/')===-1}).forEach(function(r){
       cats.filter(function(c){return c.p===r.u}).forEach(function(c2){
-        html+='<button class="cat-item lvl2" data-cat="'+c2.u+'">'+esc(c2.n)+'</button>';
+        html+='<button class="cat-item lvl2'+act(c2.u)+'" data-cat="'+c2.u+'">'+esc(c2.n)+'</button>';
         cats.filter(function(c){return c.p===c2.u}).forEach(function(c3){
-          html+='<button class="cat-item lvl3" data-cat="'+c3.u+'">'+esc(c3.n)+'</button>';
+          html+='<button class="cat-item lvl3'+act(c3.u)+'" data-cat="'+c3.u+'">'+esc(c3.n)+'</button>';
         });
       });
     });
@@ -392,6 +393,15 @@
       window.scrollTo({top:document.querySelector('.sectabs').offsetTop-70,behavior:'smooth'});
     });
   });
+
+  // deep-link from homepage: ?sec=azs|agzs  or  ?cat=<category-key>
+  (function(){
+    var params=new URLSearchParams(location.search);
+    var pcat=params.get('cat'), psec=params.get('sec');
+    if(pcat){ state.cat=pcat; state.section=pcat.indexOf('gazorazdatochnoe')===0?'agzs':'azs'; }
+    else if(psec==='azs'||psec==='agzs'){ state.section=psec; }
+    document.querySelectorAll('.sectab').forEach(function(t){t.classList.toggle('active', t.dataset.sec===state.section)});
+  })();
 
   buildSide(); render();
 })();
