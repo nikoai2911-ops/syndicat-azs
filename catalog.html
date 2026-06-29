@@ -354,12 +354,13 @@
            (p.b?'<div class="b">'+esc(p.b)+'</div>':'<div class="b"></div>')+
            badge+'<span class="open">Открыть →</span></div>';
   }
+  function gkey(p){ return p.tg ? 't:'+p.tg : (p.g ? 'g:'+p.g : null); }
   function render(){
     var raw=[]; prods.forEach(function(p,i){if(match(p))raw.push(i)});
-    var reps={};   // представитель группы — предпочитаем с фото
-    raw.forEach(function(i){var tg=prods[i].tg; if(tg){ if(!(tg in reps)||(!prods[reps[tg]].img&&prods[i].img)) reps[tg]=i; }});
+    var reps={};   // представитель группы (tg или g) — предпочитаем с фото
+    raw.forEach(function(i){var k=gkey(prods[i]); if(k){ if(!(k in reps)||(!prods[reps[k]].img&&prods[i].img)) reps[k]=i; }});
     var added={}, list=[];
-    raw.forEach(function(i){var tg=prods[i].tg; if(tg){ if(added[tg])return; added[tg]=true; list.push(reps[tg]); } else list.push(i); });
+    raw.forEach(function(i){var k=gkey(prods[i]); if(k){ if(added[k])return; added[k]=true; list.push(reps[k]); } else list.push(i); });
     countEl.textContent=list.length+' поз.';
     if(!list.length){grid.innerHTML='';emptyMsg.style.display='block';moreWrap.style.display='none';return;}
     emptyMsg.style.display='none';
