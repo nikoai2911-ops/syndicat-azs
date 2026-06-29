@@ -23,7 +23,9 @@
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('URL:', d.get\\('html_url'\\)\\); print\\('status:', d.get\\('status'\\)\\)\")",
       "Bash(curl -s \"https://nikoai2911-ops.github.io/syndicat-azs/\")",
       "Bash(git commit -q -m 'Каталог: вынести комплектующие АЗС/АГЗС с ходовыми позициями вперёд, ТРК вниз *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(git commit -q -m 'Мобильная версия: телефон виден в шапке на мобиле, отступы и тайпсет под узкий экран *)"
     ]
   }
 }

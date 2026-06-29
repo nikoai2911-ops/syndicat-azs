@@ -136,8 +136,12 @@
 
   /* ---------- RESPONSIVE ---------- */
   @media(max-width:860px){
-    .nav-links,.nav-phone{display:none}
+    .wrap{padding:0 18px}
+    .nav-links{display:none}
     .burger{display:block}
+    .nav-phone{font-size:12px;font-weight:500}
+    .nav{height:56px}
+    .hero{padding-top:74px}
     .hero-grid,.about-grid,.cta{grid-template-columns:1fr;gap:30px}
     .hero-right p,.sec-head p{text-align:left;margin-left:0}
     .hero-cta{justify-content:flex-start;flex-wrap:wrap}
@@ -154,6 +158,13 @@
     .cats-rest{grid-template-columns:1fr}
     .stats{grid-template-columns:1fr}
     .foot-grid{grid-template-columns:1fr}
+    .cat{padding:24px}
+    .sec-pad{padding:64px 0}
+  }
+  @media(max-width:380px){
+    .brand{font-size:15px;letter-spacing:1px}
+    .nav-phone{font-size:11px}
+    .foot-bottom{flex-direction:column}
   }
 </style>
 </head>
