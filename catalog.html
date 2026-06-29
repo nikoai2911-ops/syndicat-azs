@@ -344,7 +344,7 @@
     if(p.tg){
       var tn=typeGroups[p.tg].length;
       return '<div class="prod" data-i="'+i+'">'+ph+'<h3>'+esc(p.tn)+'</h3>'+
-             '<div class="b">Метрология</div>'+
+             '<div class="b">'+esc(p.b||'')+'</div>'+
              '<span class="vbadge">'+tn+' '+plural(tn,'вид','вида','видов')+' · выбор</span>'+
              '<span class="open">Открыть →</span></div>';
     }
@@ -356,8 +356,10 @@
   }
   function render(){
     var raw=[]; prods.forEach(function(p,i){if(match(p))raw.push(i)});
-    var seenTg={}, list=[];
-    raw.forEach(function(i){var tg=prods[i].tg; if(tg){if(seenTg[tg])return; seenTg[tg]=true;} list.push(i);});
+    var reps={};   // представитель группы — предпочитаем с фото
+    raw.forEach(function(i){var tg=prods[i].tg; if(tg){ if(!(tg in reps)||(!prods[reps[tg]].img&&prods[i].img)) reps[tg]=i; }});
+    var added={}, list=[];
+    raw.forEach(function(i){var tg=prods[i].tg; if(tg){ if(added[tg])return; added[tg]=true; list.push(reps[tg]); } else list.push(i); });
     countEl.textContent=list.length+' поз.';
     if(!list.length){grid.innerHTML='';emptyMsg.style.display='block';moreWrap.style.display='none';return;}
     emptyMsg.style.display='none';
