@@ -265,6 +265,10 @@
   // group map: gid -> [product indices]
   var groups={};
   prods.forEach(function(p,i){ if(p.g){ (groups[p.g]=groups[p.g]||[]).push(i); } });
+  // type-groups (метрология): tg -> [indices] — однотипные товары с подвидами
+  var typeGroups={};
+  prods.forEach(function(p,i){ if(p.tg){ (typeGroups[p.tg]=typeGroups[p.tg]||[]).push(i); } });
+  function plural(n,a,b,c){var m=n%100;if(m>=11&&m<=14)return c;m=n%10;return m===1?a:(m>=2&&m<=4?b:c);}
 
   // ---- sidebar ----
   var side=document.getElementById('side');
@@ -337,6 +341,13 @@
   function varCount(p){ return p.g && groups[p.g] ? groups[p.g].length : 0; }
   function card(p,i){
     var ph=p.img?'<div class="ph"><img loading="lazy" src="'+esc(p.img)+'" alt="'+esc(p.n)+'"></div>':'<div class="ph empty"><span class="ph-logo">SYNDI<b>CAT</b></span><span class="ph-cap">Фото по запросу</span></div>';
+    if(p.tg){
+      var tn=typeGroups[p.tg].length;
+      return '<div class="prod" data-i="'+i+'">'+ph+'<h3>'+esc(p.tn)+'</h3>'+
+             '<div class="b">Метрология</div>'+
+             '<span class="vbadge">'+tn+' '+plural(tn,'вид','вида','видов')+' · выбор</span>'+
+             '<span class="open">Открыть →</span></div>';
+    }
     var vc=varCount(p);
     var badge=vc>1?'<span class="vbadge">'+vc+' вариант'+(vc>=5?'ов':vc>=2?'а':'')+' · подбор</span>':'';
     return '<div class="prod" data-i="'+i+'">'+ph+'<h3>'+esc(p.n)+'</h3>'+
@@ -344,7 +355,9 @@
            badge+'<span class="open">Открыть →</span></div>';
   }
   function render(){
-    var list=[]; prods.forEach(function(p,i){if(match(p))list.push(i)});
+    var raw=[]; prods.forEach(function(p,i){if(match(p))raw.push(i)});
+    var seenTg={}, list=[];
+    raw.forEach(function(i){var tg=prods[i].tg; if(tg){if(seenTg[tg])return; seenTg[tg]=true;} list.push(i);});
     countEl.textContent=list.length+' поз.';
     if(!list.length){grid.innerHTML='';emptyMsg.style.display='block';moreWrap.style.display='none';return;}
     emptyMsg.style.display='none';
@@ -371,7 +384,12 @@
     var ph=imgs.length?'<div class="m-img"><img id="mMain" src="'+esc(imgs[0])+'" alt="'+esc(p.n)+'"></div>':'<div class="m-img empty"><span class="ph-logo">SYNDI<b>CAT</b></span><span class="ph-cap">Фото по запросу</span></div>';
     // configurator
     var cfg='';
-    if(p.g){
+    if(p.tg){
+      var mem=typeGroups[p.tg]||[];
+      cfg='<div class="cfg"><div class="cfg-t">⚙ Выберите вид · '+esc(p.tn)+'</div><div class="cfg-row"><label>ВИД / МОДЕЛЬ</label><select class="tg-sel">';
+      mem.forEach(function(idx){cfg+='<option value="'+idx+'"'+(idx===i?' selected':'')+'>'+esc(prods[idx].n)+'</option>'});
+      cfg+='</select></div></div>';
+    } else if(p.g){
       var ax=variantAxes(p.g);
       if(ax.length){
         cfg='<div class="cfg"><div class="cfg-t">⚙ Подбор варианта</div>';
@@ -398,6 +416,9 @@
         '<a class="btn-ghost" href="tel:+73432664066">Позвонить</a></div>'+
         '<div class="m-note">Цена и наличие — по запросу. Поставляем оригинал и аналоги.</div>'+
       '</div>';
+    // type-group select -> switch to chosen вид
+    var tgSel=mBody.querySelector('.tg-sel');
+    if(tgSel) tgSel.addEventListener('change',function(){openProduct(+this.value)});
     // configurator change -> switch to matching variant
     mBody.querySelectorAll('.cfg-sel').forEach(function(sel){
       sel.addEventListener('change',function(){
