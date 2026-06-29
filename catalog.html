@@ -261,6 +261,21 @@
   var side=document.getElementById('side');
   function cnt(key){return prods.filter(function(p){return p.c===key||p.c.indexOf(key+'/')===0}).length}
   function hasKids(key){return cats.some(function(c){return c.p===key})}
+  function updateHead(){
+    var secName=state.section==='azs'?'Топливораздаточное оборудование':'Газораздаточное оборудование';
+    var secTag=state.section==='azs'?'АЗС':'АГЗС';
+    var h1=document.querySelector('.page-head h1'), cr=document.querySelector('.crumbs'), lead=document.querySelector('.page-head .lead');
+    if(state.cat){
+      var c=cats.filter(function(x){return x.u===state.cat})[0];
+      h1.textContent=c?c.n:secName;
+      cr.innerHTML='<a href="index.html">Главная</a> / Каталог / '+esc(secName)+' ('+secTag+') / '+esc(c?c.n:'');
+      if(lead) lead.style.display='none';
+    } else {
+      h1.textContent=secName;
+      cr.innerHTML='<a href="index.html">Главная</a> / Каталог / '+esc(secName)+' ('+secTag+')';
+      if(lead) lead.style.display='none';
+    }
+  }
   function buildSide(){
     var root=SECROOT[state.section];
     var cur=state.cat?cats.filter(function(c){return c.u===state.cat})[0]:null;
@@ -285,6 +300,7 @@
         window.scrollTo({top:document.querySelector('.sectabs').offsetTop-70,behavior:'smooth'});
       });
     });
+    updateHead();
   }
 
   // ---- brand filter ----
