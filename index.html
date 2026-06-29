@@ -77,13 +77,19 @@
   .sec-head p{font-size:15px;color:var(--grey-brown);max-width:300px;text-align:right}
 
   /* ---------- CATEGORIES ---------- */
-  .cats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-  .cat{background:var(--dark-cork);border-radius:12px;padding:28px;min-height:230px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .25s ease}
+  .cats-feature{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+  .cats-rest{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .cat{background:var(--dark-cork);border-radius:12px;padding:28px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .25s ease}
+  .cats-rest .cat{min-height:210px}
   .cat:hover{transform:translateY(-4px)}
-  .cat .ico{font-size:34px;color:var(--burnt-sienna);margin-bottom:auto}
+  .cat .ico{font-size:34px;color:var(--burnt-sienna);margin-bottom:14px}
   .cat .num{font-size:11px;letter-spacing:2px;color:var(--grey-brown)}
-  .cat h3{font-size:21px;font-weight:500;line-height:1.1;margin:14px 0 8px}
+  .cat h3{font-size:21px;font-weight:500;line-height:1.1;margin:10px 0 8px}
+  .cats-rest .cat h3{font-size:17px}
   .cat p{font-size:13px;color:var(--warm-cream);opacity:.65;line-height:1.45}
+  .cat-items{list-style:none;margin:16px 0 4px;display:flex;flex-direction:column;gap:9px}
+  .cat-items li{font-size:13.5px;color:var(--warm-cream);opacity:.85;display:flex;align-items:center;gap:10px;line-height:1.3}
+  .cat-items li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--burnt-sienna);flex:none}
   .cat .more{font-size:12px;letter-spacing:1px;margin-top:18px;display:inline-flex;align-items:center;gap:6px;border-bottom:1px solid var(--warm-cream);width:fit-content;padding-bottom:2px}
 
   /* ---------- ABOUT ---------- */
@@ -135,7 +141,8 @@
     .hero-grid,.about-grid,.cta{grid-template-columns:1fr;gap:30px}
     .hero-right p,.sec-head p{text-align:left;margin-left:0}
     .hero-cta{justify-content:flex-start;flex-wrap:wrap}
-    .cats{grid-template-columns:1fr 1fr}
+    .cats-feature{grid-template-columns:1fr}
+    .cats-rest{grid-template-columns:1fr 1fr}
     .svc-list{grid-template-columns:1fr}
     .svc:nth-child(odd){padding-right:0;border-right:none}
     .svc:nth-child(even){padding-left:0}
@@ -144,7 +151,7 @@
     .rot-label{display:none}
   }
   @media(max-width:520px){
-    .cats{grid-template-columns:1fr}
+    .cats-rest{grid-template-columns:1fr}
     .stats{grid-template-columns:1fr}
     .foot-grid{grid-template-columns:1fr}
   }
@@ -195,40 +202,56 @@
         <h2>Каталог оборудования</h2>
         <p>Полный спектр узлов и комплектующих для топливных и газовых станций.</p>
       </div>
-      <div class="cats">
+      <div class="cats-feature">
         <a href="#contact" class="cat">
-          <div class="ico">⛽</div>
+          <div class="ico">🔩</div>
           <div>
-            <div class="num">01</div>
-            <h3>Топливораздаточные колонки</h3>
-            <p>ТРК для бензина, дизеля и СУГ. Одно- и многопродуктовые.</p>
-            <span class="more">Смотреть →</span>
+            <div class="num">01 · ХИТЫ ПРОДАЖ</div>
+            <h3>Комплектующие для АЗС</h3>
+            <p>Запчасти и расходники для топливных станций — бензин, дизель.</p>
+            <ul class="cat-items">
+              <li>Раздаточные краны (пистолеты)</li>
+              <li>Топливораздаточные рукава</li>
+              <li>Отрывные муфты</li>
+              <li>Фильтры тонкой очистки топлива</li>
+              <li>Счётчики жидкости и газоотделители</li>
+            </ul>
+            <span class="more">Смотреть всё →</span>
           </div>
         </a>
         <a href="#contact" class="cat">
+          <div class="ico">🔥</div>
+          <div>
+            <div class="num">02 · ХИТЫ ПРОДАЖ</div>
+            <h3>Комплектующие для АГЗС</h3>
+            <p>Запчасти и арматура для газовых станций — пропан, бутан, СУГ.</p>
+            <ul class="cat-items">
+              <li>Газовые раздаточные краны</li>
+              <li>Рукава для СУГ</li>
+              <li>Разрывные (отрывные) муфты</li>
+              <li>Скоростные и предохранительные клапаны</li>
+              <li>Сепараторы газа и расходомеры</li>
+            </ul>
+            <span class="more">Смотреть всё →</span>
+          </div>
+        </a>
+      </div>
+      <div class="cats-rest">
+        <a href="#contact" class="cat">
           <div class="ico">🛢️</div>
           <div>
-            <div class="num">02</div>
+            <div class="num">03</div>
             <h3>Резервуарное оборудование</h3>
-            <p>Резервуары и системы хранения топлива, арматура, люки.</p>
+            <p>Резервуары и системы хранения, арматура, люки.</p>
             <span class="more">Смотреть →</span>
           </div>
         </a>
         <a href="#contact" class="cat">
           <div class="ico">🔧</div>
           <div>
-            <div class="num">03</div>
-            <h3>Насосное оборудование</h3>
-            <p>Насосы и моноблоки для перекачки нефтепродуктов и СУГ.</p>
-            <span class="more">Смотреть →</span>
-          </div>
-        </a>
-        <a href="#contact" class="cat">
-          <div class="ico">🔩</div>
-          <div>
             <div class="num">04</div>
-            <h3>Комплектующие</h3>
-            <p>Рукава, раздаточные пистолеты, клапаны, фильтры, запчасти.</p>
+            <h3>Насосное оборудование</h3>
+            <p>Насосы и моноблоки для нефтепродуктов и СУГ.</p>
             <span class="more">Смотреть →</span>
           </div>
         </a>
@@ -237,16 +260,16 @@
           <div>
             <div class="num">05</div>
             <h3>Автоматика и учёт</h3>
-            <p>Системы управления, контроля и измерения уровня топлива.</p>
+            <p>Системы управления, контроля и измерения.</p>
             <span class="more">Смотреть →</span>
           </div>
         </a>
         <a href="#contact" class="cat">
-          <div class="ico">🛠️</div>
+          <div class="ico">⛽</div>
           <div>
             <div class="num">06</div>
-            <h3>Услуги и сервис</h3>
-            <p>Проектирование, монтаж, пусконаладка и обслуживание.</p>
+            <h3>Топливораздаточные колонки</h3>
+            <p>ТРК для бензина, дизеля и СУГ.</p>
             <span class="more">Смотреть →</span>
           </div>
         </a>

@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__visualize__read_me",
+      "mcp__visualize__show_widget",
+      "WebFetch(domain:sd-kt.ru)",
+      "Bash(open \"/Users/nikitasazonov/Desktop/Разработка сайтов/index.html\")",
+      "Bash(npm -v)",
+      "Bash(echo \"npm: $\\(npm -v 2>/dev/null || echo NET\\)\")",
+      "Bash(command -v npx)",
+      "Bash(echo \"npx: $\\(command -v npx || echo NET\\)\")",
+      "Bash(git --version)",
+      "Bash(command -v gh)",
+      "Bash(echo \"gh: $\\(command -v gh || echo NET\\)\")",
+      "Bash(gh auth *)",
+      "Bash(git init *)",
+      "Bash(git config *)",
+      "Bash(git add *)",
+      "Bash(git commit -q -m 'SYNDICAT — главная страница \\(каталог оборудования для АЗС/АГЗС\\) *)",
+      "Bash(gh repo *)",
+      "Bash(gh api *)",
+      "Bash(python3 -c 'import sys,json; *)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('URL:', d.get\\('html_url'\\)\\); print\\('status:', d.get\\('status'\\)\\)\")",
+      "Bash(curl -s \"https://nikoai2911-ops.github.io/syndicat-azs/\")",
+      "Bash(git commit -q -m 'Каталог: вынести комплектующие АЗС/АГЗС с ходовыми позициями вперёд, ТРК вниз *)",
+      "Bash(git push *)"
+    ]
+  }
+}
