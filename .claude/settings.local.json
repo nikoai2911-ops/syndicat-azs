@@ -33,7 +33,9 @@
       "Bash(python3 - /private/tmp/claude-501/-Users-nikitasazonov-Desktop------------------/ff903b5d-360a-49c1-9e34-8e1dba2e0936/scratchpad/gas.html)",
       "Bash(rm -f images/agzs/urls.txt)",
       "Bash(printf '%s\\\\n' 'node_modules/' '.DS_Store' 'gas.html' '*.cp1251.html')",
-      "Bash(git commit -q -m 'Каталог АГЗС: страница agzs.html с 14 товарами и фото, связана с главной *)"
+      "Bash(git commit -q -m 'Каталог АГЗС: страница agzs.html с 14 товарами и фото, связана с главной *)",
+      "Bash(python3 \"/private/tmp/claude-501/-Users-nikitasazonov-Desktop------------------/ff903b5d-360a-49c1-9e34-8e1dba2e0936/scratchpad/gen.py\")",
+      "Bash(python3 -)"
     ]
   }
 }
