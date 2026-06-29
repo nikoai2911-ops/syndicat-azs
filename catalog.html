@@ -65,6 +65,12 @@
   .cat-sec{font-size:11px;letter-spacing:1.5px;color:var(--grey-brown);margin:16px 0 6px 10px}
   .cat-item.lvl2{padding-left:22px;font-size:13px;color:#cbb9a3}
   .cat-item.lvl3{padding-left:34px;font-size:12.5px;color:var(--grey-brown)}
+  .cat-item.top{font-weight:500}
+  .cat-item .cc{float:right;color:var(--grey-brown);font-size:11px;opacity:.85;margin-left:8px}
+  .cat-item .arrow{color:var(--grey-brown);margin-left:3px}
+  .cat-back{display:block;width:100%;text-align:left;background:none;border:none;color:var(--grey-brown);font-family:var(--font);font-size:12px;letter-spacing:.5px;padding:6px 10px 14px;cursor:pointer;transition:color .15s ease}
+  .cat-back:hover{color:var(--burnt-sienna)}
+  .side-head{font-size:11px;letter-spacing:1.5px;color:var(--grey-brown);margin:4px 0 10px 10px}
 
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:16px}
   .prod{background:var(--dark-cork);border-radius:12px;padding:14px;display:flex;flex-direction:column;cursor:pointer;transition:transform .2s ease,outline-color .2s ease;outline:1px solid transparent}
@@ -253,26 +259,30 @@
 
   // ---- sidebar ----
   var side=document.getElementById('side');
+  function cnt(key){return prods.filter(function(p){return p.c===key||p.c.indexOf(key+'/')===0}).length}
+  function hasKids(key){return cats.some(function(c){return c.p===key})}
   function buildSide(){
-    var sec=state.section;
-    var secCount=prods.filter(function(p){return p.c.indexOf(SECROOT[sec])===0}).length;
-    function act(cat){return cat===state.cat?' active':''}
-    var html='<button class="cat-item'+act('')+'" data-cat="">Все в разделе ('+secCount+')</button>';
-    cats.filter(function(c){return c.s===sec && c.u.indexOf('/')===-1}).forEach(function(r){
-      cats.filter(function(c){return c.p===r.u}).forEach(function(c2){
-        html+='<button class="cat-item lvl2'+act(c2.u)+'" data-cat="'+c2.u+'">'+esc(c2.n)+'</button>';
-        cats.filter(function(c){return c.p===c2.u}).forEach(function(c3){
-          html+='<button class="cat-item lvl3'+act(c3.u)+'" data-cat="'+c3.u+'">'+esc(c3.n)+'</button>';
-        });
-      });
+    var root=SECROOT[state.section];
+    var cur=state.cat?cats.filter(function(c){return c.u===state.cat})[0]:null;
+    var parentKey = !cur ? root : (hasKids(cur.u)?cur.u:cur.p);
+    var html='';
+    if(parentKey===root){
+      html+='<div class="side-head">КАТЕГОРИИ РАЗДЕЛА</div>';
+      html+='<button class="cat-item top'+(state.cat===''?' active':'')+'" data-cat="">Все в разделе<span class="cc">'+cnt(root)+'</span></button>';
+    } else {
+      var par=cats.filter(function(c){return c.u===parentKey})[0];
+      html+='<button class="cat-back" data-cat="">← Все категории</button>';
+      html+='<button class="cat-item top'+(state.cat===parentKey?' active':'')+'" data-cat="'+parentKey+'">'+esc(par.n)+' — всё<span class="cc">'+cnt(parentKey)+'</span></button>';
+    }
+    cats.filter(function(c){return c.p===parentKey}).forEach(function(ch){
+      html+='<button class="cat-item'+(state.cat===ch.u?' active':'')+'" data-cat="'+ch.u+'">'+esc(ch.n)+(hasKids(ch.u)?'<span class="arrow">›</span>':'')+'<span class="cc">'+cnt(ch.u)+'</span></button>';
     });
     side.innerHTML=html;
-    side.querySelectorAll('.cat-item').forEach(function(b){
+    side.querySelectorAll('[data-cat]').forEach(function(b){
       b.addEventListener('click',function(){
-        state.cat=b.dataset.cat; state.limit=PAGE;
-        side.querySelectorAll('.cat-item').forEach(function(x){x.classList.remove('active')});
-        b.classList.add('active'); side.classList.remove('open'); render();
-        window.scrollTo({top:document.querySelector('.toolbar').offsetTop-70,behavior:'smooth'});
+        state.cat=b.dataset.cat; state.limit=PAGE; side.classList.remove('open');
+        buildSide(); render();
+        window.scrollTo({top:document.querySelector('.sectabs').offsetTop-70,behavior:'smooth'});
       });
     });
   }
