@@ -50,6 +50,11 @@
   .searchbox input{width:100%}
   .count{font-size:12px;color:var(--grey-brown);letter-spacing:.5px;white-space:nowrap}
   .cat-toggle{display:none}
+  .sectabs{display:flex;gap:10px;margin:20px 0 4px;flex-wrap:wrap}
+  .sectab{background:transparent;border:1px solid var(--cork-shadow);color:var(--grey-brown);border-radius:36px;padding:12px 24px;font-family:var(--font);font-size:14px;font-weight:500;cursor:pointer;transition:border-color .2s ease,color .2s ease,background .2s ease}
+  .sectab span{opacity:.65;font-size:12px;margin-left:5px}
+  .sectab:hover{color:var(--warm-cream)}
+  .sectab.active{background:var(--dark-cork);border-color:var(--burnt-sienna);color:var(--warm-cream)}
 
   .layout{display:grid;grid-template-columns:280px 1fr;gap:28px;padding-bottom:60px;align-items:start}
   .side{position:sticky;top:76px;max-height:calc(100vh - 96px);overflow-y:auto;padding-right:8px}
@@ -195,7 +200,12 @@
   <div class="page-head">
     <div class="crumbs"><a href="index.html">Главная</a> / Каталог</div>
     <h1>Каталог оборудования</h1>
-    <p class="lead">Оборудование и комплектующие для АЗС и АГЗС. Откройте карточку — внутри подбор по параметрам (диаметр, скоба, DN), характеристики и запрос цены.</p>
+    <p class="lead">Выберите раздел — топливораздаточное (АЗС) или газораздаточное (АГЗС). Откройте карточку — внутри подбор по параметрам (диаметр, скоба, DN), характеристики и запрос цены.</p>
+  </div>
+
+  <div class="sectabs" id="sectabs">
+    <button class="sectab active" data-sec="azs">Топливораздаточное · АЗС <span>1034</span></button>
+    <button class="sectab" data-sec="agzs">Газораздаточное · АГЗС <span>136</span></button>
   </div>
 
   <div class="toolbar">
@@ -233,7 +243,8 @@
   var C=window.CATALOG, cats=C.cats, prods=C.products;
   var PAGE=48, PIST="toplivorazdatochnoe-oborudovanie/toplivorazdatochnye-pistolety";
   var AXES=["Диаметр носика","Тип скобы","Диаметр условного прохода DN (ДУ)","Резьба","Тип жидкости","Количество рукавов","Питание насоса","Тип индикации","Класс точности","Производительность","Мощность двигателя","Количество видов топлива"];
-  var state={cat:"",brand:"",q:"",limit:PAGE};
+  var SECROOT={azs:"toplivorazdatochnoe-oborudovanie",agzs:"gazorazdatochnoe-oborudovanie"};
+  var state={section:"azs",cat:"",brand:"",q:"",limit:PAGE};
   function esc(s){return (s||"").replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 
   // group map: gid -> [product indices]
@@ -243,16 +254,14 @@
   // ---- sidebar ----
   var side=document.getElementById('side');
   function buildSide(){
-    var html='<button class="cat-item active" data-cat="">Все товары ('+prods.length+')</button>';
-    ['azs','agzs'].forEach(function(sec){
-      cats.filter(function(c){return c.s===sec && c.u.indexOf('/')===-1}).forEach(function(r){
-        html+='<div class="cat-sec">'+esc(r.n).toUpperCase()+'</div>';
-        html+='<button class="cat-item" data-cat="'+r.u+'">Все: '+esc(r.n)+'</button>';
-        cats.filter(function(c){return c.p===r.u}).forEach(function(c2){
-          html+='<button class="cat-item lvl2" data-cat="'+c2.u+'">'+esc(c2.n)+'</button>';
-          cats.filter(function(c){return c.p===c2.u}).forEach(function(c3){
-            html+='<button class="cat-item lvl3" data-cat="'+c3.u+'">'+esc(c3.n)+'</button>';
-          });
+    var sec=state.section;
+    var secCount=prods.filter(function(p){return p.c.indexOf(SECROOT[sec])===0}).length;
+    var html='<button class="cat-item active" data-cat="">Все в разделе ('+secCount+')</button>';
+    cats.filter(function(c){return c.s===sec && c.u.indexOf('/')===-1}).forEach(function(r){
+      cats.filter(function(c){return c.p===r.u}).forEach(function(c2){
+        html+='<button class="cat-item lvl2" data-cat="'+c2.u+'">'+esc(c2.n)+'</button>';
+        cats.filter(function(c){return c.p===c2.u}).forEach(function(c3){
+          html+='<button class="cat-item lvl3" data-cat="'+c3.u+'">'+esc(c3.n)+'</button>';
         });
       });
     });
@@ -273,6 +282,7 @@
   Object.keys(brands).sort().forEach(function(b){var o=document.createElement('option');o.value=b;o.textContent=b+' ('+brands[b]+')';bsel.appendChild(o)});
 
   function match(p){
+    if(p.c.indexOf(SECROOT[state.section])!==0) return false;
     if(state.cat && p.c!==state.cat && p.c.indexOf(state.cat+'/')!==0) return false;
     if(state.brand && p.b!==state.brand) return false;
     if(state.q){var q=state.q.toLowerCase();if((p.n||'').toLowerCase().indexOf(q)<0 && (p.b||'').toLowerCase().indexOf(q)<0)return false;}
@@ -373,6 +383,15 @@
   document.getElementById('search').addEventListener('input',function(e){clearTimeout(st);var v=e.target.value;st=setTimeout(function(){state.q=v;state.limit=PAGE;render()},180)});
   bsel.addEventListener('change',function(e){state.brand=e.target.value;state.limit=PAGE;render()});
   document.getElementById('catToggle').addEventListener('click',function(){side.classList.toggle('open')});
+  document.querySelectorAll('.sectab').forEach(function(t){
+    t.addEventListener('click',function(){
+      state.section=t.dataset.sec; state.cat=""; state.brand=""; state.q=""; state.limit=PAGE;
+      bsel.value=""; document.getElementById('search').value="";
+      document.querySelectorAll('.sectab').forEach(function(x){x.classList.remove('active')}); t.classList.add('active');
+      buildSide(); render();
+      window.scrollTo({top:document.querySelector('.sectabs').offsetTop-70,behavior:'smooth'});
+    });
+  });
 
   buildSide(); render();
 })();
