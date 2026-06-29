@@ -1,0 +1,4 @@
+node_modules/
+.DS_Store
+gas.html
+*.cp1251.html

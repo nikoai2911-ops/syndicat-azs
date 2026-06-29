@@ -26,7 +26,14 @@
       "Bash(git push *)",
       "mcp__Claude_Preview__preview_start",
       "Bash(git commit -q -m 'Мобильная версия: телефон виден в шапке на мобиле, отступы и тайпсет под узкий экран *)",
-      "Bash(git commit -q -m 'Каталог: акцент-плашка «Быстроизнашивающиеся детали · в наличии» на карточках комплектующих *)"
+      "Bash(git commit -q -m 'Каталог: акцент-плашка «Быстроизнашивающиеся детали · в наличии» на карточках комплектующих *)",
+      "WebFetch(domain:www.azs-specsnab.ru)",
+      "Bash(curl -sk -A Mozilla/5.0 https://www.azs-specsnab.ru/gazovoe-oborudovanie -o /private/tmp/claude-501/-Users-nikitasazonov-Desktop------------------/ff903b5d-360a-49c1-9e34-8e1dba2e0936/scratchpad/gas.cp1251.html)",
+      "Bash(iconv -f CP1251 -t UTF-8 /private/tmp/claude-501/-Users-nikitasazonov-Desktop------------------/ff903b5d-360a-49c1-9e34-8e1dba2e0936/scratchpad/gas.cp1251.html)",
+      "Bash(python3 - /private/tmp/claude-501/-Users-nikitasazonov-Desktop------------------/ff903b5d-360a-49c1-9e34-8e1dba2e0936/scratchpad/gas.html)",
+      "Bash(rm -f images/agzs/urls.txt)",
+      "Bash(printf '%s\\\\n' 'node_modules/' '.DS_Store' 'gas.html' '*.cp1251.html')",
+      "Bash(git commit -q -m 'Каталог АГЗС: страница agzs.html с 14 товарами и фото, связана с главной *)"
     ]
   }
 }
