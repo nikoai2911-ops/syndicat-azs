@@ -240,7 +240,7 @@
 
 <footer class="wrap">
   <span>© 2026 SYNDICAT · sd-kt.ru · Екатеринбург, ул. Окружная, 88</span>
-  <span><a href="tel:+73432664066">+7 343 266-40-66</a> · <a href="mailto:ekb@sd-kt.ru">ekb@sd-kt.ru</a></span>
+  <span><a href="tel:+73432664066">+7 343 266-40-66</a> · <a href="mailto:m2@sd-kt.ru">m2@sd-kt.ru</a></span>
 </footer>
 
 <script src="catalog-data.js"></script>
@@ -259,7 +259,12 @@
     {azs:"toplivorazdatochnoe-oborudovanie/toplivorazdatochnye-pistolety", agzs:"gazorazdatochnoe-oborudovanie/komplektuyuschie-zapchasti-i-rashodniki-dlya-grk/gazorazdatochnye-pistolety-strubciny"}
   ];
   function pairOf(cat){for(var i=0;i<PAIRS.length;i++){if(PAIRS[i].azs===cat||PAIRS[i].agzs===cat)return PAIRS[i];}return null;}
-  var state={section:"azs",cat:"",brand:"",q:"",limit:PAGE};
+  // быстроизнашивающиеся детали (расходники) по разделам
+  var WEARCATS={
+    azs:["toplivorazdatochnoe-oborudovanie/toplivorazdatochnye-pistolety","toplivorazdatochnoe-oborudovanie/rukava-shlangi-mbs-i-katushki","toplivorazdatochnoe-oborudovanie/filtraciya-i-ochistka-topliva"],
+    agzs:["gazorazdatochnoe-oborudovanie/komplektuyuschie-zapchasti-i-rashodniki-dlya-grk/gazorazdatochnye-pistolety-strubciny","gazorazdatochnoe-oborudovanie/komplektuyuschie-zapchasti-i-rashodniki-dlya-grk/rukava-dlya-grk","gazorazdatochnoe-oborudovanie/zapornaya-armatura-sug"]
+  };
+  var state={section:"azs",cat:"",brand:"",q:"",limit:PAGE,wear:false};
   function esc(s){return (s||"").replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 
   // group map: gid -> [product indices]
@@ -280,6 +285,16 @@
     var h1=document.querySelector('.page-head h1'), cr=document.querySelector('.crumbs'), lead=document.querySelector('.page-head .lead');
     var tabs=document.getElementById('sectabs');
     if(lead) lead.style.display='none';
+    if(state.wear){
+      var c2=state.cat?cats.filter(function(x){return x.u===state.cat})[0]:null;
+      h1.textContent = c2 ? c2.n : 'Быстроизнашивающиеся детали';
+      if(tabs) tabs.style.display='flex';
+      var aS=document.querySelector('.sectab[data-sec=azs] span'), gS=document.querySelector('.sectab[data-sec=agzs] span');
+      if(aS)aS.textContent=prods.filter(function(p){return p.w&&p.c.indexOf(SECROOT.azs)===0}).length;
+      if(gS)gS.textContent=prods.filter(function(p){return p.w&&p.c.indexOf(SECROOT.agzs)===0}).length;
+      cr.innerHTML='<a href="index.html">Главная</a> / <a href="catalog.html">Каталог</a> / Быстроизнашивающиеся детали ('+secTag+')'+(c2?' / '+esc(c2.n):'');
+      return;
+    }
     var pr = state.cat ? pairOf(state.cat) : null;
     // вкладки видны: на входе в раздел ИЛИ в категории-близнеце (где есть версия для обоих разделов)
     if(tabs) tabs.style.display = (!state.cat || pr) ? 'flex' : 'none';
@@ -297,6 +312,24 @@
   }
   function buildSide(){
     var root=SECROOT[state.section];
+    if(state.wear){
+      var wtot=prods.filter(function(p){return p.w && p.c.indexOf(root)===0}).length;
+      var wh='<div class="side-head">БЫСТРОИЗНАШИВАЮЩИЕСЯ</div>';
+      wh+='<button class="cat-item top'+(state.cat===''?' active':'')+'" data-cat="">Все расходники<span class="cc">'+wtot+'</span></button>';
+      WEARCATS[state.section].forEach(function(k){
+        var c=cats.filter(function(x){return x.u===k})[0];
+        wh+='<button class="cat-item'+(state.cat===k?' active':'')+'" data-cat="'+k+'">'+esc(c?c.n:k)+'<span class="cc">'+cnt(k)+'</span></button>';
+      });
+      side.innerHTML=wh;
+      side.querySelectorAll('[data-cat]').forEach(function(b){
+        b.addEventListener('click',function(){
+          state.cat=b.dataset.cat; state.limit=PAGE; side.classList.remove('open');
+          buildSide(); render();
+          window.scrollTo({top:document.querySelector('.sectabs').offsetTop-70,behavior:'smooth'});
+        });
+      });
+      updateHead(); return;
+    }
     var cur=state.cat?cats.filter(function(c){return c.u===state.cat})[0]:null;
     var parentKey = !cur ? root : (hasKids(cur.u)?cur.u:cur.p);
     var html='';
@@ -328,6 +361,7 @@
   Object.keys(brands).sort().forEach(function(b){var o=document.createElement('option');o.value=b;o.textContent=b+' ('+brands[b]+')';bsel.appendChild(o)});
 
   function match(p){
+    if(state.wear && !p.w) return false;
     if(p.c.indexOf(SECROOT[state.section])!==0) return false;
     if(state.cat && p.c!==state.cat && p.c.indexOf(state.cat+'/')!==0) return false;
     if(state.brand && p.b!==state.brand) return false;
@@ -371,7 +405,7 @@
   // ---- modal / product card ----
   var modal=document.getElementById('modal'), mBody=document.getElementById('mBody');
   function catName(key){var c=cats.filter(function(x){return x.u===key})[0];return c?c.n:''}
-  function mailto(name){return 'mailto:ekb@sd-kt.ru?subject='+encodeURIComponent('Запрос цены: '+name)+'&body='+encodeURIComponent('Здравствуйте! Интересует цена и наличие:\n\n'+name+'\n\nКоличество: \nОрганизация: \nТелефон: ');}
+  function mailto(name){return 'mailto:m2@sd-kt.ru?subject='+encodeURIComponent('Запрос цены: '+name)+'&body='+encodeURIComponent('Здравствуйте! Интересует цена и наличие:\n\n'+name+'\n\nКоличество: \nОрганизация: \nТелефон: ');}
 
   function variantAxes(gid){
     var mem=groups[gid]||[];var ax=[];
@@ -451,8 +485,9 @@
   document.getElementById('catToggle').addEventListener('click',function(){side.classList.toggle('open')});
   document.querySelectorAll('.sectab').forEach(function(t){
     t.addEventListener('click',function(){
-      var ns=t.dataset.sec, pr=state.cat?pairOf(state.cat):null;
-      state.cat = pr ? pr[ns] : "";        // в категории-близнеце переключаем на её версию в другом разделе
+      var ns=t.dataset.sec;
+      if(state.wear){ state.cat=""; }       // в режиме расходников просто меняем раздел
+      else { var pr=state.cat?pairOf(state.cat):null; state.cat = pr ? pr[ns] : ""; }
       state.section=ns; state.brand=""; state.q=""; state.limit=PAGE;
       bsel.value=""; document.getElementById('search').value="";
       document.querySelectorAll('.sectab').forEach(function(x){x.classList.remove('active')}); t.classList.add('active');
@@ -469,8 +504,9 @@
   // deep-link from homepage: ?sec=azs|agzs  or  ?cat=<category-key>
   (function(){
     var params=new URLSearchParams(location.search);
-    var pcat=params.get('cat'), psec=params.get('sec');
-    if(pcat){ state.cat=pcat; state.section=pcat.indexOf('gazorazdatochnoe')===0?'agzs':'azs'; }
+    var pcat=params.get('cat'), psec=params.get('sec'), pwear=params.get('wear');
+    if(pwear==='azs'||pwear==='agzs'){ state.wear=true; state.section=pwear; }
+    else if(pcat){ state.cat=pcat; state.section=pcat.indexOf('gazorazdatochnoe')===0?'agzs':'azs'; }
     else if(psec==='azs'||psec==='agzs'){ state.section=psec; }
     document.querySelectorAll('.sectab').forEach(function(t){t.classList.toggle('active', t.dataset.sec===state.section)});
   })();

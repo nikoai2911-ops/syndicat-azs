@@ -81,7 +81,10 @@
       "Bash(python3 -c \"import openpyxl; print\\('openpyxl OK', openpyxl.__version__\\)\")",
       "Bash(open \"Каталог_SYNDICAT_позиции.xlsx\")",
       "Bash(open -R \"Каталог_SYNDICAT_позиции.xlsx\")",
-      "Bash(git commit -q -m 'Главная: эмодзи на карточках категорий заменены на линейные SVG-иконки \\(оранжевый штрих\\) *)"
+      "Bash(git commit -q -m 'Главная: эмодзи на карточках категорий заменены на линейные SVG-иконки \\(оранжевый штрих\\) *)",
+      "Bash(grep -rln 'ekb@sd-kt.ru' index.html catalog.html thanks.html)",
+      "Bash(grep -c 'ekb@sd-kt.ru' index.html catalog.html thanks.html)",
+      "Bash(git commit -q -m 'Расходники: кликабельная плашка -> раздел быстроизнашивающихся деталей \\(АЗС/АГЗС\\) + почта m2@sd-kt.ru *)"
     ]
   }
 }
