@@ -56,7 +56,14 @@
       "Bash(rm -rf images/catalog)",
       "Bash(ls images/)",
       "Bash(git commit -q -m 'Убраны все фото каталога с вотермарками/логотипами конкурента \\(АЗС.online\\) *)",
-      "Bash(git commit -q -m 'Возврат чистых фото + удаление только заклеймённых \\(41 шт\\) *)"
+      "Bash(git commit -q -m 'Возврат чистых фото + удаление только заклеймённых \\(41 шт\\) *)",
+      "Bash(python3 -c 'import json;print\\('\\\\''\\\\n'\\\\''.join\\(sorted\\(json.load\\(open\\('\\\\''__TRACKED_VAR__/wm.json'\\\\''\\)\\)\\)\\)\\)')",
+      "Bash(git ls-tree *)",
+      "Bash(python3 -c \"import scipy; from scipy import signal; print\\('scipy OK', scipy.__version__\\)\")",
+      "Bash(python3 -c \"import skimage; print\\('skimage OK', skimage.__version__\\)\")",
+      "Bash(python3 -c \"import cv2; print\\('cv2 OK'\\)\")",
+      "Bash(open \"/Users/nikitasazonov/Desktop/Разработка сайтов/_сравнение_вариантов.png\")",
+      "Bash(git commit -q -m 'Чистка фото: 590 чистых/закрашенных, 570 заклеймённых -> заглушка *)"
     ]
   }
 }
