@@ -84,7 +84,8 @@
       "Bash(git commit -q -m 'Главная: эмодзи на карточках категорий заменены на линейные SVG-иконки \\(оранжевый штрих\\) *)",
       "Bash(grep -rln 'ekb@sd-kt.ru' index.html catalog.html thanks.html)",
       "Bash(grep -c 'ekb@sd-kt.ru' index.html catalog.html thanks.html)",
-      "Bash(git commit -q -m 'Расходники: кликабельная плашка -> раздел быстроизнашивающихся деталей \\(АЗС/АГЗС\\) + почта m2@sd-kt.ru *)"
+      "Bash(git commit -q -m 'Расходники: кликабельная плашка -> раздел быстроизнашивающихся деталей \\(АЗС/АГЗС\\) + почта m2@sd-kt.ru *)",
+      "Bash(git commit -q -m 'Каталог: убрано фото у '\\\\''Муфта REGO A2141 \\(аналог\\)'\\\\'' -> заглушка *)"
     ]
   }
 }
