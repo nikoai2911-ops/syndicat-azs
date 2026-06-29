@@ -250,6 +250,15 @@
   var PAGE=48, PIST="toplivorazdatochnoe-oborudovanie/toplivorazdatochnye-pistolety";
   var AXES=["Диаметр носика","Тип скобы","Диаметр условного прохода DN (ДУ)","Резьба","Тип жидкости","Количество рукавов","Питание насоса","Тип индикации","Класс точности","Производительность","Мощность двигателя","Количество видов топлива"];
   var SECROOT={azs:"toplivorazdatochnoe-oborudovanie",agzs:"gazorazdatochnoe-oborudovanie"};
+  // категории-близнецы: один тип оборудования в обоих разделах (не взаимозаменяемы)
+  var PAIRS=[
+    {azs:"toplivorazdatochnoe-oborudovanie/rezervuarnaya-obvyazka", agzs:"gazorazdatochnoe-oborudovanie/zapornaya-armatura-sug"},
+    {azs:"toplivorazdatochnoe-oborudovanie/toplivnye-nasosnye-agregaty-i-nasosy", agzs:"gazorazdatochnoe-oborudovanie/nasosy-agregaty-komplektuushie-lpg"},
+    {azs:"toplivorazdatochnoe-oborudovanie/toplivnye-kolonki-trk", agzs:"gazorazdatochnoe-oborudovanie/gazovye-kolonki-grk"},
+    {azs:"toplivorazdatochnoe-oborudovanie/schetchiki-i-rashodomery", agzs:"gazorazdatochnoe-oborudovanie/schetchiki-i-rashodomery-sug"},
+    {azs:"toplivorazdatochnoe-oborudovanie/toplivorazdatochnye-pistolety", agzs:"gazorazdatochnoe-oborudovanie/komplektuyuschie-zapchasti-i-rashodniki-dlya-grk/gazorazdatochnye-pistolety-strubciny"}
+  ];
+  function pairOf(cat){for(var i=0;i<PAIRS.length;i++){if(PAIRS[i].azs===cat||PAIRS[i].agzs===cat)return PAIRS[i];}return null;}
   var state={section:"azs",cat:"",brand:"",q:"",limit:PAGE};
   function esc(s){return (s||"").replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 
@@ -267,7 +276,12 @@
     var h1=document.querySelector('.page-head h1'), cr=document.querySelector('.crumbs'), lead=document.querySelector('.page-head .lead');
     var tabs=document.getElementById('sectabs');
     if(lead) lead.style.display='none';
-    if(tabs) tabs.style.display = state.cat ? 'none' : 'flex';   // вкладки разделов только на входе, не внутри категории
+    var pr = state.cat ? pairOf(state.cat) : null;
+    // вкладки видны: на входе в раздел ИЛИ в категории-близнеце (где есть версия для обоих разделов)
+    if(tabs) tabs.style.display = (!state.cat || pr) ? 'flex' : 'none';
+    var aSp=document.querySelector('.sectab[data-sec=azs] span'), gSp=document.querySelector('.sectab[data-sec=agzs] span');
+    if(pr){ if(aSp)aSp.textContent=cnt(pr.azs); if(gSp)gSp.textContent=cnt(pr.agzs); }
+    else { if(aSp)aSp.textContent=cnt(SECROOT.azs); if(gSp)gSp.textContent=cnt(SECROOT.agzs); }
     if(state.cat){
       var c=cats.filter(function(x){return x.u===state.cat})[0];
       h1.textContent=c?c.n:secName;
@@ -413,7 +427,9 @@
   document.getElementById('catToggle').addEventListener('click',function(){side.classList.toggle('open')});
   document.querySelectorAll('.sectab').forEach(function(t){
     t.addEventListener('click',function(){
-      state.section=t.dataset.sec; state.cat=""; state.brand=""; state.q=""; state.limit=PAGE;
+      var ns=t.dataset.sec, pr=state.cat?pairOf(state.cat):null;
+      state.cat = pr ? pr[ns] : "";        // в категории-близнеце переключаем на её версию в другом разделе
+      state.section=ns; state.brand=""; state.q=""; state.limit=PAGE;
       bsel.value=""; document.getElementById('search').value="";
       document.querySelectorAll('.sectab').forEach(function(x){x.classList.remove('active')}); t.classList.add('active');
       buildSide(); render();
