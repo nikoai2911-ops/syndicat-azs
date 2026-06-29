@@ -50,7 +50,12 @@
       "Bash(echo \"cwebp: $\\(command -v cwebp || echo NET\\)\")",
       "Bash(command -v magick convert)",
       "Bash(python3 gen2.py)",
-      "Bash(git commit -q -m 'Карточка товара \\(модалка\\) + конфигуратор внутри + рабочая форма + сжатие фото *)"
+      "Bash(git commit -q -m 'Карточка товара \\(модалка\\) + конфигуратор внутри + рабочая форма + сжатие фото *)",
+      "Bash(shuf)",
+      "Bash(awk 'NR%140==1')",
+      "Bash(rm -rf images/catalog)",
+      "Bash(ls images/)",
+      "Bash(git commit -q -m 'Убраны все фото каталога с вотермарками/логотипами конкурента \\(АЗС.online\\) *)"
     ]
   }
 }
