@@ -42,6 +42,7 @@
   select:focus,.searchbox input:focus{border-color:var(--burnt-sienna)}
   .btn{background:var(--dark-cork);color:var(--warm-cream);border:1px solid var(--dark-cork);border-radius:36px;padding:12px 24px;font-size:14px;font-weight:500;cursor:pointer;transition:border-color .25s ease;display:inline-block;text-align:center}
   .btn:hover{border-color:var(--burnt-sienna)}
+  .btn.added{background:var(--burnt-sienna);border-color:var(--burnt-sienna);color:#fff}
   .btn-ghost{background:transparent;border:1px solid var(--warm-cream);border-radius:36px;padding:10px 18px;font-size:12px;cursor:pointer;color:var(--warm-cream);transition:border-color .25s ease,color .25s ease}
   .btn-ghost:hover{border-color:var(--burnt-sienna);color:var(--burnt-sienna)}
 
@@ -118,12 +119,68 @@
   .m-actions{display:flex;gap:12px;flex-wrap:wrap}
   .m-note{font-size:11px;color:var(--grey-brown);margin-top:14px}
 
+  /* cart button in nav */
+  .cart-btn{position:relative;display:inline-flex;align-items:center;gap:7px;background:var(--dark-cork);border:1px solid var(--dark-cork);color:var(--warm-cream);border-radius:36px;padding:8px 16px 8px 13px;font-family:var(--font);font-size:12px;letter-spacing:.5px;cursor:pointer;transition:border-color .25s ease}
+  .cart-btn:hover{border-color:var(--burnt-sienna)}
+  .cart-btn svg{width:17px;height:17px;flex:none}
+  .cart-count{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;background:var(--burnt-sienna);color:#fff;border-radius:10px;font-size:11px;font-weight:600;display:none;align-items:center;justify-content:center;line-height:1}
+  .cart-count.show{display:inline-flex}
+  .cart-btn .cart-lbl{white-space:nowrap}
+
+  /* add-to-request buttons */
+  .prod .addbtn{margin-top:10px;width:100%;background:transparent;border:1px solid var(--cork-shadow);color:var(--warm-cream);border-radius:8px;padding:9px 10px;font-family:var(--font);font-size:12px;font-weight:500;cursor:pointer;transition:border-color .2s ease,background .2s ease,color .2s ease}
+  .prod .addbtn:hover{border-color:var(--burnt-sienna);color:var(--burnt-sienna)}
+  .prod .addbtn.added{background:var(--burnt-sienna);border-color:var(--burnt-sienna);color:#fff}
+
+  /* cart drawer */
+  .cart-overlay{position:fixed;inset:0;z-index:300;background:rgba(10,5,2,0.7);backdrop-filter:blur(4px);opacity:0;visibility:hidden;transition:opacity .25s ease,visibility .25s ease}
+  .cart-overlay.open{opacity:1;visibility:visible}
+  .cart-panel{position:fixed;top:0;right:0;bottom:0;z-index:301;width:420px;max-width:100%;background:var(--studio-black);border-left:1px solid var(--cork-shadow);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+  .cart-panel.open{transform:translateX(0)}
+  .cart-head{display:flex;align-items:center;justify-content:space-between;padding:20px 22px;border-bottom:1px solid var(--cork-shadow);flex:none}
+  .cart-head h2{font-size:17px;font-weight:600;letter-spacing:.3px}
+  .cart-head .sub{font-size:11px;color:var(--grey-brown);margin-top:3px;letter-spacing:.5px}
+  .cart-x{background:none;border:none;color:var(--warm-cream);font-size:28px;line-height:1;cursor:pointer;opacity:.8}
+  .cart-x:hover{color:var(--burnt-sienna);opacity:1}
+  .cart-items{flex:1;overflow-y:auto;padding:8px 22px}
+  .cart-items::-webkit-scrollbar{width:6px}.cart-items::-webkit-scrollbar-thumb{background:var(--cork-shadow);border-radius:3px}
+  .cart-empty{text-align:center;color:var(--grey-brown);font-size:14px;padding:60px 20px;line-height:1.6}
+  .ci{display:flex;gap:12px;padding:15px 0;border-bottom:1px dashed var(--cork-shadow)}
+  .ci-info{flex:1;min-width:0}
+  .ci-name{font-size:13.5px;font-weight:500;line-height:1.3}
+  .ci-brand{font-size:11px;color:var(--grey-brown);margin-top:3px}
+  .ci-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+  .qty{display:flex;align-items:center;border:1px solid var(--cork-shadow);border-radius:8px;overflow:hidden}
+  .qty button{width:28px;height:28px;background:transparent;border:none;color:var(--warm-cream);font-size:16px;cursor:pointer;line-height:1}
+  .qty button:hover{color:var(--burnt-sienna)}
+  .qty span{min-width:30px;text-align:center;font-size:13px}
+  .ci-rm{background:none;border:none;color:var(--grey-brown);font-size:11px;letter-spacing:.5px;cursor:pointer;transition:color .2s ease}
+  .ci-rm:hover{color:var(--burnt-sienna)}
+  .cart-foot{flex:none;border-top:1px solid var(--cork-shadow);padding:18px 22px 22px}
+  .cart-foot .crow{margin-bottom:13px}
+  .cart-foot label{display:block;font-size:10px;letter-spacing:1.2px;color:var(--grey-brown);margin-bottom:6px}
+  .cart-foot input,.cart-foot textarea{width:100%;background:transparent;border:none;border-bottom:1px solid var(--cork-shadow);color:var(--warm-cream);font-family:var(--font);font-size:14px;padding:5px 0;outline:none}
+  .cart-foot input:focus,.cart-foot textarea:focus{border-color:var(--burnt-sienna)}
+  .cart-foot input::placeholder,.cart-foot textarea::placeholder{color:var(--grey-brown)}
+  .cart-foot textarea{resize:vertical;min-height:24px}
+  .cart-submit{width:100%;background:var(--burnt-sienna);border:1px solid var(--burnt-sienna);color:#fff;border-radius:36px;padding:13px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;transition:opacity .2s ease}
+  .cart-submit:hover{opacity:.9}
+  .cart-submit:disabled{opacity:.4;cursor:not-allowed}
+  .cart-alt{display:block;text-align:center;font-size:11px;color:var(--grey-brown);margin-top:11px;cursor:pointer}
+  .cart-alt:hover{color:var(--burnt-sienna)}
+  .cart-clear{display:block;width:100%;text-align:center;background:none;border:none;color:var(--grey-brown);font-size:11px;letter-spacing:.5px;cursor:pointer;padding:6px;margin-top:4px}
+  .cart-clear:hover{color:var(--burnt-sienna)}
+
   footer{padding:36px 0;border-top:1px dashed var(--cork-shadow);font-size:12px;color:var(--grey-brown);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
   footer a:hover{color:var(--burnt-sienna)}
 
   @media(max-width:900px){
     .wrap{padding:0 16px}
     .nav-right a:not(.nav-phone){display:none}
+    .nav-right{gap:12px}
+    .cart-panel{width:100%}
+    .cart-btn .cart-lbl{display:none}
+    .cart-btn{padding:9px 12px}
     .layout{grid-template-columns:1fr;gap:0}
     .side{position:fixed;inset:60px 0 0 0;background:var(--studio-black);z-index:90;max-height:none;height:calc(100vh - 60px);overflow-y:auto;padding:18px;display:none;border-top:1px solid var(--cork-shadow)}
     .side.open{display:block}
@@ -198,6 +255,11 @@
     <div class="nav-right">
       <a href="index.html">← На главную</a>
       <a href="tel:+73432664066" class="nav-phone">+7 343 266-40-66</a>
+      <button class="cart-btn" id="cartBtn" aria-label="Заявка">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h2.2l2.1 12.2a1.5 1.5 0 0 0 1.5 1.3h9.1a1.5 1.5 0 0 0 1.5-1.2L21 7H5.3"/></svg>
+        <span class="cart-lbl">Заявка</span>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
     </div>
   </div>
 </header>
@@ -237,6 +299,32 @@
     <div class="modal-body" id="mBody"></div>
   </div>
 </div>
+
+<div class="cart-overlay" id="cartOverlay"></div>
+<aside class="cart-panel" id="cartPanel" aria-label="Заявка">
+  <div class="cart-head">
+    <div>
+      <h2>Заявка на подбор</h2>
+      <div class="sub" id="cartSub">Цены и наличие — пришлём в ответ</div>
+    </div>
+    <button class="cart-x" id="cartClose" aria-label="Закрыть">×</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-foot" id="cartFoot">
+    <form id="cartForm" action="https://formsubmit.co/m2@sd-kt.ru" method="POST">
+      <input type="hidden" name="_subject" value="Заявка из каталога SYNDICAT">
+      <input type="hidden" name="_next" value="https://nikoai2911-ops.github.io/syndicat-azs/thanks.html">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_template" value="table">
+      <div class="crow"><label>ВАШЕ ИМЯ</label><input type="text" name="Имя" placeholder="Иван Петров" required></div>
+      <div class="crow"><label>ТЕЛЕФОН ИЛИ EMAIL</label><input type="text" name="Контакт" placeholder="+7 900 000-00-00" required></div>
+      <div class="crow"><label>КОММЕНТАРИЙ</label><textarea name="Комментарий" placeholder="Город доставки, сроки, пожелания…" rows="1"></textarea></div>
+      <button type="submit" class="cart-submit" id="cartSubmit">Отправить заявку</button>
+    </form>
+    <span class="cart-alt" id="cartMail">или отправить почтой →</span>
+    <button class="cart-clear" id="cartClear">Очистить заявку</button>
+  </div>
+</aside>
 
 <footer class="wrap">
   <span>© 2026 SYNDICAT · sd-kt.ru · Екатеринбург, ул. Окружная, 88</span>
@@ -380,13 +468,16 @@
       return '<div class="prod" data-i="'+i+'">'+ph+'<h3>'+esc(p.tn)+'</h3>'+
              '<div class="b">'+esc(p.b||'')+'</div>'+
              '<span class="vbadge">'+tn+' '+plural(tn,'вид','вида','видов')+' · выбор</span>'+
-             '<span class="open">Открыть →</span></div>';
+             '<span class="open">Открыть →</span>'+
+             '<button class="addbtn" data-cfg="1" data-i="'+i+'">Выбрать вид</button></div>';
     }
     var vc=varCount(p);
     var badge=vc>1?'<span class="vbadge">'+vc+' вариант'+(vc>=5?'ов':vc>=2?'а':'')+' · подбор</span>':'';
+    var add=vc>1?'<button class="addbtn" data-cfg="1" data-i="'+i+'">Выбрать вариант</button>'
+                :'<button class="addbtn'+(inCart(p)?' added':'')+'" data-i="'+i+'">'+(inCart(p)?'✓ В заявке':'+ В заявку')+'</button>';
     return '<div class="prod" data-i="'+i+'">'+ph+'<h3>'+esc(p.n)+'</h3>'+
            (p.b?'<div class="b">'+esc(p.b)+'</div>':'<div class="b"></div>')+
-           badge+'<span class="open">Открыть →</span></div>';
+           badge+'<span class="open">Открыть →</span>'+add+'</div>';
   }
   function gkey(p){ return p.tg ? 't:'+p.tg : (p.g ? 'g:'+p.g : null); }
   function render(){
@@ -449,10 +540,15 @@
         '<h2 id="mName">'+esc(p.n)+'</h2>'+
         (p.b?'<div class="m-brand">'+esc(p.b)+'</div>':'')+
         cfg+specs+
-        '<div class="m-actions"><a class="btn" id="mAsk" href="'+mailto(p.n)+'">Запросить цену</a>'+
+        '<div class="m-actions"><button class="btn" id="mAdd">'+(inCart(p)?'✓ В заявке':'+ Добавить в заявку')+'</button>'+
         '<a class="btn-ghost" href="tel:+73432664066">Позвонить</a></div>'+
         '<div class="m-note">Цена и наличие — по запросу. Поставляем оригинал и аналоги.</div>'+
       '</div>';
+    // add current product/variant to request
+    var mAdd=document.getElementById('mAdd');
+    if(mAdd) mAdd.addEventListener('click',function(){
+      addToCart(i); closeModal(); openCart();
+    });
     // type-group select -> switch to chosen вид
     var tgSel=mBody.querySelector('.tg-sel');
     if(tgSel) tgSel.addEventListener('change',function(){openProduct(+this.value)});
@@ -475,7 +571,16 @@
   document.getElementById('mClose').addEventListener('click',closeModal);
   modal.addEventListener('click',function(e){if(e.target===modal)closeModal()});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal()});
-  grid.addEventListener('click',function(e){var c=e.target.closest('.prod');if(c)openProduct(+c.dataset.i)});
+  grid.addEventListener('click',function(e){
+    var ab=e.target.closest('.addbtn');
+    if(ab){ e.stopPropagation();
+      var idx=+ab.dataset.i;
+      if(ab.dataset.cfg){ openProduct(idx); return; }   // конфигурируемое — выбор в карточке
+      addToCart(idx); ab.classList.add('added'); ab.textContent='✓ В заявке';
+      return;
+    }
+    var c=e.target.closest('.prod');if(c)openProduct(+c.dataset.i);
+  });
 
   // ---- events ----
   document.getElementById('more').addEventListener('click',function(){state.limit+=PAGE;render()});
@@ -511,7 +616,96 @@
     document.querySelectorAll('.sectab').forEach(function(t){t.classList.toggle('active', t.dataset.sec===state.section)});
   })();
 
-  buildSide(); render();
+  // ---- cart / заявка ----
+  var CART_KEY='syndicat_cart_v1';
+  var cart=loadCart();
+  function loadCart(){try{return JSON.parse(localStorage.getItem(CART_KEY))||[]}catch(e){return []}}
+  function saveCart(){try{localStorage.setItem(CART_KEY,JSON.stringify(cart))}catch(e){}}
+  function itemKey(p){return (p.n||'')+'|'+(p.b||'')}
+  function inCart(p){var k=itemKey(p);return cart.some(function(c){return c.k===k})}
+  function cartCount(){return cart.reduce(function(s,c){return s+c.q},0)}
+  function addToCart(i){
+    var p=prods[i],k=itemKey(p);
+    var ex=cart.filter(function(c){return c.k===k})[0];
+    if(ex){ex.q++}else{cart.push({k:k,n:p.n,b:p.b||'',cat:catName(p.c),q:1})}
+    saveCart(); updateCart();
+  }
+  function compileList(){
+    return cart.map(function(c,i){return (i+1)+'. '+c.n+(c.b?' / '+c.b:'')+' — '+c.q+' шт.'}).join('\n');
+  }
+  function resyncGrid(){
+    grid.querySelectorAll('.addbtn').forEach(function(b){
+      if(b.dataset.cfg)return;
+      var p=prods[+b.dataset.i], on=inCart(p);
+      b.classList.toggle('added',on); b.textContent=on?'✓ В заявке':'+ В заявку';
+    });
+  }
+  var cartItemsBox=document.getElementById('cartItems'), cartFoot=document.getElementById('cartFoot'),
+      cartSub=document.getElementById('cartSub');
+  function renderCartItems(){
+    if(!cart.length){
+      cartItemsBox.innerHTML='<div class="cart-empty">Заявка пуста.<br><br>Добавляйте позиции кнопкой «+ В заявку» — затем отправьте одним списком, мы пришлём цены и наличие.</div>';
+      cartFoot.style.display='none';
+      cartSub.textContent='Цены и наличие — пришлём в ответ';
+      return;
+    }
+    cartFoot.style.display='block';
+    cartSub.textContent=cart.length+' '+plural(cart.length,'позиция','позиции','позиций')+' · '+cartCount()+' шт.';
+    cartItemsBox.innerHTML=cart.map(function(c,ix){
+      return '<div class="ci"><div class="ci-info"><div class="ci-name">'+esc(c.n)+'</div>'+
+        (c.b?'<div class="ci-brand">'+esc(c.b)+'</div>':'')+
+        '<div class="ci-bottom"><div class="qty">'+
+          '<button data-act="dec" data-ci="'+ix+'" aria-label="Меньше">−</button>'+
+          '<span>'+c.q+'</span>'+
+          '<button data-act="inc" data-ci="'+ix+'" aria-label="Больше">+</button></div>'+
+        '<button class="ci-rm" data-act="rm" data-ci="'+ix+'">Убрать</button>'+
+      '</div></div></div>';
+    }).join('');
+  }
+  function updateCart(){
+    var n=cartCount(), cc=document.getElementById('cartCount');
+    cc.textContent=n; cc.classList.toggle('show',n>0);
+    renderCartItems(); resyncGrid();
+  }
+  cartItemsBox.addEventListener('click',function(e){
+    var btn=e.target.closest('[data-act]'); if(!btn)return;
+    var ix=+btn.dataset.ci, act=btn.dataset.act, it=cart[ix]; if(!it)return;
+    if(act==='inc')it.q++;
+    else if(act==='dec'){it.q--; if(it.q<1)cart.splice(ix,1);}
+    else cart.splice(ix,1);
+    saveCart(); updateCart();
+  });
+  var cartOverlay=document.getElementById('cartOverlay'), cartPanel=document.getElementById('cartPanel');
+  function openCart(){updateCart(); cartOverlay.classList.add('open'); cartPanel.classList.add('open'); document.body.style.overflow='hidden';}
+  function closeCart(){cartOverlay.classList.remove('open'); cartPanel.classList.remove('open'); document.body.style.overflow='';}
+  document.getElementById('cartBtn').addEventListener('click',openCart);
+  document.getElementById('cartClose').addEventListener('click',closeCart);
+  cartOverlay.addEventListener('click',closeCart);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeCart()});
+  document.getElementById('cartClear').addEventListener('click',function(){
+    if(cart.length && confirm('Очистить заявку?')){cart=[]; saveCart(); updateCart();}
+  });
+  document.getElementById('cartMail').addEventListener('click',function(){
+    if(!cart.length)return;
+    var body='Здравствуйте! Прошу прислать цены и наличие по позициям:\n\n'+compileList()+'\n\nИмя: \nКонтакт: \nКомментарий: ';
+    location.href='mailto:m2@sd-kt.ru?subject='+encodeURIComponent('Заявка из каталога SYNDICAT')+'&body='+encodeURIComponent(body);
+  });
+  var cartForm=document.getElementById('cartForm');
+  cartForm.addEventListener('submit',function(e){
+    if(!cart.length){e.preventDefault(); return;}
+    cartForm.querySelectorAll('.gen').forEach(function(n){n.remove()});
+    cart.forEach(function(c,i){
+      var inp=document.createElement('input'); inp.type='hidden'; inp.className='gen';
+      inp.name='Поз. '+(i+1); inp.value=c.n+(c.b?' / '+c.b:'')+' — '+c.q+' шт.';
+      cartForm.appendChild(inp);
+    });
+    var sum=document.createElement('input'); sum.type='hidden'; sum.className='gen';
+    sum.name='Итого'; sum.value=cart.length+' позиц., '+cartCount()+' шт.';
+    cartForm.appendChild(sum);
+    try{localStorage.removeItem(CART_KEY)}catch(err){}
+  });
+
+  buildSide(); render(); updateCart();
 })();
 </script>
 </body>
