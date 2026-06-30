@@ -93,7 +93,16 @@
       "Bash(node -e \"const C=require\\('./catalog-data.js'\\); const p=\\(typeof CATALOG!=='undefined'?CATALOG:null\\)\")",
       "Bash(node -e ' *)",
       "Bash(python3 tools/build_seo.py)",
-      "Bash(curl -s http://localhost:8765/robots.txt)"
+      "Bash(curl -s http://localhost:8765/robots.txt)",
+      "Bash(git commit -q -m 'SEO: домен sd-kt.ru, 787 страниц товаров, sitemap, robots, микроразметка *)",
+      "Bash(git rm *)",
+      "Bash(git commit -q -m 'SEO: убрал CNAME до настройки DNS \\(github.io остаётся рабочим\\) + инструкция по домену и регистрации в поисковиках *)",
+      "WebFetch(domain:www.piusi.com)",
+      "WebFetch(domain:elaflex.de)",
+      "WebFetch(domain:freedomelectronics.com)",
+      "Bash(curl -s -o images/catalog/piusi-k33.webp \"https://media.piusi.com/prodotti/USA/_productsSmall/k33_atex_ver_a_atex_mechanical_meters_meters_piusi.webp\")",
+      "Bash(curl -s -o images/catalog/piusi-k40.webp \"https://media.piusi.com/prodotti/USA/_productsSmall/k40_meter_bsp_mechanical_meters_meters_piusi.webp\")",
+      "Bash(git commit -q -m 'Фото: пилот — официальные фото PIUSI K33 и K40 \\(счётчики + пистолет\\), привязаны к 3 позициям, страницы пересобраны *)"
     ]
   }
 }
