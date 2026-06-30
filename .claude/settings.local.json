@@ -182,7 +182,8 @@
       "WebFetch(domain:store.prompribor.ru)",
       "Bash(rm -rf /tmp/pl)",
       "Bash(sed -i '' 's#catalog-data.js?v=4#catalog-data.js?v=5#' catalog.html)",
-      "Bash(git commit -q -m 'Фото: масштабная волна \\(+155 позиций\\): Tatsuno, Elaflex, ПНСК, Китай\\(BlueSky/Baotai\\), PIUSI-остаток, рус.насосы/метрология, трубопроводы, зарубежные\\(ADAST/Corken/Tokheim/Mites/OPW\\). Итого 900/1156 с фото \\(78%\\). Данные v=5 *)"
+      "Bash(git commit -q -m 'Фото: масштабная волна \\(+155 позиций\\): Tatsuno, Elaflex, ПНСК, Китай\\(BlueSky/Baotai\\), PIUSI-остаток, рус.насосы/метрология, трубопроводы, зарубежные\\(ADAST/Corken/Tokheim/Mites/OPW\\). Итого 900/1156 с фото \\(78%\\). Данные v=5 *)",
+      "Bash(git commit -q -m 'Фото: удалены 33 изображения с вотермарками реселлеров \\(azs.pro, tezagaz, azk, arkat, azs-trade, a3c, azsmentor, obazs, priborpostavka, velona\\). Осталось 867/1156 фото без чужих логотипов. Данные v=6 *)"
     ]
   }
 }
