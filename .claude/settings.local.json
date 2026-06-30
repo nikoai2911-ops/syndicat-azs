@@ -102,7 +102,11 @@
       "WebFetch(domain:freedomelectronics.com)",
       "Bash(curl -s -o images/catalog/piusi-k33.webp \"https://media.piusi.com/prodotti/USA/_productsSmall/k33_atex_ver_a_atex_mechanical_meters_meters_piusi.webp\")",
       "Bash(curl -s -o images/catalog/piusi-k40.webp \"https://media.piusi.com/prodotti/USA/_productsSmall/k40_meter_bsp_mechanical_meters_meters_piusi.webp\")",
-      "Bash(git commit -q -m 'Фото: пилот — официальные фото PIUSI K33 и K40 \\(счётчики + пистолет\\), привязаны к 3 позициям, страницы пересобраны *)"
+      "Bash(git commit -q -m 'Фото: пилот — официальные фото PIUSI K33 и K40 \\(счётчики + пистолет\\), привязаны к 3 позициям, страницы пересобраны *)",
+      "Bash(curl -sI \"https://media.piusi.com/prodotti/USA/_productsSmall/k400_meter_bsp_batteries_included_electronic_meters_meters_piusi_vista1.webp\")",
+      "WebFetch(domain:www.directindustry.com)",
+      "Bash(python3 -c ' *)",
+      "Bash(git commit -q -m 'Фото: официальные изображения PIUSI для 26 позиций \\(насосы, счётчики, колонки, пистолеты, Viscomat\\). PIUSI 72/101 с фото, всего 619/1156. Версия данных v=3 *)"
     ]
   }
 }
