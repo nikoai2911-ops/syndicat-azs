@@ -266,7 +266,7 @@ def render_product(i):
 </main>
 <footer class="wrap">
   <span>© 2026 SYNDICAT · sd-kt.ru · Екатеринбург, ул. Окружная, 88</span>
-  <span><a href="tel:+73432664066">+7 343 266-40-66</a> · <a href="mailto:m2@sd-kt.ru">m2@sd-kt.ru</a></span>
+  <span><a href="tel:+73432664066">+7 343 266-40-66</a> · <a href="mailto:m2@sd-kt.ru">m2@sd-kt.ru</a> · <a href="https://t.me/+79068084908" target="_blank" rel="noopener">Telegram</a> · <a href="https://wa.me/79068084908" target="_blank" rel="noopener">WhatsApp</a> · <a href="https://max.ru/u/f9LHodD0cOLffjdnpQtxuBmCL1xxuw8qMMhdfp6IIJ5zzUyDwaApSt6sRgQ" target="_blank" rel="noopener">Max</a></span>
 </footer>
 </body>
 </html>"""
