@@ -85,7 +85,15 @@
       "Bash(grep -rln 'ekb@sd-kt.ru' index.html catalog.html thanks.html)",
       "Bash(grep -c 'ekb@sd-kt.ru' index.html catalog.html thanks.html)",
       "Bash(git commit -q -m 'Расходники: кликабельная плашка -> раздел быстроизнашивающихся деталей \\(АЗС/АГЗС\\) + почта m2@sd-kt.ru *)",
-      "Bash(git commit -q -m 'Каталог: убрано фото у '\\\\''Муфта REGO A2141 \\(аналог\\)'\\\\'' -> заглушка *)"
+      "Bash(git commit -q -m 'Каталог: убрано фото у '\\\\''Муфта REGO A2141 \\(аналог\\)'\\\\'' -> заглушка *)",
+      "Bash(git commit -q -m 'Каталог: корзина-заявка \\(список позиций с количеством, localStorage, отправка одной заявкой через formsubmit + резерв почтой\\) *)",
+      "Bash(git commit -q -m 'Каталог: тост-уведомление при добавлении в заявку \\(с названием и кнопкой Открыть\\) *)",
+      "Bash(git commit -q -m 'Главная: кнопка-корзина '\\\\''Заявка'\\\\'' со счётчиком в шапке \\(общий с каталогом через localStorage, переход открывает панель заявки\\) *)",
+      "WebSearch",
+      "Bash(node -e \"const C=require\\('./catalog-data.js'\\); const p=\\(typeof CATALOG!=='undefined'?CATALOG:null\\)\")",
+      "Bash(node -e ' *)",
+      "Bash(python3 tools/build_seo.py)",
+      "Bash(curl -s http://localhost:8765/robots.txt)"
     ]
   }
 }

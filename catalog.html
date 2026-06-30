@@ -3,8 +3,18 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Каталог оборудования для АЗС и АГЗС | SYNDICAT</title>
-<meta name="description" content="Каталог оборудования и комплектующих для АЗС и АГЗС: топливораздаточные пистолеты, колонки ТРК, насосы, рукава, счётчики, газовое оборудование. Подбор вариантов по параметрам прямо в карточке товара." />
+<title>Каталог оборудования для АЗС и АГЗС — 1000+ позиций | SYNDICAT</title>
+<meta name="description" content="Каталог оборудования и комплектующих для АЗС и АГЗС: топливораздаточные пистолеты, колонки ТРК, насосы, рукава МБС, счётчики и расходомеры, газовое оборудование, метрология, расходники. Подбор по параметрам, оригинал и аналоги, цена по запросу." />
+<meta name="keywords" content="каталог оборудования АЗС, каталог АГЗС, топливораздаточные пистолеты купить, колонки ТРК, насосы для топлива, счётчики топлива, рукава МБС, газораздаточные колонки, запчасти и расходники АЗС" />
+<link rel="canonical" href="https://sd-kt.ru/catalog.html" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Каталог оборудования для АЗС и АГЗС | SYNDICAT" />
+<meta property="og:description" content="1000+ позиций оборудования и комплектующих для АЗС и АГЗС. Подбор по параметрам, оригинал и аналоги." />
+<meta property="og:url" content="https://sd-kt.ru/catalog.html" />
+<meta property="og:image" content="https://sd-kt.ru/apple-touch-icon.png" />
+<meta property="og:site_name" content="SYNDICAT" />
+<meta property="og:locale" content="ru_RU" />
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://sd-kt.ru/"},{"@type":"ListItem","position":2,"name":"Каталог","item":"https://sd-kt.ru/catalog.html"}]}</script>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -324,7 +334,7 @@
   <div class="cart-foot" id="cartFoot">
     <form id="cartForm" action="https://formsubmit.co/m2@sd-kt.ru" method="POST">
       <input type="hidden" name="_subject" value="Заявка из каталога SYNDICAT">
-      <input type="hidden" name="_next" value="https://nikoai2911-ops.github.io/syndicat-azs/thanks.html">
+      <input type="hidden" name="_next" value="https://sd-kt.ru/thanks.html">
       <input type="hidden" name="_captcha" value="false">
       <input type="hidden" name="_template" value="table">
       <div class="crow"><label>ВАШЕ ИМЯ</label><input type="text" name="Имя" placeholder="Иван Петров" required></div>
@@ -348,7 +358,7 @@
   <span><a href="tel:+73432664066">+7 343 266-40-66</a> · <a href="mailto:m2@sd-kt.ru">m2@sd-kt.ru</a></span>
 </footer>
 
-<script src="catalog-data.js"></script>
+<script src="catalog-data.js?v=2"></script>
 <script>
 (function(){
   var C=window.CATALOG, cats=C.cats, prods=C.products;
@@ -482,19 +492,19 @@
     var ph=p.img?'<div class="ph"><img loading="lazy" src="'+esc(p.img)+'" alt="'+esc(p.n)+'"></div>':'<div class="ph empty"><span class="ph-logo">SYNDI<b>CAT</b></span><span class="ph-cap">Фото по запросу</span></div>';
     if(p.tg){
       var tn=typeGroups[p.tg].length;
-      return '<div class="prod" data-i="'+i+'">'+ph+'<h3>'+esc(p.tn)+'</h3>'+
+      return '<a class="prod" href="p/'+esc(p.u||'')+'.html" data-i="'+i+'">'+ph+'<h3>'+esc(p.tn)+'</h3>'+
              '<div class="b">'+esc(p.b||'')+'</div>'+
              '<span class="vbadge">'+tn+' '+plural(tn,'вид','вида','видов')+' · выбор</span>'+
              '<span class="open">Открыть →</span>'+
-             '<button class="addbtn" data-cfg="1" data-i="'+i+'">Выбрать вид</button></div>';
+             '<button class="addbtn" data-cfg="1" data-i="'+i+'">Выбрать вид</button></a>';
     }
     var vc=varCount(p);
     var badge=vc>1?'<span class="vbadge">'+vc+' вариант'+(vc>=5?'ов':vc>=2?'а':'')+' · подбор</span>':'';
     var add=vc>1?'<button class="addbtn" data-cfg="1" data-i="'+i+'">Выбрать вариант</button>'
                 :'<button class="addbtn'+(inCart(p)?' added':'')+'" data-i="'+i+'">'+(inCart(p)?'✓ В заявке':'+ В заявку')+'</button>';
-    return '<div class="prod" data-i="'+i+'">'+ph+'<h3>'+esc(p.n)+'</h3>'+
+    return '<a class="prod" href="p/'+esc(p.u||'')+'.html" data-i="'+i+'">'+ph+'<h3>'+esc(p.n)+'</h3>'+
            (p.b?'<div class="b">'+esc(p.b)+'</div>':'<div class="b"></div>')+
-           badge+'<span class="open">Открыть →</span>'+add+'</div>';
+           badge+'<span class="open">Открыть →</span>'+add+'</a>';
   }
   function gkey(p){ return p.tg ? 't:'+p.tg : (p.g ? 'g:'+p.g : null); }
   function render(){
@@ -591,13 +601,17 @@
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal()});
   grid.addEventListener('click',function(e){
     var ab=e.target.closest('.addbtn');
-    if(ab){ e.stopPropagation();
+    if(ab){ e.preventDefault(); e.stopPropagation();
       var idx=+ab.dataset.i;
       if(ab.dataset.cfg){ openProduct(idx); return; }   // конфигурируемое — выбор в карточке
       addToCart(idx); ab.classList.add('added'); ab.textContent='✓ В заявке';
       return;
     }
-    var c=e.target.closest('.prod');if(c)openProduct(+c.dataset.i);
+    var c=e.target.closest('.prod');
+    if(c){
+      if(e.metaKey||e.ctrlKey||e.shiftKey||e.button===1) return; // открыть страницу в новой вкладке
+      e.preventDefault(); openProduct(+c.dataset.i);
+    }
   });
 
   // ---- events ----
