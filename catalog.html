@@ -171,6 +171,17 @@
   .cart-clear{display:block;width:100%;text-align:center;background:none;border:none;color:var(--grey-brown);font-size:11px;letter-spacing:.5px;cursor:pointer;padding:6px;margin-top:4px}
   .cart-clear:hover{color:var(--burnt-sienna)}
 
+  /* toast */
+  .toast{position:fixed;left:50%;bottom:26px;z-index:400;transform:translate(-50%,140%);max-width:calc(100% - 32px);display:flex;align-items:center;gap:14px;background:var(--dark-cork);border:1px solid var(--burnt-sienna);border-radius:12px;padding:12px 14px 12px 16px;box-shadow:0 12px 30px rgba(0,0,0,.45);opacity:0;visibility:hidden;transition:transform .32s cubic-bezier(.2,.8,.2,1),opacity .25s ease,visibility .25s ease}
+  .toast.show{transform:translate(-50%,0);opacity:1;visibility:visible}
+  .toast .tic{flex:none;width:22px;height:22px;border-radius:50%;background:var(--burnt-sienna);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+  .toast .ttxt{min-width:0}
+  .toast .tt1{font-size:13px;font-weight:500;color:var(--warm-cream)}
+  .toast .tt2{font-size:11px;color:var(--grey-brown);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
+  .toast .topen{flex:none;background:transparent;border:1px solid var(--cork-shadow);color:var(--warm-cream);border-radius:20px;padding:7px 14px;font-family:var(--font);font-size:12px;cursor:pointer;transition:border-color .2s ease,color .2s ease}
+  .toast .topen:hover{border-color:var(--burnt-sienna);color:var(--burnt-sienna)}
+  @media(max-width:480px){.toast .tt2{max-width:130px}}
+
   footer{padding:36px 0;border-top:1px dashed var(--cork-shadow);font-size:12px;color:var(--grey-brown);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
   footer a:hover{color:var(--burnt-sienna)}
 
@@ -325,6 +336,12 @@
     <button class="cart-clear" id="cartClear">Очистить заявку</button>
   </div>
 </aside>
+
+<div class="toast" id="toast">
+  <span class="tic">✓</span>
+  <div class="ttxt"><div class="tt1">Добавлено в заявку</div><div class="tt2" id="toastName"></div></div>
+  <button class="topen" id="toastOpen">Открыть</button>
+</div>
 
 <footer class="wrap">
   <span>© 2026 SYNDICAT · sd-kt.ru · Екатеринбург, ул. Окружная, 88</span>
@@ -547,7 +564,8 @@
     // add current product/variant to request
     var mAdd=document.getElementById('mAdd');
     if(mAdd) mAdd.addEventListener('click',function(){
-      addToCart(i); closeModal(); openCart();
+      mAdd.classList.add('added'); mAdd.textContent='✓ В заявке';
+      addToCart(i); closeModal();
     });
     // type-group select -> switch to chosen вид
     var tgSel=mBody.querySelector('.tg-sel');
@@ -628,8 +646,16 @@
     var p=prods[i],k=itemKey(p);
     var ex=cart.filter(function(c){return c.k===k})[0];
     if(ex){ex.q++}else{cart.push({k:k,n:p.n,b:p.b||'',cat:catName(p.c),q:1})}
-    saveCart(); updateCart();
+    saveCart(); updateCart(); showToast(p.n);
   }
+  var toastEl=document.getElementById('toast'), toastName=document.getElementById('toastName'), toastT;
+  function showToast(name){
+    toastName.textContent=name||'';
+    toastEl.classList.add('show');
+    clearTimeout(toastT);
+    toastT=setTimeout(function(){toastEl.classList.remove('show')},3000);
+  }
+  document.getElementById('toastOpen').addEventListener('click',function(){toastEl.classList.remove('show');clearTimeout(toastT);openCart();});
   function compileList(){
     return cart.map(function(c,i){return (i+1)+'. '+c.n+(c.b?' / '+c.b:'')+' — '+c.q+' шт.'}).join('\n');
   }
