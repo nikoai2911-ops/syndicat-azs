@@ -52,6 +52,11 @@
   .nav-links a:hover{color:var(--burnt-sienna)}
   .nav-phone{font-size:13px;font-weight:500;letter-spacing:.5px}
   .burger{display:none;background:none;border:none;color:var(--warm-cream);font-size:22px;cursor:pointer}
+  .cart-link{position:relative;display:inline-flex;align-items:center;gap:7px;background:var(--dark-cork);border:1px solid var(--dark-cork);color:var(--warm-cream);border-radius:36px;padding:8px 16px 8px 13px;font-size:12px;letter-spacing:.5px;transition:border-color .25s ease}
+  .cart-link:hover{border-color:var(--burnt-sienna)}
+  .cart-link svg{width:17px;height:17px;flex:none}
+  .cart-link .cl-count{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;background:var(--burnt-sienna);color:#fff;border-radius:10px;font-size:11px;font-weight:600;display:none;align-items:center;justify-content:center;line-height:1}
+  .cart-link .cl-count.show{display:inline-flex}
 
   /* ---------- HERO ---------- */
   .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding-top:80px;padding-bottom:60px}
@@ -145,8 +150,10 @@
     .wrap{padding:0 18px}
     .nav-links{display:none}
     .burger{display:block}
-    .nav-phone{font-size:12px;font-weight:500}
-    .nav{height:56px}
+    .nav-phone{font-size:12px;font-weight:500;white-space:nowrap}
+    .nav{height:56px;gap:12px}
+    .cart-link .cl-lbl{display:none}
+    .cart-link{padding:9px 12px}
     .hero{padding-top:74px}
     .hero-grid,.about-grid,.cta{grid-template-columns:1fr;gap:30px}
     .hero-right p,.sec-head p{text-align:left;margin-left:0}
@@ -191,6 +198,11 @@
       <a href="#contact">КОНТАКТЫ</a>
     </nav>
     <a href="tel:+73432664066" class="nav-phone">+7 343 266-40-66</a>
+    <a href="catalog.html?cart=1" class="cart-link" id="cartLink" aria-label="Заявка">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h2.2l2.1 12.2a1.5 1.5 0 0 0 1.5 1.3h9.1a1.5 1.5 0 0 0 1.5-1.2L21 7H5.3"/></svg>
+      <span class="cl-lbl">Заявка</span>
+      <span class="cl-count" id="cartLinkCount">0</span>
+    </a>
     <button class="burger" aria-label="Меню">☰</button>
   </div>
 </header>
@@ -412,6 +424,14 @@
     if(!open){links.style.position='absolute';links.style.flexDirection='column';links.style.top='60px';links.style.right='24px';links.style.background='#100904';links.style.padding='18px 22px';links.style.border='1px solid #40372e';links.style.borderRadius='12px';links.style.gap='16px';}
   });
   links&&links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{if(window.innerWidth<=860)links.style.display='none';}));
+
+  // счётчик заявки (общий с каталогом через localStorage)
+  (function(){
+    var cnt=0;
+    try{var c=JSON.parse(localStorage.getItem('syndicat_cart_v1'))||[];cnt=c.reduce(function(s,x){return s+(x.q||0)},0);}catch(e){}
+    var el=document.getElementById('cartLinkCount');
+    if(el){el.textContent=cnt;el.classList.toggle('show',cnt>0);}
+  })();
 </script>
 
 </body>

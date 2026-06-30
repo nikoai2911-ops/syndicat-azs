@@ -732,6 +732,7 @@
   });
 
   buildSide(); render(); updateCart();
+  if(new URLSearchParams(location.search).get('cart')==='1' && cart.length) openCart();
 })();
 </script>
 </body>
