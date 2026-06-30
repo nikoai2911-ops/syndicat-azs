@@ -212,7 +212,9 @@
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('cname:',d.get\\('cname'\\)\\); print\\('status:',d.get\\('status'\\)\\); print\\('https_enforced:',d.get\\('https_enforced'\\)\\); print\\('cert:',d.get\\('https_certificate'\\)\\)\")",
       "mcp__bf7c680d-5fdc-5ef4-b4a0-abadb619bf0a__send_later",
       "Bash(git commit -q -m 'Контакты: Telegram и WhatsApp кликабельны \\(на +79068084908\\). Max — добавим по ссылке max.ru/u/ от клиента *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(grep -rln \"Окружная\" index.html catalog.html tools/build_seo.py thanks.html)",
+      "Bash(grep -rn \"Окружная\" index.html catalog.html tools/build_seo.py)"
     ]
   }
 }
