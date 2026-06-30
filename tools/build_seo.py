@@ -266,7 +266,7 @@ def render_product(i):
 </main>
 <footer class="wrap">
   <span>© 2026 SYNDICAT · sd-kt.ru · Екатеринбург, ул. Окружная, 88</span>
-  <span><a href="tel:+73432664066">+7 343 266-40-66</a> · <a href="mailto:m2@sd-kt.ru">m2@sd-kt.ru</a> · <a href="https://t.me/+79068084908" target="_blank" rel="noopener">Telegram</a> · <a href="https://wa.me/79068084908" target="_blank" rel="noopener">WhatsApp</a> · <a href="https://max.ru/u/f9LHodD0cOLffjdnpQtxuBmCL1xxuw8qMMhdfp6IIJ5zzUyDwaApSt6sRgQ" target="_blank" rel="noopener">Max</a></span>
+  <span class="foot-contacts"><a href="tel:+73432664066">+7 343 266-40-66</a> <a href="mailto:m2@sd-kt.ru">m2@sd-kt.ru</a> <a href="https://t.me/+79068084908" target="_blank" rel="noopener">Telegram</a> <a href="https://wa.me/79068084908" target="_blank" rel="noopener">WhatsApp</a> <a href="https://max.ru/u/f9LHodD0cOLffjdnpQtxuBmCL1xxuw8qMMhdfp6IIJ5zzUyDwaApSt6sRgQ" target="_blank" rel="noopener">Max</a></span>
 </footer>
 </body>
 </html>"""
@@ -316,6 +316,7 @@ header{position:sticky;top:0;z-index:50;border-bottom:1px solid var(--cork-shado
 .muted{font-size:12.5px;color:var(--grey-brown);margin-top:12px}
 footer{margin-top:30px;padding:30px 0;border-top:1px dashed var(--cork-shadow);font-size:12px;color:var(--grey-brown);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
 footer a:hover{color:var(--burnt-sienna)}
+.foot-contacts a+a{margin-left:16px}
 @media(max-width:760px){.wrap{padding:0 16px}.p-top{grid-template-columns:1fr;gap:20px}.p-img{height:300px}.p-variants ul{columns:1}.nav-right a:not(.ph){display:none}}
 """
 
