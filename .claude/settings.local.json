@@ -219,7 +219,24 @@
       "Bash(curl -skI --max-time 20 https://sd-kt.ru)",
       "Bash(curl -sI --max-time 20 https://nikoai2911-ops.github.io/syndicat-azs/)",
       "Bash(python3 -c \"import sys,json;print\\(json.load\\(sys.stdin\\).get\\('status','?'\\)\\)\")",
-      "Bash(git revert *)"
+      "Bash(git revert *)",
+      "Bash(curl -s -o /dev/null -w '%{http_code}\\\\n' --max-time 12 -A 'Mozilla/5.0 Chrome/124' http://techno-projekt.ru/)",
+      "Bash(curl -s --max-time 15 -A 'Mozilla/5.0 Chrome/124' http://livenka.ru/biznes/produktsiya/komplektuyushchie-i-zip/281-gidravlicheskij-agregat-trk-livenka)",
+      "Bash(curl -s --max-time 15 -A 'Mozilla/5.0 Chrome/124' http://techno-projekt.ru/)",
+      "Bash(curl -s --max-time 15 -A 'Mozilla/5.0 Chrome/124' -L http://techno-projekt.ru/)",
+      "Bash(iconv -f cp1251 -t utf-8)",
+      "Bash(curl -s --max-time 15 -A 'Mozilla/5.0 Chrome/124' http://techno-projekt.ru/Prod.htm)",
+      "Bash(curl -s --max-time 15 -A 'Mozilla/5.0 Chrome/124' -L https://prompribor.kz/products/izmeritel-obema-zhidkosti-pzh-2-25-dlya-trk)",
+      "Bash(curl -s --max-time 15 -A 'Mozilla/5.0 Chrome/124' -L https://store.prompribor.ru/catalog/zapasnyje_chasti_11995/pzh_2-25_42452/)",
+      "Bash(curl -s --max-time 15 -A 'Mozilla/5.0 Chrome/124' -L https://ankas.ru/metroshtoki-mshs/metroshtok-mshs-35-metra-2-zvena-1032)",
+      "Bash(curl -s --max-time 20 -A 'Mozilla/5.0 Chrome/124' -L https://cim-tek.com/products/300-30-70012)",
+      "Bash(curl -s --max-time 15 -A 'Mozilla/5.0 Chrome/124' -L https://i-con.su/catalog/zapchasti-dlya-grk/izmeriteli-obyema/izmeritel_obyema_sug_lpg_2_topaz_shelf/)",
+      "Bash(curl -s --max-time 15 -A 'Mozilla/5.0 Chrome/124' -L https://www.jayopetromachinery.com/metering-fuel-nozzle-lly-25.html)",
+      "Bash(curl -s --max-time 15 -A 'Mozilla/5.0 Chrome/124' -L https://www.chinafuelnozzle.com/product/)",
+      "Bash(curl -s --max-time 15 -A 'Mozilla/5.0 Chrome/124' -L https://www.chinafuelnozzle.com/)",
+      "Bash(curl -s --max-time 15 -A 'Mozilla/5.0 Chrome/124' -L https://www.chinafuelnozzle.com/LPG-nozzle.html)",
+      "Bash(curl -s --max-time 15 -A 'Mozilla/5.0 Chrome/124' -L https://www.chinafuelnozzle.com/lpg-disepnser-spares-autogas-p.html)",
+      "Bash(curl -s --max-time 15 -A 'Mozilla/5.0 Chrome/124' -L https://www.chinafuelnozzle.com/Nozzle-spares.html)"
     ]
   }
 }
