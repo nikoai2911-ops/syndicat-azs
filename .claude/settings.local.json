@@ -214,7 +214,12 @@
       "Bash(git commit -q -m 'Контакты: Telegram и WhatsApp кликабельны \\(на +79068084908\\). Max — добавим по ссылке max.ru/u/ от клиента *)",
       "Bash(git commit *)",
       "Bash(grep -rln \"Окружная\" index.html catalog.html tools/build_seo.py thanks.html)",
-      "Bash(grep -rn \"Окружная\" index.html catalog.html tools/build_seo.py)"
+      "Bash(grep -rn \"Окружная\" index.html catalog.html tools/build_seo.py)",
+      "Bash(python3 -c \"import sys,json;d=json.load\\(sys.stdin\\);print\\('cname:',d.get\\('cname'\\)\\);print\\('https_enforced:',d.get\\('https_enforced'\\)\\);print\\('cert:',d.get\\('https_certificate'\\)\\)\")",
+      "Bash(curl -skI --max-time 20 https://sd-kt.ru)",
+      "Bash(curl -sI --max-time 20 https://nikoai2911-ops.github.io/syndicat-azs/)",
+      "Bash(python3 -c \"import sys,json;print\\(json.load\\(sys.stdin\\).get\\('status','?'\\)\\)\")",
+      "Bash(git revert *)"
     ]
   }
 }
