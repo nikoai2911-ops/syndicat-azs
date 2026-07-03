@@ -191,7 +191,7 @@ def render_product(i):
     if len(mem) > 1:
         items = ''
         for m in mem:
-            items += f'<li>{esc(prods[m].get("n"))}</li>'
+            items += f'<li>{esc(prods[m].get("n"))} <span class="va">· арт. {esc(prods[m].get("art",""))}</span></li>'
         variants = (f'<div class="p-variants"><h2>Модификации и размеры ({len(mem)})</h2>'
                     f'<ul>{items}</ul>'
                     f'<p class="muted">Подберём нужный вариант — уточните при запросе.</p></div>')
@@ -216,6 +216,7 @@ def render_product(i):
 
     # JSON-LD
     product_ld = {"@context": "https://schema.org/", "@type": "Product", "name": name}
+    if p.get("art"): product_ld["sku"] = p["art"]
     if img: product_ld["image"] = [img_abs]
     product_ld["description"] = meta_desc
     if brand: product_ld["brand"] = {"@type": "Brand", "name": brand}
@@ -234,7 +235,7 @@ def render_product(i):
     ld = (f'<script type="application/ld+json">{json.dumps(product_ld, ensure_ascii=False)}</script>'
           f'<script type="application/ld+json">{json.dumps(breadcrumb_ld, ensure_ascii=False)}</script>')
 
-    mailto = f'mailto:m2@sd-kt.ru?subject={esc("Запрос цены: " + name)}'
+    mailto = f'mailto:m2@sd-kt.ru?subject={esc("Запрос цены: [арт. " + p.get("art","") + "] " + name)}'
 
     return f"""<!DOCTYPE html>
 <html lang="ru">
@@ -269,6 +270,7 @@ def render_product(i):
     <div class="p-gallery">{photo}</div>
     <div class="p-info">
       <h1>{esc(name)}</h1>
+      <div class="p-art">Артикул: <b>{esc(p.get('art',''))}</b></div>
       {f'<div class="p-brand">{esc(brand)}</div>' if brand else ''}
       <div class="p-cat">Раздел: <a href="../catalog.html?cat={esc(c)}">{esc(leaf)}</a> · {secw}</div>
       {orig_html}
@@ -315,6 +317,8 @@ header{position:sticky;top:0;z-index:50;border-bottom:1px solid var(--cork-shado
 .p-img .pl b{color:var(--burnt-sienna)}
 .p-img .pc{font-size:11px;letter-spacing:1px;color:var(--grey-brown);text-transform:uppercase}
 .p-info h1{font-size:26px;font-weight:600;line-height:1.2;margin-bottom:10px}
+.p-art{font-size:13px;color:var(--grey-brown);margin-bottom:6px}
+.p-art b{color:var(--warm-cream);font-weight:500;letter-spacing:.6px}
 .p-brand{font-size:14px;color:var(--grey-brown);margin-bottom:6px}
 .p-cat{font-size:13px;color:var(--grey-brown);margin-bottom:18px}
 .p-cat a:hover{color:var(--burnt-sienna)}
@@ -339,6 +343,7 @@ header{position:sticky;top:0;z-index:50;border-bottom:1px solid var(--cork-shado
 .p-variants h2,.p-descr h2,.p-related h2{font-size:18px;font-weight:600;margin-bottom:14px}
 .p-variants ul{columns:2;gap:24px;list-style:none}
 .p-variants li{font-size:13.5px;padding:5px 0;border-bottom:1px dashed var(--cork-shadow);break-inside:avoid}
+.p-variants .va{color:var(--grey-brown);font-size:12px;white-space:nowrap}
 .p-descr p{font-size:14.5px;color:#cdbfae;max-width:780px}
 .p-related ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px 24px}
 .p-related li{font-size:13.5px;padding:5px 0;border-bottom:1px dashed var(--cork-shadow)}

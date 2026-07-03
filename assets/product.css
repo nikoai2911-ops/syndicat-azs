@@ -20,6 +20,8 @@ header{position:sticky;top:0;z-index:50;border-bottom:1px solid var(--cork-shado
 .p-img .pl b{color:var(--burnt-sienna)}
 .p-img .pc{font-size:11px;letter-spacing:1px;color:var(--grey-brown);text-transform:uppercase}
 .p-info h1{font-size:26px;font-weight:600;line-height:1.2;margin-bottom:10px}
+.p-art{font-size:13px;color:var(--grey-brown);margin-bottom:6px}
+.p-art b{color:var(--warm-cream);font-weight:500;letter-spacing:.6px}
 .p-brand{font-size:14px;color:var(--grey-brown);margin-bottom:6px}
 .p-cat{font-size:13px;color:var(--grey-brown);margin-bottom:18px}
 .p-cat a:hover{color:var(--burnt-sienna)}
@@ -44,6 +46,7 @@ header{position:sticky;top:0;z-index:50;border-bottom:1px solid var(--cork-shado
 .p-variants h2,.p-descr h2,.p-related h2{font-size:18px;font-weight:600;margin-bottom:14px}
 .p-variants ul{columns:2;gap:24px;list-style:none}
 .p-variants li{font-size:13.5px;padding:5px 0;border-bottom:1px dashed var(--cork-shadow);break-inside:avoid}
+.p-variants .va{color:var(--grey-brown);font-size:12px;white-space:nowrap}
 .p-descr p{font-size:14.5px;color:#cdbfae;max-width:780px}
 .p-related ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px 24px}
 .p-related li{font-size:13.5px;padding:5px 0;border-bottom:1px dashed var(--cork-shadow)}

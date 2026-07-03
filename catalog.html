@@ -144,6 +144,8 @@
   .m-alt-item .th.empty{background:var(--studio-black);border:1px dashed var(--cork-shadow)}
   .m-alt-item .nm{font-size:13px;line-height:1.3}
   .m-alt-item:hover .nm{color:var(--burnt-sienna)}
+  .m-art{font-size:12px;color:var(--grey-brown);margin:-4px 0 10px}
+  .m-art b{color:var(--warm-cream);font-weight:500;letter-spacing:.6px}
   .m-orig{font-size:13px;margin:-8px 0 16px;color:var(--warm-cream)}
   .m-orig span{cursor:pointer;border-bottom:1px solid var(--burnt-sienna)}
   .m-orig span:hover{color:var(--burnt-sienna)}
@@ -425,7 +427,7 @@
   <span class="foot-contacts"><a href="tel:+73432664066">+7 343 266-40-66</a> <a href="mailto:m2@sd-kt.ru">m2@sd-kt.ru</a> <a href="https://t.me/+79068084908" target="_blank" rel="noopener">Telegram</a> <a href="https://wa.me/79068084908" target="_blank" rel="noopener">WhatsApp</a> <a href="https://max.ru/u/f9LHodD0cOLffjdnpQtxuBmCL1xxuw8qMMhdfp6IIJ5zzUyDwaApSt6sRgQ" target="_blank" rel="noopener">Max</a></span>
 </footer>
 
-<script src="catalog-data.js?v=9"></script>
+<script src="catalog-data.js?v=10"></script>
 <script>
 (function(){
   var C=window.CATALOG, cats=C.cats, prods=C.products;
@@ -459,7 +461,7 @@
   function alias(s){for(var i=0;i<ALIAS.length;i++){s=s.replace(ALIAS[i][0],ALIAS[i][1]);}return s;}
   function compact(s){return s.replace(/[\s\-\.\,\/\(\)"'«»№]+/g,'');}
   function idxStr(txt){var b=nrm(txt),h=homo(b);return b+''+h+''+compact(b)+''+compact(h);}
-  var sidx=prods.map(function(p){return idxStr((p.n||'')+' '+(p.tn||'')+' '+(p.b||''));});
+  var sidx=prods.map(function(p){return idxStr((p.n||'')+' '+(p.tn||'')+' '+(p.b||'')+' '+(p.art||''));});
   var cidxMap={}; cats.forEach(function(c){cidxMap[c.u]=idxStr(c.n);});
   function qVariants(tok){
     var out={},a;
@@ -734,7 +736,7 @@
     if(p.tg){
       var mem=typeGroups[p.tg]||[];
       cfg='<div class="cfg"><div class="cfg-t">⚙ Выберите вид · '+esc(p.tn)+'</div><div class="cfg-row"><label>ВИД / МОДЕЛЬ</label><select class="tg-sel">';
-      mem.forEach(function(idx){cfg+='<option value="'+idx+'"'+(idx===i?' selected':'')+'>'+esc(prods[idx].n)+'</option>'});
+      mem.forEach(function(idx){cfg+='<option value="'+idx+'"'+(idx===i?' selected':'')+'>'+esc(prods[idx].n)+' (арт. '+esc(prods[idx].art||'')+')</option>'});
       cfg+='</select></div></div>';
     } else if(p.g){
       var ax=variantAxes(p.g);
@@ -804,6 +806,7 @@
       '<div class="m-info">'+
         '<div class="m-crumb">'+esc(catName(p.c))+'</div>'+
         '<h2 id="mName">'+esc(p.n)+'</h2>'+
+        '<div class="m-art">Артикул: <b>'+esc(p.art||'')+'</b></div>'+
         (p.b?'<div class="m-brand">'+esc(p.b)+'</div>':'')+
         origHtml+cfg+specs+altHtml+
         '<div class="m-actions"><button class="btn" id="mAdd">'+(inCart(p)?'✓ В заявке':'+ Добавить в заявку')+'</button>'+
@@ -893,7 +896,7 @@
       mp.forEach(function(i){
         var p=prods[i];
         var th=p.img?'<div class="si-th"><img loading="lazy" src="'+esc(p.img)+'" alt=""></div>':'<div class="si-th empty"></div>';
-        h+='<button class="sug-item" data-sp="'+i+'">'+th+'<div class="si-t"><div class="si-n">'+esc(dispName(i))+'</div><div class="si-s">'+esc(catName(p.c))+' · '+secTagOf(p.c)+'</div></div></button>';
+        h+='<button class="sug-item" data-sp="'+i+'">'+th+'<div class="si-t"><div class="si-n">'+esc(dispName(i))+'</div><div class="si-s">арт. '+esc(p.art||'')+' · '+esc(catName(p.c))+' · '+secTagOf(p.c)+'</div></div></button>';
       });
     }
     if(!h){
@@ -977,7 +980,7 @@
   function addToCart(i){
     var p=prods[i],k=itemKey(p);
     var ex=cart.filter(function(c){return c.k===k})[0];
-    if(ex){ex.q++}else{cart.push({k:k,n:p.n,b:p.b||'',cat:catName(p.c),q:1})}
+    if(ex){ex.q++}else{cart.push({k:k,n:p.n,b:p.b||'',cat:catName(p.c),q:1,a:p.art||''})}
     saveCart(); updateCart(); showToast(p.n);
   }
   var toastEl=document.getElementById('toast'), toastName=document.getElementById('toastName'), toastT;
@@ -989,7 +992,7 @@
   }
   document.getElementById('toastOpen').addEventListener('click',function(){toastEl.classList.remove('show');clearTimeout(toastT);openCart();});
   function compileList(){
-    return cart.map(function(c,i){return (i+1)+'. '+c.n+(c.b?' / '+c.b:'')+' — '+c.q+' шт.'}).join('\n');
+    return cart.map(function(c,i){return (i+1)+'. '+(c.a?'[арт. '+c.a+'] ':'')+c.n+(c.b?' / '+c.b:'')+' — '+c.q+' шт.'}).join('\n');
   }
   function resyncGrid(){
     grid.querySelectorAll('.addbtn').forEach(function(b){
@@ -1011,7 +1014,7 @@
     cartSub.textContent=cart.length+' '+plural(cart.length,'позиция','позиции','позиций')+' · '+cartCount()+' шт.';
     cartItemsBox.innerHTML=cart.map(function(c,ix){
       return '<div class="ci"><div class="ci-info"><div class="ci-name">'+esc(c.n)+'</div>'+
-        (c.b?'<div class="ci-brand">'+esc(c.b)+'</div>':'')+
+        ((c.a||c.b)?'<div class="ci-brand">'+(c.a?'арт. '+esc(c.a)+(c.b?' · ':''):'')+esc(c.b||'')+'</div>':'')+
         '<div class="ci-bottom"><div class="qty">'+
           '<button data-act="dec" data-ci="'+ix+'" aria-label="Меньше">−</button>'+
           '<span>'+c.q+'</span>'+
@@ -1054,7 +1057,7 @@
     cartForm.querySelectorAll('.gen').forEach(function(n){n.remove()});
     cart.forEach(function(c,i){
       var inp=document.createElement('input'); inp.type='hidden'; inp.className='gen';
-      inp.name='Поз. '+(i+1); inp.value=c.n+(c.b?' / '+c.b:'')+' — '+c.q+' шт.';
+      inp.name='Поз. '+(i+1); inp.value=(c.a?'[арт. '+c.a+'] ':'')+c.n+(c.b?' / '+c.b:'')+' — '+c.q+' шт.';
       cartForm.appendChild(inp);
     });
     var sum=document.createElement('input'); sum.type='hidden'; sum.className='gen';
