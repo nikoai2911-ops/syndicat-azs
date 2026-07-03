@@ -97,7 +97,48 @@
   .prod .vbadge{display:inline-block;font-size:10px;letter-spacing:.5px;color:var(--burnt-sienna);border:1px solid var(--burnt-sienna);border-radius:20px;padding:3px 9px;margin-bottom:10px;width:fit-content}
   .prod .open{font-size:12px;color:var(--warm-cream);border-bottom:1px solid var(--warm-cream);width:fit-content;padding-bottom:2px}
   .more-wrap{text-align:center;padding:34px 0}
-  .empty-msg{padding:50px 0;text-align:center;color:var(--grey-brown)}
+  .empty-msg{padding:50px 0;text-align:center;color:var(--grey-brown);line-height:1.6}
+  .em-list{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+
+  /* умный поиск: подсказки */
+  .searchbox{position:relative}
+  .sug{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:150;background:var(--studio-black);border:1px solid var(--cork-shadow);border-radius:12px;box-shadow:0 16px 40px rgba(0,0,0,.55);max-height:70vh;overflow-y:auto;display:none}
+  .sug.open{display:block}
+  .sug::-webkit-scrollbar{width:6px}.sug::-webkit-scrollbar-thumb{background:var(--cork-shadow);border-radius:3px}
+  .sug-h{font-size:10px;letter-spacing:1.5px;color:var(--grey-brown);padding:12px 14px 4px;text-transform:uppercase}
+  .sug-item{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:none;color:var(--warm-cream);font-family:var(--font);font-size:13.5px;padding:8px 14px;cursor:pointer;transition:background .12s ease}
+  .sug-item:hover{background:var(--dark-cork)}
+  .si-th{width:38px;height:38px;flex:none;background:var(--warm-cream);border-radius:6px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .si-th img{width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply}
+  .si-th.empty{background:var(--dark-cork)}
+  .si-t{flex:1;min-width:0}
+  .si-n{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .si-s{font-size:11px;color:var(--grey-brown);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sug-empty{padding:12px 14px;font-size:12.5px;color:var(--grey-brown)}
+
+  /* чипы активных фильтров */
+  .chips{display:none;gap:8px;flex-wrap:wrap;margin:2px 0 10px}
+  .chip{display:inline-flex;align-items:center;gap:7px;background:var(--dark-cork);border:1px solid var(--cork-shadow);color:var(--warm-cream);border-radius:20px;padding:6px 12px;font-size:12px;font-family:var(--font);cursor:pointer;transition:border-color .2s ease}
+  .chip:hover{border-color:var(--burnt-sienna)}
+  .chip .x{color:var(--grey-brown);font-size:13px;line-height:1}
+  .chip:hover .x{color:var(--burnt-sienna)}
+  .chip.reset{background:transparent;color:var(--grey-brown)}
+
+  /* недавно просмотренные */
+  .viewed{padding:6px 0 48px}
+  .viewed h2{font-size:18px;font-weight:600;margin-bottom:14px}
+  .viewed-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+  .vcard{background:var(--dark-cork);border-radius:10px;padding:10px;cursor:pointer;outline:1px solid transparent;transition:outline-color .2s ease}
+  .vcard:hover{outline-color:var(--burnt-sienna)}
+  .vph{background:var(--warm-cream);border-radius:6px;height:92px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:8px}
+  .vph img{width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply}
+  .vph.empty{background:var(--studio-black);border:1px dashed var(--cork-shadow)}
+  .vn{font-size:12px;line-height:1.35;max-height:33px;overflow:hidden}
+
+  /* с этим смотрят (в модалке) */
+  .m-rel{grid-column:1/-1;border-top:1px dashed var(--cork-shadow);padding-top:18px}
+  .m-rel h3{font-size:14px;font-weight:600;margin-bottom:12px}
+  .m-rel-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
 
   /* modal */
   .modal{position:fixed;inset:0;z-index:200;background:rgba(10,5,2,0.78);backdrop-filter:blur(4px);display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px}
@@ -207,6 +248,7 @@
     .side{position:fixed;inset:60px 0 0 0;background:var(--studio-black);z-index:90;max-height:none;height:calc(100vh - 60px);overflow-y:auto;padding:18px;display:none;border-top:1px solid var(--cork-shadow)}
     .side.open{display:block}
     .cat-toggle{display:inline-flex;align-items:center;gap:8px}
+    .searchbox{flex-basis:100%}
     .grid{grid-template-columns:1fr 1fr;gap:12px}
     .modal{padding:0}
     .modal-card{border-radius:0;min-height:100vh}
@@ -300,10 +342,17 @@
 
   <div class="toolbar">
     <button class="btn-ghost cat-toggle" id="catToggle">☰ Категории</button>
-    <div class="searchbox"><input id="search" type="text" placeholder="Поиск по названию или бренду…"></div>
-    <select id="brand" style="min-width:180px"><option value="">Все бренды</option></select>
+    <div class="searchbox"><input id="search" type="text" placeholder="Поиск: название, модель, бренд…" autocomplete="off"><div class="sug" id="sug"></div></div>
+    <select id="brand" style="min-width:170px"><option value="">Все бренды</option></select>
+    <select id="sort" style="min-width:150px">
+      <option value="">По умолчанию</option>
+      <option value="photo">Сначала с фото</option>
+      <option value="az">Название А-Я</option>
+      <option value="za">Название Я-А</option>
+    </select>
     <span class="count" id="count"></span>
   </div>
+  <div class="chips" id="chips"></div>
 
   <div class="layout">
     <aside class="side" id="side"></aside>
@@ -312,6 +361,10 @@
       <div class="more-wrap" id="moreWrap" style="display:none"><button class="btn-ghost" id="more">Показать ещё</button></div>
       <div class="empty-msg" id="emptyMsg" style="display:none">По вашему запросу ничего не найдено. <a href="index.html#contact" style="border-bottom:1px solid var(--warm-cream)">Оставьте заявку</a> — подберём.</div>
     </section>
+  </div>
+  <div class="viewed" id="viewedWrap" style="display:none">
+    <h2>Вы недавно смотрели</h2>
+    <div class="viewed-row" id="viewedRow"></div>
   </div>
 </main>
 
@@ -380,8 +433,73 @@
     azs:["toplivorazdatochnoe-oborudovanie/toplivorazdatochnye-pistolety","toplivorazdatochnoe-oborudovanie/rukava-shlangi-mbs-i-katushki","toplivorazdatochnoe-oborudovanie/filtraciya-i-ochistka-topliva"],
     agzs:["gazorazdatochnoe-oborudovanie/komplektuyuschie-zapchasti-i-rashodniki-dlya-grk/gazorazdatochnye-pistolety-strubciny","gazorazdatochnoe-oborudovanie/komplektuyuschie-zapchasti-i-rashodniki-dlya-grk/rukava-dlya-grk","gazorazdatochnoe-oborudovanie/zapornaya-armatura-sug"]
   };
-  var state={section:"azs",cat:"",brand:"",q:"",limit:PAGE,wear:false};
+  var state={section:"azs",cat:"",brand:"",q:"",limit:PAGE,wear:false,sort:""};
   function esc(s){return (s||"").replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+  // ---- умный поиск: нормализация, транслит, гомоглифы, алиасы брендов ----
+  var ALIAS=[[/джилбарко|гилбарко|гильбарко/g,'gilbarco'],[/татсуно|тацуно/g,'tatsuno'],[/пиуси|пьюси|пьюзи|пиузи/g,'piusi'],[/элафлекс|елафлекс/g,'elaflex'],[/токхайм|тохайм|токхейм|тохейм/g,'tokheim'],[/коркен/g,'corken'],[/блэкмер|блекмер/g,'blackmer'],[/вэйн|уэйн|вайне/g,'wayne'],[/адаст/g,'adast'],[/рего/g,'rego'],[/опв/g,'opw'],[/зва/g,'zva'],[/цим[\s-]?тек/g,'cim-tek'],[/мепсан/g,'mepsan'],[/квантиум/g,'quantium'],[/тдв/g,'tdw'],[/баотай/g,'baotai'],[/джиахао|цзяхао/g,'jiahao'],[/блюскай|блю скай/g,'bluesky'],[/ред[\s-]?джекет|ред[\s-]?жакет/g,'red jacket'],[/виско?мат/g,'viscomat'],[/пиусибокс/g,'piusibox'],[/сузарабл[юу]/g,'suzzarablue']];
+  var TRANS={'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ж':'zh','з':'z','и':'i','й':'y','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'h','ц':'c','ч':'ch','ш':'sh','щ':'sch','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya'};
+  var HOMO={'а':'a','в':'b','е':'e','к':'k','м':'m','н':'h','о':'o','р':'p','с':'c','т':'t','у':'y','х':'x'};
+  function nrm(s){return (s||'').toLowerCase().replace(/ё/g,'е');}
+  function translit(s){var o='';for(var i=0;i<s.length;i++){var c=s[i];o+=(TRANS[c]!==undefined?TRANS[c]:c);}return o;}
+  function homo(s){var o='';for(var i=0;i<s.length;i++){var c=s[i];o+=(HOMO[c]!==undefined?HOMO[c]:c);}return o;}
+  function alias(s){for(var i=0;i<ALIAS.length;i++){s=s.replace(ALIAS[i][0],ALIAS[i][1]);}return s;}
+  function compact(s){return s.replace(/[\s\-\.\,\/\(\)"'«»№]+/g,'');}
+  function idxStr(txt){var b=nrm(txt),h=homo(b);return b+''+h+''+compact(b)+''+compact(h);}
+  var sidx=prods.map(function(p){return idxStr((p.n||'')+' '+(p.tn||'')+' '+(p.b||''));});
+  var cidxMap={}; cats.forEach(function(c){cidxMap[c.u]=idxStr(c.n);});
+  function qVariants(tok){
+    var out={},a;
+    [tok,homo(tok),a=alias(tok),translit(a)].forEach(function(x){ if(x){out[x]=1;out[compact(x)]=1;} });
+    return Object.keys(out).filter(function(x){return x.length>=1});
+  }
+  function makeQ(q){
+    q=nrm((q||'').trim());
+    if(!q) return null;
+    var toks=q.split(/\s+/).filter(Boolean);
+    return {toks:toks.map(qVariants), joined: toks.length>1 ? qVariants(toks.join('')) : null};
+  }
+  function hitStr(qo,s){
+    var all=true;
+    for(var t=0;t<qo.toks.length;t++){
+      var ok=false,vs=qo.toks[t];
+      for(var v=0;v<vs.length;v++){ if(s.indexOf(vs[v])>=0){ok=true;break;} }
+      if(!ok){all=false;break;}
+    }
+    if(all) return true;
+    if(qo.joined){ for(var j=0;j<qo.joined.length;j++){ if(s.indexOf(qo.joined[j])>=0) return true; } }
+    return false;
+  }
+  function qTest(qo,i){return hitStr(qo,sidx[i]);}
+  var _qc={s:null,o:null};
+  function qObj(){ if(_qc.s!==state.q){_qc.s=state.q;_qc.o=makeQ(state.q);} return _qc.o; }
+  // опечатки: расстояние Левенштейна (для пустой выдачи)
+  function lev(a,b){
+    if(Math.abs(a.length-b.length)>2) return 9;
+    var m=a.length,n=b.length,prev=[],cur,i,j;
+    for(j=0;j<=n;j++)prev[j]=j;
+    for(i=1;i<=m;i++){cur=[i];for(j=1;j<=n;j++){cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));}prev=cur;}
+    return prev[n];
+  }
+  function fuzzySuggest(q){
+    var qn=compact(alias(nrm(q))), qh=compact(homo(nrm(q))), qt=compact(translit(alias(nrm(q))));
+    if(qn.length<3) return [];
+    var tol=qn.length>=7?2:1, scored=[], seen={};
+    prods.forEach(function(p,i){
+      var k=gkey(p); if(k && seen[k]) return;
+      var words=nrm((p.n||'')+' '+(p.b||'')).split(/[\s\-\/\(\)\.,"«»]+/).filter(function(w){return w.length>=3});
+      var best=9;
+      for(var w=0;w<words.length;w++){
+        var wd=compact(words[w]), wh=compact(homo(words[w]));
+        if(wd.indexOf(qn)===0||wh.indexOf(qh)===0||wd.indexOf(qt)===0){best=0;break;}
+        var d=Math.min(lev(qn,wd),lev(qh,wh),lev(qt,wd));
+        if(d<best)best=d;
+      }
+      if(best<=tol){ scored.push([best,i]); if(k)seen[k]=1; }
+    });
+    scored.sort(function(a,b){return a[0]-b[0]});
+    return scored.slice(0,6).map(function(x){return x[1]});
+  }
 
   // group map: gid -> [product indices]
   var groups={};
@@ -476,12 +594,13 @@
   var bsel=document.getElementById('brand');
   Object.keys(brands).sort().forEach(function(b){var o=document.createElement('option');o.value=b;o.textContent=b+' ('+brands[b]+')';bsel.appendChild(o)});
 
-  function match(p){
+  function match(p,i){
     if(state.wear && !p.w) return false;
     if(p.c.indexOf(SECROOT[state.section])!==0) return false;
     if(state.cat && p.c!==state.cat && p.c.indexOf(state.cat+'/')!==0) return false;
     if(state.brand && p.b!==state.brand) return false;
-    if(state.q){var q=state.q.toLowerCase();if((p.n||'').toLowerCase().indexOf(q)<0 && (p.b||'').toLowerCase().indexOf(q)<0)return false;}
+    var qo=qObj();
+    if(qo && !qTest(qo,i)) return false;
     return true;
   }
 
@@ -508,18 +627,77 @@
            badge+'<span class="open">Открыть →</span>'+add+'</a>';
   }
   function gkey(p){ return p.tg ? 't:'+p.tg : (p.g ? 'g:'+p.g : null); }
+  function dispName(i){var p=prods[i];return p.tg?(p.tn||p.n):p.n;}
+  function renderChips(){
+    var el=document.getElementById('chips'); if(!el)return;
+    var h='';
+    if(state.cat){var c=cats.filter(function(x){return x.u===state.cat})[0]; h+='<button class="chip" data-clear="cat">'+esc(c?c.n:'Категория')+' <span class="x">✕</span></button>';}
+    if(state.brand){h+='<button class="chip" data-clear="brand">'+esc(state.brand.split('(')[0].trim())+' <span class="x">✕</span></button>';}
+    if(state.q){h+='<button class="chip" data-clear="q">Поиск: «'+esc(state.q)+'» <span class="x">✕</span></button>';}
+    var n=(state.cat?1:0)+(state.brand?1:0)+(state.q?1:0);
+    if(n>=2) h+='<button class="chip reset" data-clear="all">Сбросить всё</button>';
+    el.innerHTML=h; el.style.display=h?'flex':'none';
+  }
   function render(){
-    var raw=[]; prods.forEach(function(p,i){if(match(p))raw.push(i)});
+    var raw=[]; prods.forEach(function(p,i){if(match(p,i))raw.push(i)});
     var reps={};   // представитель группы (tg или g) — предпочитаем с фото
     raw.forEach(function(i){var k=gkey(prods[i]); if(k){ if(!(k in reps)||(!prods[reps[k]].img&&prods[i].img)) reps[k]=i; }});
     var added={}, list=[];
     raw.forEach(function(i){var k=gkey(prods[i]); if(k){ if(added[k])return; added[k]=true; list.push(reps[k]); } else list.push(i); });
+    if(state.sort==='photo') list.sort(function(a,b){return (prods[b].img?1:0)-(prods[a].img?1:0)});
+    else if(state.sort==='az') list.sort(function(a,b){return dispName(a).localeCompare(dispName(b),'ru')});
+    else if(state.sort==='za') list.sort(function(a,b){return dispName(b).localeCompare(dispName(a),'ru')});
     countEl.textContent=list.length+' поз.';
-    if(!list.length){grid.innerHTML='';emptyMsg.style.display='block';moreWrap.style.display='none';return;}
+    renderChips();
+    if(!list.length){
+      grid.innerHTML=''; moreWrap.style.display='none';
+      var h='По вашему запросу ничего не найдено.';
+      var qo=qObj();
+      if(qo){
+        // совпадения во всём каталоге (без учёта раздела/категории/бренда)
+        var g=[]; prods.forEach(function(p,i){ if(qTest(qo,i)) g.push(i); });
+        if(g.length){
+          var gl={},gc=0; g.forEach(function(i){var k=gkey(prods[i]); if(k){if(gl[k])return;gl[k]=1;} gc++;});
+          h='В текущем разделе не нашлось, но во всём каталоге есть <b>'+gc+'</b> '+plural(gc,'совпадение','совпадения','совпадений')+'. <div style="margin-top:12px"><button class="btn-ghost" id="emAll">Показать все совпадения</button></div>';
+        } else {
+          var fz=fuzzySuggest(state.q);
+          if(fz.length){
+            h+='<div style="margin-top:14px">Возможно, вы искали:</div><div class="em-list">'+
+               fz.map(function(i){return '<button class="chip" data-open="'+i+'">'+esc(dispName(i).slice(0,60))+'</button>';}).join('')+'</div>';
+          }
+        }
+      }
+      h+='<div style="margin-top:16px"><a href="index.html#contact" style="border-bottom:1px solid var(--warm-cream)">Оставьте заявку</a> — подберём и пришлём предложение.</div>';
+      emptyMsg.innerHTML=h; emptyMsg.style.display='block';
+      return;
+    }
     emptyMsg.style.display='none';
     grid.innerHTML=list.slice(0,state.limit).map(function(i){return card(prods[i],i)}).join('');
     moreWrap.style.display=list.length>state.limit?'block':'none';
   }
+  // клики в пустой выдаче: показать все совпадения / открыть предложенный товар
+  emptyMsg.addEventListener('click',function(e){
+    var op=e.target.closest('[data-open]');
+    if(op){ openProduct(+op.dataset.open); return; }
+    if(e.target.closest('#emAll')){
+      var qo=qObj(); if(!qo) return;
+      var na=0,ng=0;
+      prods.forEach(function(p,i){ if(!qTest(qo,i))return; if(p.c.indexOf(SECROOT.azs)===0)na++; else ng++; });
+      state.section = ng>na ? 'agzs':'azs';
+      state.cat=''; state.brand=''; state.wear=false; state.limit=PAGE; bsel.value='';
+      document.querySelectorAll('.sectab').forEach(function(x){x.classList.toggle('active',x.dataset.sec===state.section)});
+      buildSide(); render();
+    }
+  });
+  // клики по чипам
+  document.getElementById('chips').addEventListener('click',function(e){
+    var ch=e.target.closest('[data-clear]'); if(!ch)return;
+    var w=ch.dataset.clear;
+    if(w==='cat'||w==='all'){ state.cat=''; }
+    if(w==='brand'||w==='all'){ state.brand=''; bsel.value=''; }
+    if(w==='q'||w==='all'){ state.q=''; document.getElementById('search').value=''; }
+    state.limit=PAGE; buildSide(); render();
+  });
 
   // ---- modal / product card ----
   var modal=document.getElementById('modal'), mBody=document.getElementById('mBody');
@@ -561,6 +739,30 @@
     var rows='';
     Object.keys(p.f).forEach(function(k){ if(k!=='Бренд') rows+='<tr><td>'+esc(k)+'</td><td>'+esc(p.f[k])+'</td></tr>'; });
     var specs=rows?'<table class="specs">'+rows+'</table>':'';
+    // с этим товаром смотрят: та же категория, приоритет — тот же бренд и с фото
+    var relHtml='';
+    (function(){
+      var k0=gkey(p), seenR={}; if(k0)seenR[k0]=1;
+      var pool=[];
+      prods.forEach(function(pp,ii){
+        if(ii===i) return;
+        if(pp.c!==p.c) return;
+        var k=gkey(pp); if(k){ if(seenR[k])return; seenR[k]=1; }
+        pool.push(ii);
+      });
+      pool.sort(function(a,b){
+        var pa=prods[a],pb=prods[b];
+        return ((pb.b===p.b?2:0)+(pb.img?1:0)) - ((pa.b===p.b?2:0)+(pa.img?1:0));
+      });
+      var rel=pool.slice(0,4);
+      if(rel.length){
+        relHtml='<div class="m-rel"><h3>С этим товаром смотрят</h3><div class="m-rel-row">'+rel.map(function(ri){
+          var rp=prods[ri];
+          var rph=rp.img?'<div class="vph"><img loading="lazy" src="'+esc(rp.img)+'" alt=""></div>':'<div class="vph empty"></div>';
+          return '<div class="vcard" data-rel="'+ri+'">'+rph+'<div class="vn">'+esc(dispName(ri))+'</div></div>';
+        }).join('')+'</div></div>';
+      }
+    })();
     mBody.innerHTML=
       '<div class="m-gallery">'+ph+'</div>'+
       '<div class="m-info">'+
@@ -571,7 +773,11 @@
         '<div class="m-actions"><button class="btn" id="mAdd">'+(inCart(p)?'✓ В заявке':'+ Добавить в заявку')+'</button>'+
         '<a class="btn-ghost" href="tel:+73432664066">Позвонить</a></div>'+
         '<div class="m-note">Цена и наличие — по запросу. Поставляем оригинал и аналоги.</div>'+
-      '</div>';
+      '</div>'+relHtml;
+    mBody.querySelectorAll('[data-rel]').forEach(function(el){
+      el.addEventListener('click',function(){openProduct(+el.dataset.rel)});
+    });
+    pushViewed(i);
     // add current product/variant to request
     var mAdd=document.getElementById('mAdd');
     if(mAdd) mAdd.addEventListener('click',function(){
@@ -615,11 +821,83 @@
     }
   });
 
+  // ---- живые подсказки поиска ----
+  var sugEl=document.getElementById('sug'), searchEl=document.getElementById('search');
+  function secTagOf(c){return (c||'').indexOf(SECROOT.agzs)===0?'АГЗС':'АЗС';}
+  function closeSug(){sugEl.classList.remove('open');sugEl.innerHTML='';}
+  function buildSug(qraw){
+    var q=(qraw||'').trim();
+    if(q.length<2){closeSug();return;}
+    var qo=makeQ(q); if(!qo){closeSug();return;}
+    var h='';
+    // категории
+    var mc=cats.filter(function(c){return hitStr(qo,cidxMap[c.u]);}).slice(0,3);
+    if(mc.length){
+      h+='<div class="sug-h">Категории</div>';
+      mc.forEach(function(c){ h+='<button class="sug-item" data-sc="'+esc(c.u)+'"><div class="si-t"><div class="si-n">'+esc(c.n)+'</div><div class="si-s">'+secTagOf(c.u)+' · '+cnt(c.u)+' поз.</div></div></button>'; });
+    }
+    // бренды
+    var mb=Object.keys(brands).filter(function(b){return hitStr(qo,idxStr(b));}).slice(0,3);
+    if(mb.length){
+      h+='<div class="sug-h">Бренды</div>';
+      mb.forEach(function(b){ h+='<button class="sug-item" data-sb="'+esc(b)+'"><div class="si-t"><div class="si-n">'+esc(b.split('(')[0].trim())+'</div><div class="si-s">'+brands[b]+' поз.</div></div></button>'; });
+    }
+    // товары (по всему каталогу, без дублей групп)
+    var mp=[],seen={};
+    for(var i=0;i<prods.length && mp.length<6;i++){
+      if(!qTest(qo,i)) continue;
+      var k=gkey(prods[i]); if(k){ if(seen[k])continue; seen[k]=1; }
+      mp.push(i);
+    }
+    if(mp.length){
+      h+='<div class="sug-h">Товары</div>';
+      mp.forEach(function(i){
+        var p=prods[i];
+        var th=p.img?'<div class="si-th"><img loading="lazy" src="'+esc(p.img)+'" alt=""></div>':'<div class="si-th empty"></div>';
+        h+='<button class="sug-item" data-sp="'+i+'">'+th+'<div class="si-t"><div class="si-n">'+esc(dispName(i))+'</div><div class="si-s">'+esc(catName(p.c))+' · '+secTagOf(p.c)+'</div></div></button>';
+      });
+    }
+    if(!h){
+      var fz=fuzzySuggest(q);
+      if(fz.length){
+        h='<div class="sug-h">Возможно, вы искали</div>';
+        fz.forEach(function(i){
+          var p=prods[i];
+          var th=p.img?'<div class="si-th"><img loading="lazy" src="'+esc(p.img)+'" alt=""></div>':'<div class="si-th empty"></div>';
+          h+='<button class="sug-item" data-sp="'+i+'">'+th+'<div class="si-t"><div class="si-n">'+esc(dispName(i))+'</div><div class="si-s">'+esc(catName(p.c))+'</div></div></button>';
+        });
+      } else {
+        h='<div class="sug-empty">Ничего не нашли. Попробуйте иначе или <a href="index.html#contact" style="border-bottom:1px solid var(--grey-brown)">оставьте заявку</a> — подберём.</div>';
+      }
+    }
+    sugEl.innerHTML=h; sugEl.classList.add('open');
+  }
+  sugEl.addEventListener('click',function(e){
+    var t;
+    if((t=e.target.closest('[data-sp]'))){ closeSug(); openProduct(+t.dataset.sp); return; }
+    if((t=e.target.closest('[data-sc]'))){
+      var u=t.dataset.sc;
+      state.section = u.indexOf(SECROOT.agzs)===0?'agzs':'azs';
+      state.wear=false; state.cat=u; state.brand=''; bsel.value='';
+      state.q=''; searchEl.value=''; state.limit=PAGE;
+      document.querySelectorAll('.sectab').forEach(function(x){x.classList.toggle('active',x.dataset.sec===state.section)});
+      closeSug(); buildSide(); render(); return;
+    }
+    if((t=e.target.closest('[data-sb]'))){
+      state.brand=t.dataset.sb; bsel.value=state.brand; state.limit=PAGE;
+      closeSug(); render(); return;
+    }
+  });
+  document.addEventListener('click',function(e){ if(!e.target.closest('.searchbox')) closeSug(); });
+  searchEl.addEventListener('focus',function(){ if(searchEl.value.trim().length>=2) buildSug(searchEl.value); });
+
   // ---- events ----
   document.getElementById('more').addEventListener('click',function(){state.limit+=PAGE;render()});
   var st;
-  document.getElementById('search').addEventListener('input',function(e){clearTimeout(st);var v=e.target.value;st=setTimeout(function(){state.q=v;state.limit=PAGE;render()},180)});
+  searchEl.addEventListener('input',function(e){clearTimeout(st);var v=e.target.value;st=setTimeout(function(){state.q=v;state.limit=PAGE;render();buildSug(v)},180)});
+  searchEl.addEventListener('keydown',function(e){if(e.key==='Escape'){closeSug();}});
   bsel.addEventListener('change',function(e){state.brand=e.target.value;state.limit=PAGE;render()});
+  document.getElementById('sort').addEventListener('change',function(e){state.sort=e.target.value;state.limit=PAGE;render()});
   document.getElementById('catToggle').addEventListener('click',function(){side.classList.toggle('open')});
   document.querySelectorAll('.sectab').forEach(function(t){
     t.addEventListener('click',function(){
@@ -746,7 +1024,34 @@
     try{localStorage.removeItem(CART_KEY)}catch(err){}
   });
 
-  buildSide(); render(); updateCart();
+  // ---- недавно просмотренные ----
+  var VKEY='syndicat_viewed';
+  var uIndex={}; prods.forEach(function(p,i){ if(p.u && !(p.u in uIndex)) uIndex[p.u]=i; });
+  function getViewed(){try{return JSON.parse(localStorage.getItem(VKEY))||[]}catch(e){return []}}
+  function pushViewed(i){
+    var u=prods[i] && prods[i].u; if(!u) return;
+    var v=getViewed().filter(function(x){return x!==u});
+    v.unshift(u); v=v.slice(0,12);
+    try{localStorage.setItem(VKEY,JSON.stringify(v))}catch(e){}
+    renderViewed();
+  }
+  function renderViewed(){
+    var wrap=document.getElementById('viewedWrap'), row=document.getElementById('viewedRow');
+    if(!wrap||!row) return;
+    var v=getViewed().map(function(u){return uIndex[u]}).filter(function(x){return x!==undefined}).slice(0,6);
+    if(!v.length){wrap.style.display='none';return;}
+    wrap.style.display='block';
+    row.innerHTML=v.map(function(i){
+      var p=prods[i];
+      var ph=p.img?'<div class="vph"><img loading="lazy" src="'+esc(p.img)+'" alt=""></div>':'<div class="vph empty"></div>';
+      return '<div class="vcard" data-i="'+i+'">'+ph+'<div class="vn">'+esc(dispName(i))+'</div></div>';
+    }).join('');
+  }
+  document.getElementById('viewedRow').addEventListener('click',function(e){
+    var c=e.target.closest('[data-i]'); if(c) openProduct(+c.dataset.i);
+  });
+
+  buildSide(); render(); updateCart(); renderViewed();
   if(new URLSearchParams(location.search).get('cart')==='1' && cart.length) openCart();
 })();
 </script>
