@@ -32,6 +32,14 @@ header{position:sticky;top:0;z-index:50;border-bottom:1px solid var(--cork-shado
 .btn.ghost{background:transparent;border-color:var(--warm-cream);color:var(--warm-cream);font-weight:500}
 .btn.ghost:hover{border-color:var(--burnt-sienna);color:var(--burnt-sienna)}
 .p-note{font-size:12px;color:var(--grey-brown)}
+.p-origline{font-size:13px;margin:-6px 0 16px}
+.p-origline a{border-bottom:1px solid var(--burnt-sienna)}
+.p-origline a:hover,.p-origline b{color:var(--burnt-sienna);font-weight:400}
+.p-alt{border:1px solid var(--burnt-sienna);border-radius:12px;padding:12px 16px;margin-bottom:20px}
+.p-alt .t{font-size:11px;letter-spacing:.6px;color:var(--burnt-sienna);text-transform:uppercase;margin-bottom:6px}
+.p-alt-item{display:block;font-size:13.5px;padding:4px 0}
+.p-alt-item b{color:var(--burnt-sienna);font-weight:400}
+.p-alt-item:hover{color:var(--burnt-sienna)}
 .p-variants,.p-descr,.p-related{border-top:1px dashed var(--cork-shadow);padding:26px 0}
 .p-variants h2,.p-descr h2,.p-related h2{font-size:18px;font-weight:600;margin-bottom:14px}
 .p-variants ul{columns:2;gap:24px;list-style:none}

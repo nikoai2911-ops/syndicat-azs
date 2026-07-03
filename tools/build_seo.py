@@ -112,6 +112,9 @@ for i, p in enumerate(prods):
     else:
         slug_for_index[i] = slug_by_page.get(reps[k])
 
+# слаг -> индекс страницы (для связей оригинал/аналог)
+u2page = {slug_by_page[i]: i for i in page_indices}
+
 # товары по категориям (для блока «похожие»)
 by_cat = {}
 for i in page_indices:
@@ -164,6 +167,23 @@ def render_product(i):
         if k == 'Бренд': continue
         rows += f'<tr><td>{esc(k)}</td><td>{esc(str(v))}</td></tr>'
     specs = f'<table class="p-specs"><caption>Характеристики</caption>{rows}</table>' if rows else ''
+
+    # связи оригинал <-> аналог (собираем по всем членам группы)
+    mem_all = members_of(i)
+    ao = next((prods[m].get('ao') for m in mem_all if prods[m].get('ao')), None)
+    an_list = []
+    for m in mem_all:
+        for au in (prods[m].get('an') or []):
+            if au not in an_list: an_list.append(au)
+    orig_html = ''
+    if ao and ao in u2page:
+        orig_html = (f'<div class="p-origline">Оригинал: <a href="{esc(ao)}.html">'
+                     f'{esc(prods[u2page[ao]].get("n",""))}</a> <b>→</b></div>')
+    alt_items = ''
+    for au in an_list:
+        if au in u2page:
+            alt_items += f'<a class="p-alt-item" href="{esc(au)}.html">{esc(prods[u2page[au]].get("n",""))} <b>→</b></a>'
+    alt_html = f'<div class="p-alt"><div class="t">Есть аналог дешевле</div>{alt_items}</div>' if alt_items else ''
 
     # модификации (члены группы)
     mem = members_of(i)
@@ -251,7 +271,9 @@ def render_product(i):
       <h1>{esc(name)}</h1>
       {f'<div class="p-brand">{esc(brand)}</div>' if brand else ''}
       <div class="p-cat">Раздел: <a href="../catalog.html?cat={esc(c)}">{esc(leaf)}</a> · {secw}</div>
+      {orig_html}
       {specs}
+      {alt_html}
       <div class="p-actions">
         <a class="btn" href="{mailto}">Запросить цену</a>
         <a class="btn ghost" href="tel:+73432664066">Позвонить</a>
@@ -305,6 +327,14 @@ header{position:sticky;top:0;z-index:50;border-bottom:1px solid var(--cork-shado
 .btn.ghost{background:transparent;border-color:var(--warm-cream);color:var(--warm-cream);font-weight:500}
 .btn.ghost:hover{border-color:var(--burnt-sienna);color:var(--burnt-sienna)}
 .p-note{font-size:12px;color:var(--grey-brown)}
+.p-origline{font-size:13px;margin:-6px 0 16px}
+.p-origline a{border-bottom:1px solid var(--burnt-sienna)}
+.p-origline a:hover,.p-origline b{color:var(--burnt-sienna);font-weight:400}
+.p-alt{border:1px solid var(--burnt-sienna);border-radius:12px;padding:12px 16px;margin-bottom:20px}
+.p-alt .t{font-size:11px;letter-spacing:.6px;color:var(--burnt-sienna);text-transform:uppercase;margin-bottom:6px}
+.p-alt-item{display:block;font-size:13.5px;padding:4px 0}
+.p-alt-item b{color:var(--burnt-sienna);font-weight:400}
+.p-alt-item:hover{color:var(--burnt-sienna)}
 .p-variants,.p-descr,.p-related{border-top:1px dashed var(--cork-shadow);padding:26px 0}
 .p-variants h2,.p-descr h2,.p-related h2{font-size:18px;font-weight:600;margin-bottom:14px}
 .p-variants ul{columns:2;gap:24px;list-style:none}
