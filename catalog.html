@@ -462,6 +462,7 @@
   function compact(s){return s.replace(/[\s\-\.\,\/\(\)"'«»№]+/g,'');}
   function idxStr(txt){var b=nrm(txt),h=homo(b);return b+''+h+''+compact(b)+''+compact(h);}
   var catByU={}; cats.forEach(function(c){catByU[c.u]=c;});
+  var catOrder={}; cats.forEach(function(c,ci){catOrder[c.u]=ci;});
   var chainCache={};
   function chainName(u){
     if(chainCache[u]!==undefined) return chainCache[u];
@@ -700,7 +701,8 @@
     raw.forEach(function(i){var k=gkey(prods[i]); if(k){ if(!(k in reps)||(!prods[reps[k]].img&&prods[i].img)) reps[k]=i; }});
     var added={}, list=[];
     raw.forEach(function(i){var k=gkey(prods[i]); if(k){ if(added[k])return; added[k]=true; list.push(reps[k]); } else list.push(i); });
-    if(state.sort==='photo') list.sort(function(a,b){return (prods[b].img?1:0)-(prods[a].img?1:0)});
+    if(!state.sort) list.sort(function(a,b){var ca=(catOrder[prods[a].c]!==undefined?catOrder[prods[a].c]:9999),cb=(catOrder[prods[b].c]!==undefined?catOrder[prods[b].c]:9999);return ca-cb||a-b;});
+    else if(state.sort==='photo') list.sort(function(a,b){return (prods[b].img?1:0)-(prods[a].img?1:0)});
     else if(state.sort==='az') list.sort(function(a,b){return dispName(a).localeCompare(dispName(b),'ru')});
     else if(state.sort==='za') list.sort(function(a,b){return dispName(b).localeCompare(dispName(a),'ru')});
     countEl.textContent=list.length+' поз.';
