@@ -243,7 +243,9 @@
       "Bash(curl -sI --max-time 20 \"https://sd-kt.ru/catalog.html\")",
       "Bash(curl -s --max-time 20 \"https://sd-kt.ru/catalog.html?nc=$\\(date +%s\\)\")",
       "Bash(curl -s --max-time 20 \"https://sd-kt.ru/catalog-data.js?v=10\")",
-      "Bash(curl -s --max-time 20 \"https://sd-kt.ru/p/nosik-pistoleta-er-381-dn-25-elaflex.html?nc=$\\(date +%s\\)\")"
+      "Bash(curl -s --max-time 20 \"https://sd-kt.ru/p/nosik-pistoleta-er-381-dn-25-elaflex.html?nc=$\\(date +%s\\)\")",
+      "Bash(awk '{s+=$5} END {print \"суммарно:\",s/1024,\"KB\"}')",
+      "Bash(sed -i '' 's#catalog-data.js?v=13#catalog-data.js?v=14#' catalog.html)"
     ]
   }
 }
