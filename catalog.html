@@ -628,7 +628,7 @@
     if(p.tg){
       var tn=typeGroups[p.tg].length;
       return '<a class="prod" href="p/'+esc(p.u||'')+'.html" data-i="'+i+'">'+ph+'<h3>'+esc(p.tn)+'</h3>'+
-             '<div class="b">'+esc(p.b||'')+'</div>'+
+             '<div class="b">арт. '+esc(p.art||'')+(p.b?' · '+esc(p.b):'')+'</div>'+
              '<span class="vbadge">'+tn+' '+plural(tn,'вид','вида','видов')+' · выбор</span>'+
              '<span class="open">Открыть →</span>'+
              '<button class="addbtn" data-cfg="1" data-i="'+i+'">Выбрать вид</button></a>';
@@ -638,7 +638,7 @@
     var add=vc>1?'<button class="addbtn" data-cfg="1" data-i="'+i+'">Выбрать вариант</button>'
                 :'<button class="addbtn'+(inCart(p)?' added':'')+'" data-i="'+i+'">'+(inCart(p)?'✓ В заявке':'+ В заявку')+'</button>';
     return '<a class="prod" href="p/'+esc(p.u||'')+'.html" data-i="'+i+'">'+ph+'<h3>'+esc(p.n)+'</h3>'+
-           (p.b?'<div class="b">'+esc(p.b)+'</div>':'<div class="b"></div>')+
+           '<div class="b">арт. '+esc(p.art||'')+(p.b?' · '+esc(p.b):'')+'</div>'+
            badge+'<span class="open">Открыть →</span>'+add+'</a>';
   }
   function gkey(p){ return p.tg ? 't:'+p.tg : (p.g ? 'g:'+p.g : null); }
