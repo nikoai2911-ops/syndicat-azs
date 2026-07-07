@@ -461,60 +461,18 @@
   function alias(s){for(var i=0;i<ALIAS.length;i++){s=s.replace(ALIAS[i][0],ALIAS[i][1]);}return s;}
   function compact(s){return s.replace(/[\s\-\.\,\/\(\)"'«»№]+/g,'');}
   function idxStr(txt){var b=nrm(txt),h=homo(b);return b+''+h+''+compact(b)+''+compact(h);}
-  var catByU={}; cats.forEach(function(c){catByU[c.u]=c;});
-  var chainCache={};
-  function chainName(u){
-    if(chainCache[u]!==undefined) return chainCache[u];
-    var out=[],cur=u,guard=0;
-    while(cur && catByU[cur] && guard++<8){ out.push(catByU[cur].n); cur=catByU[cur].p; }
-    return chainCache[u]=out.join(' ');
-  }
-  var sidx=prods.map(function(p){return idxStr((p.n||'')+' '+(p.tn||'')+' '+(p.b||'')+' '+(p.art||'')+' '+chainName(p.c||''));});
+  var sidx=prods.map(function(p){return idxStr((p.n||'')+' '+(p.tn||'')+' '+(p.b||'')+' '+(p.art||''));});
   var cidxMap={}; cats.forEach(function(c){cidxMap[c.u]=idxStr(c.n);});
   function qVariants(tok){
     var out={},a;
     [tok,homo(tok),a=alias(tok),translit(a)].forEach(function(x){ if(x){out[x]=1;out[compact(x)]=1;} });
     return Object.keys(out).filter(function(x){return x.length>=1});
   }
-  // синонимы: одно и то же оборудование называют по-разному
-  var SYN=[
-    ['пистолет','кран'],
-    ['разливн','раздаточн','заправочн','отпуска'],
-    ['трк','колонк','топливораздаточн'],
-    ['грк','газоразда','газовая колонк'],
-    ['шланг','рукав'],
-    ['счетчик','расходомер','измеритель','объемомер','обьемомер'],
-    ['емкость','резервуар'],
-    ['суг','lpg','пропан'],
-    ['дт','дизел','солярк'],
-    ['адаптер','переходник','фитинг'],
-    ['смдк','дыхательн'],
-    ['носик','сопло'],
-    ['кран','вентил'],
-    ['огнепреградител','пламегасител'],
-    ['катушка','барабан'],
-    ['чехол','кожух'],
-    ['муфта разрывн','брейкав','breakaway']
-  ];
-  var SHORT_OK={'дт':1,'суг':1,'трк':1,'грк':1,'lpg':1};
-  function synStems(tok){
-    var out=[], t=tok;
-    if(t.length<3 && !SHORT_OK[t]) return out;
-    SYN.forEach(function(gr){
-      var hit=gr.some(function(st){ return st.indexOf(t)===0 || t.indexOf(st)===0; });
-      if(hit) gr.forEach(function(st){ if(out.indexOf(st)<0 && st!==t) out.push(st); });
-    });
-    return out;
-  }
   function makeQ(q){
     q=nrm((q||'').trim());
     if(!q) return null;
     var toks=q.split(/\s+/).filter(Boolean);
-    return {toks:toks.map(function(t){
-      var v=qVariants(t).concat(synStems(t));
-      if(t.length>=7) v.push(t.slice(0,6));   // метрология -> метрол (окончания)
-      return v;
-    }), joined: toks.length>1 ? qVariants(toks.join('')) : null};
+    return {toks:toks.map(qVariants), joined: toks.length>1 ? qVariants(toks.join('')) : null};
   }
   function hitStr(qo,s){
     var all=true;
@@ -978,7 +936,7 @@
   // ---- events ----
   document.getElementById('more').addEventListener('click',function(){state.limit+=PAGE;render()});
   var st;
-  searchEl.addEventListener('input',function(e){clearTimeout(st);var v=e.target.value;st=setTimeout(function(){state.q=v;state.limit=PAGE;render();buildSug(v)},110)});
+  searchEl.addEventListener('input',function(e){clearTimeout(st);var v=e.target.value;st=setTimeout(function(){state.q=v;state.limit=PAGE;render();buildSug(v)},180)});
   searchEl.addEventListener('keydown',function(e){if(e.key==='Escape'){closeSug();}});
   bsel.addEventListener('change',function(e){state.brand=e.target.value;state.limit=PAGE;render()});
   document.getElementById('sort').addEventListener('change',function(e){state.sort=e.target.value;state.limit=PAGE;render()});
