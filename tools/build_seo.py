@@ -168,6 +168,10 @@ def render_product(i):
         rows += f'<tr><td>{esc(k)}</td><td>{esc(str(v))}</td></tr>'
     specs = f'<table class="p-specs"><caption>Характеристики</caption>{rows}</table>' if rows else ''
 
+    pr = p.get('pr')
+    try: price_html = f'<div class="p-price">{int(pr):,} \u20BD</div>'.replace(',', '\u202f') if pr else ''
+    except Exception: price_html = f'<div class="p-price">{pr} \u20BD</div>' if pr else ''
+
     # связи оригинал <-> аналог (собираем по всем членам группы)
     mem_all = members_of(i)
     ao = next((prods[m].get('ao') for m in mem_all if prods[m].get('ao')), None)
@@ -217,6 +221,8 @@ def render_product(i):
     # JSON-LD
     product_ld = {"@context": "https://schema.org/", "@type": "Product", "name": name}
     if p.get("art"): product_ld["sku"] = p["art"]
+    if pr:
+        product_ld["offers"] = {"@type":"Offer","price":str(pr),"priceCurrency":"RUB","url":url}
     if img: product_ld["image"] = [img_abs]
     product_ld["description"] = meta_desc
     if brand: product_ld["brand"] = {"@type": "Brand", "name": brand}
@@ -271,6 +277,7 @@ def render_product(i):
     <div class="p-info">
       <h1>{esc(name)}</h1>
       <div class="p-art">Артикул: <b>{esc(p.get('art',''))}</b></div>
+      {price_html}
       {f'<div class="p-brand">{esc(brand)}</div>' if brand else ''}
       <div class="p-cat">Раздел: <a href="../catalog.html?cat={esc(c)}">{esc(leaf)}</a> · {secw}</div>
       {orig_html}
@@ -281,7 +288,7 @@ def render_product(i):
         <a class="btn ghost" href="tel:+73432664066">Позвонить</a>
         <a class="btn ghost" href="../catalog.html?cat={esc(c)}">В каталог</a>
       </div>
-      <p class="p-note">Цена и наличие — по запросу. Поставляем оригинал и аналоги. Доставка по России.</p>
+      <p class="p-note">{'Наличие и сроки — по запросу.' if pr else 'Цена и наличие — по запросу.'} Поставляем оригинал и аналоги. Доставка по России.</p>
     </div>
   </div>
   {variants}
@@ -318,6 +325,7 @@ header{position:sticky;top:0;z-index:50;border-bottom:1px solid var(--cork-shado
 .p-img .pc{font-size:11px;letter-spacing:1px;color:var(--grey-brown);text-transform:uppercase}
 .p-info h1{font-size:26px;font-weight:600;line-height:1.2;margin-bottom:10px}
 .p-art{font-size:13px;color:var(--grey-brown);margin-bottom:6px}
+.p-price{font-size:26px;font-weight:600;margin:4px 0 12px;letter-spacing:.3px}
 .p-art b{color:var(--warm-cream);font-weight:500;letter-spacing:.6px}
 .p-brand{font-size:14px;color:var(--grey-brown);margin-bottom:6px}
 .p-cat{font-size:13px;color:var(--grey-brown);margin-bottom:18px}
