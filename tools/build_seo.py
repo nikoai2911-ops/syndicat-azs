@@ -365,7 +365,7 @@ def main():
         open(os.path.join(ROOT, "p", slug_by_page[i] + ".html"), "w", encoding="utf-8").write(page)
 
     # sitemap
-    urls = [f"{BASE}/", f"{BASE}/catalog.html"]
+    urls = [f"{BASE}/", f"{BASE}/catalog.html", f"{BASE}/uslugi.html"]
     # категории как лендинги
     for c in cats:
         urls.append(f"{BASE}/catalog.html?cat={c['u']}")
