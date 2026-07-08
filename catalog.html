@@ -699,7 +699,23 @@
     if(n>=2) h+='<button class="chip reset" data-clear="all">Сбросить всё</button>';
     el.innerHTML=h; el.style.display=h?'flex':'none';
   }
+  // синхронизация состояния каталога с адресной строкой — чтобы при обновлении
+  // страницы пользователь оставался в той же категории/поиске/фильтре
+  function syncURL(){
+    try{
+      var params=new URLSearchParams();
+      if(state.wear){ params.set('wear', state.section); }
+      else if(state.cat){ params.set('cat', state.cat); }
+      else { params.set('sec', state.section); }
+      if(state.brand) params.set('brand', state.brand);
+      if(state.q) params.set('q', state.q);
+      if(state.sort) params.set('sort', state.sort);
+      var qs=params.toString();
+      history.replaceState(null,'', location.pathname + (qs?('?'+qs):''));
+    }catch(e){}
+  }
   function render(){
+    syncURL();
     var raw=[]; prods.forEach(function(p,i){if(match(p,i))raw.push(i)});
     var reps={};   // представитель группы (tg или g) — предпочитаем с фото
     raw.forEach(function(i){var k=gkey(prods[i]); if(k){ if(!(k in reps)||(!prods[reps[k]].img&&prods[i].img)) reps[k]=i; }});
@@ -1007,13 +1023,18 @@
     if(s){ e.preventDefault(); state.cat=""; state.brand=""; state.q=""; state.limit=PAGE; bsel.value=""; document.getElementById('search').value=""; buildSide(); render(); window.scrollTo({top:0,behavior:'smooth'}); }
   });
 
-  // deep-link from homepage: ?sec=azs|agzs  or  ?cat=<category-key>
+  // deep-link / восстановление состояния при обновлении страницы:
+  // ?sec=azs|agzs · ?cat=<key> · ?wear=... · ?brand=... · ?q=... · ?sort=...
   (function(){
     var params=new URLSearchParams(location.search);
     var pcat=params.get('cat'), psec=params.get('sec'), pwear=params.get('wear');
     if(pwear==='azs'||pwear==='agzs'){ state.wear=true; state.section=pwear; }
     else if(pcat){ state.cat=pcat; state.section=pcat.indexOf('gazorazdatochnoe')===0?'agzs':'azs'; }
     else if(psec==='azs'||psec==='agzs'){ state.section=psec; }
+    var pbrand=params.get('brand'), pq=params.get('q'), psort=params.get('sort');
+    if(pbrand){ state.brand=pbrand; bsel.value=pbrand; }
+    if(pq){ state.q=pq; searchEl.value=pq; }
+    if(psort){ state.sort=psort; document.getElementById('sort').value=psort; }
     document.querySelectorAll('.sectab').forEach(function(t){t.classList.toggle('active', t.dataset.sec===state.section)});
   })();
 
