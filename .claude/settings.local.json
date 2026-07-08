@@ -249,7 +249,8 @@
       "Read(//Users/nikitasazonov/Desktop/**)",
       "Read(//Users/nikitasazonov/Downloads/**)",
       "Bash(python3)",
-      "Bash(git commit -q -m ' *)"
+      "Bash(git commit -q -m ' *)",
+      "Bash(find /private/tmp/claude-501 /var/folders -type f \\\\\\( -iname \"*.png\" -o -iname \"*.jpg\" -o -iname \"*.jpeg\" -o -iname \"*.webp\" \\\\\\) -newermt \"2026-07-08 11:00\" 2>/dev/null | head -20; echo \"---scratchpad---\"; ls -la \"/private/tmp/claude-501/-Users-nikitasazonov-Desktop------------------/336a583d-1f49-40be-a025-3e900c495e32/scratchpad\" 2>/dev/null)"
     ]
   }
 }
