@@ -222,7 +222,7 @@ const REGIONS = [
 ["Ямало-Ненецкий автономный округ","RU-YAN"],["Ярославская область","RU-YAR"]];
 
 const OVERPASS = ["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter"];
-const COLS = ["Название","Тип","Бренд/Оператор","Телефон","Адрес","Сайт","Координаты","Источник"];
+const COLS = ["Название","Тип","Бренд/Оператор","Телефон","Адрес","Сайт","Координаты"];
 let allRows = [];      // всё собранное
 let currentRegion = "";
 
@@ -263,8 +263,7 @@ function parseEl(el,region){
     "Телефон": pickPhone(t),
     "Адрес": pickAddr(t,region,lat,lon),
     "Сайт": t.website||t["contact:website"]||"",
-    "Координаты": (lat&&lon)?`${lat}, ${lon}`:"",
-    "Источник": "OpenStreetMap"
+    "Координаты": (lat&&lon)?`${lat}, ${lon}`:""
   };
 }
 
@@ -296,7 +295,7 @@ function applyFilters(){
   const no800=document.getElementById('fNo800').checked;
   const words=document.getElementById('fedWords').value.toLowerCase()
     .split(",").map(s=>s.trim()).filter(Boolean);
-  return allRows.filter(r=>{
+  const filtered=allRows.filter(r=>{
     if(onlyPhone && !r["Телефон"]) return false;
     if(no800 && r["Телефон"] && r["Телефон"].replace(/\s/g,"").includes("800")) return false;
     if(exFed){
@@ -305,6 +304,19 @@ function applyFilters(){
     }
     return true;
   });
+  // дедуп по номеру: одинаковый телефон показываем один раз.
+  // строки без телефона не схлопываем (у них нет ключа для сравнения).
+  const seenPhone=new Set(), out=[];
+  for(const r of filtered){
+    const p=r["Телефон"];
+    if(p){
+      const d=p.replace(/\D/g,""), key=d.length>=10?d.slice(-10):d;
+      if(seenPhone.has(key)) continue;
+      seenPhone.add(key);
+    }
+    out.push(r);
+  }
+  return out;
 }
 
 function render(){
@@ -373,7 +385,7 @@ function downloadXlsx(){
   const rows=window._filtered||[];
   if(!rows.length) return;
   const ws=XLSX.utils.json_to_sheet(rows,{header:COLS});
-  ws['!cols']=[{wch:34},{wch:10},{wch:24},{wch:20},{wch:46},{wch:28},{wch:24},{wch:14}];
+  ws['!cols']=[{wch:34},{wch:10},{wch:24},{wch:20},{wch:46},{wch:28},{wch:24}];
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,"АЗС и АГЗС");
   XLSX.writeFile(wb,fileBase()+".xlsx");
