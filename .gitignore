@@ -2,3 +2,7 @@ node_modules/
 .DS_Store
 gas.html
 *.cp1251.html
+# Собранные базы лидов — НЕ публиковать в открытый репозиторий
+tools/azs_*.xlsx
+tools/azs_*.csv
+tools/~$*.xlsx

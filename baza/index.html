@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>SYNDICAT · База АЗС/АГЗС по регионам</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --studio-black:#100904;--warm-cream:#ffedd7;--cork-shadow:#40372e;
+    --dark-cork:#382416;--burnt-sienna:#dc5000;--grey-brown:#6c5f51;
+    --panel:#1a110a;--line:#2c2116;
+    --font:'Figtree',ui-sans-serif,system-ui,-apple-system,sans-serif;
+  }
+  body{background:var(--studio-black);color:var(--warm-cream);font-family:var(--font);
+    font-weight:400;-webkit-font-smoothing:antialiased;line-height:1.5;padding:0 0 80px}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+  header{border-bottom:1px solid var(--cork-shadow);padding:20px 0;margin-bottom:32px;
+    background:rgba(16,9,4,.72)}
+  .brand{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:600;letter-spacing:1.5px}
+  .brand b{color:var(--burnt-sienna);font-weight:600}
+  .tag{font-size:11px;letter-spacing:1px;color:var(--grey-brown);margin-top:4px}
+  h1{font-size:clamp(26px,4vw,40px);font-weight:600;letter-spacing:-.5px;margin-bottom:8px;line-height:1.05}
+  h1 .accent{color:var(--burnt-sienna)}
+  .lead{color:#d9c4ab;max-width:640px;margin-bottom:28px;font-size:15px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:20px}
+  label{display:block;font-size:12px;letter-spacing:.8px;text-transform:uppercase;
+    color:var(--grey-brown);margin-bottom:8px}
+  select,input[type=text]{width:100%;background:#120a05;border:1px solid var(--cork-shadow);
+    color:var(--warm-cream);border-radius:10px;padding:13px 14px;font-family:inherit;font-size:15px}
+  select:focus,input:focus{outline:none;border-color:var(--burnt-sienna)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:640px){.row2{grid-template-columns:1fr}}
+  .checks{margin-top:18px;display:flex;flex-direction:column;gap:12px}
+  .chk{display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:14px;color:#e8d5bd}
+  .chk input{margin-top:2px;width:18px;height:18px;accent-color:var(--burnt-sienna);cursor:pointer}
+  .chk small{display:block;color:var(--grey-brown);font-size:12px;margin-top:2px}
+  .fedlist{margin-top:10px}
+  .fedlist input{font-size:13px;padding:10px 12px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    background:var(--burnt-sienna);color:#fff;border:none;border-radius:30px;
+    padding:14px 28px;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;
+    transition:opacity .2s,transform .1s}
+  .btn:hover{opacity:.9}.btn:active{transform:translateY(1px)}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .btn.ghost{background:transparent;border:1px solid var(--cork-shadow);color:var(--warm-cream)}
+  .actions{margin-top:22px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+  .status{margin-top:16px;font-size:14px;color:#d9c4ab;min-height:22px}
+  .status.err{color:#ff7a4d}
+  .spin{display:inline-block;width:15px;height:15px;border:2px solid var(--cork-shadow);
+    border-top-color:var(--burnt-sienna);border-radius:50%;animation:sp .7s linear infinite;
+    vertical-align:-2px;margin-right:8px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .stats{display:flex;flex-wrap:wrap;gap:14px;margin:18px 0}
+  .stat{background:#120a05;border:1px solid var(--line);border-radius:12px;padding:12px 18px;min-width:120px}
+  .stat b{display:block;font-size:26px;font-weight:600;color:var(--burnt-sienna)}
+  .stat span{font-size:12px;color:var(--grey-brown);letter-spacing:.5px}
+  .dl{display:none;gap:12px;flex-wrap:wrap;margin-top:6px}
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;margin-top:8px}
+  table{border-collapse:collapse;width:100%;font-size:13px;white-space:nowrap}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line)}
+  th{background:#120a05;color:var(--grey-brown);font-weight:500;font-size:11px;
+    letter-spacing:.5px;text-transform:uppercase;position:sticky;top:0}
+  td{color:#e8d5bd}
+  tr:last-child td{border-bottom:none}
+  .badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;
+    background:var(--dark-cork);color:var(--warm-cream)}
+  .badge.gas{background:#1d3a1d;color:#9fe09f}
+  .muted{color:var(--grey-brown)}
+  .note{font-size:12px;color:var(--grey-brown);margin-top:14px;line-height:1.6}
+  .note b{color:#d9c4ab;font-weight:500}
+  .previewnote{font-size:12px;color:var(--grey-brown);margin-top:10px}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand"><span>SYNDI<b>CAT</b></span></div>
+    <div class="tag">ВНУТРЕННИЙ ИНСТРУМЕНТ · ЛИДОГЕНЕРАЦИЯ</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <h1>База <span class="accent">АЗС и АГЗС</span> по региону</h1>
+  <p class="lead">Выбери регион — соберётся список заправок для холодного обзвона:
+    название, тип, оператор, телефон, адрес. Можно сразу исключить федеральные сети
+    (у них закупки централизованы) и скачать в Excel.</p>
+
+  <div class="panel">
+    <div class="row2">
+      <div>
+        <label>Регион</label>
+        <select id="region"></select>
+      </div>
+      <div>
+        <label>Или впиши вручную (как в OSM)</label>
+        <input type="text" id="regionManual" placeholder="напр. Красноярский край">
+      </div>
+    </div>
+
+    <div class="checks">
+      <label class="chk">
+        <input type="checkbox" id="fExFed" checked>
+        <span>Исключить федеральные сети
+          <small>Газпром / Роснефть / Лукойл / Татнефть и подобные — по умолчанию убираем</small></span>
+      </label>
+      <div class="fedlist">
+        <input type="text" id="fedWords"
+          value="газпром, роснефть, лукойл, татнефть, shell, bp, нефтегаз">
+      </div>
+      <label class="chk">
+        <input type="checkbox" id="fPhone">
+        <span>Только с телефоном
+          <small>Оставить лишь заправки, где в базе есть номер</small></span>
+      </label>
+      <label class="chk">
+        <input type="checkbox" id="fNo800">
+        <span>Убрать номера 8-800
+          <small>Горячие линии сетей — не прямой контакт владельца</small></span>
+      </label>
+    </div>
+
+    <div class="actions">
+      <button class="btn" id="go">Собрать базу</button>
+      <span class="status" id="status"></span>
+    </div>
+  </div>
+
+  <div id="results" style="display:none">
+    <div class="stats" id="stats"></div>
+    <div class="dl" id="dl">
+      <button class="btn" id="dlXlsx">⬇ Скачать Excel (.xlsx)</button>
+      <button class="btn ghost" id="dlCsv">⬇ Скачать CSV</button>
+    </div>
+    <div class="previewnote">Предпросмотр (первые 50 строк). В файл выгружаются все отфильтрованные.</div>
+    <div class="tablewrap"><table id="tbl"></table></div>
+    <div class="note">
+      <b>Источник:</b> OpenStreetMap (открытые данные, обновляются сообществом).
+      Телефоны есть не у всех точек. <b>Оборот и ИНН</b> в этой веб-версии не подтягиваются
+      (для них нужен закрытый ключ) — их даёт локальный скрипт <b>tools/parse_azs.py</b>.
+    </div>
+  </div>
+</div>
+
+<script>
+const REGIONS = [
+["Алтайский край","RU-ALT"],["Амурская область","RU-AMU"],["Архангельская область","RU-ARK"],
+["Астраханская область","RU-AST"],["Белгородская область","RU-BEL"],["Брянская область","RU-BRY"],
+["Владимирская область","RU-VLA"],["Волгоградская область","RU-VGG"],["Вологодская область","RU-VLG"],
+["Воронежская область","RU-VOR"],["Еврейская автономная область","RU-YEV"],["Забайкальский край","RU-ZAB"],
+["Ивановская область","RU-IVA"],["Иркутская область","RU-IRK"],["Кабардино-Балкарская Республика","RU-KB"],
+["Калининградская область","RU-KGD"],["Калужская область","RU-KLU"],["Камчатский край","RU-KAM"],
+["Карачаево-Черкесская Республика","RU-KC"],["Кемеровская область","RU-KEM"],["Кировская область","RU-KIR"],
+["Костромская область","RU-KOS"],["Краснодарский край","RU-KDA"],["Красноярский край","RU-KYA"],
+["Курганская область","RU-KGN"],["Курская область","RU-KRS"],["Ленинградская область","RU-LEN"],
+["Липецкая область","RU-LIP"],["Магаданская область","RU-MAG"],["Москва","RU-MOW"],
+["Московская область","RU-MOS"],["Мурманская область","RU-MUR"],["Ненецкий автономный округ","RU-NEN"],
+["Нижегородская область","RU-NIZ"],["Новгородская область","RU-NGR"],["Новосибирская область","RU-NVS"],
+["Омская область","RU-OMS"],["Оренбургская область","RU-ORE"],["Орловская область","RU-ORL"],
+["Пензенская область","RU-PNZ"],["Пермский край","RU-PER"],["Приморский край","RU-PRI"],
+["Псковская область","RU-PSK"],["Республика Адыгея","RU-AD"],["Республика Алтай","RU-AL"],
+["Республика Башкортостан","RU-BA"],["Республика Бурятия","RU-BU"],["Республика Дагестан","RU-DA"],
+["Республика Ингушетия","RU-IN"],["Республика Калмыкия","RU-KL"],["Республика Карелия","RU-KR"],
+["Республика Коми","RU-KO"],["Республика Крым","RU-CR"],["Республика Марий Эл","RU-ME"],
+["Республика Мордовия","RU-MO"],["Республика Саха (Якутия)","RU-SA"],["Республика Северная Осетия — Алания","RU-SE"],
+["Республика Татарстан","RU-TA"],["Республика Тыва","RU-TY"],["Республика Хакасия","RU-KK"],
+["Ростовская область","RU-ROS"],["Рязанская область","RU-RYA"],["Самарская область","RU-SAM"],
+["Санкт-Петербург","RU-SPE"],["Саратовская область","RU-SAR"],["Сахалинская область","RU-SAK"],
+["Свердловская область","RU-SVE"],["Севастополь","RU-SEV"],["Смоленская область","RU-SMO"],
+["Ставропольский край","RU-STA"],["Тамбовская область","RU-TAM"],["Тверская область","RU-TVE"],
+["Томская область","RU-TOM"],["Тульская область","RU-TUL"],["Тюменская область","RU-TYU"],
+["Удмуртская Республика","RU-UD"],["Ульяновская область","RU-ULY"],["Хабаровский край","RU-KHA"],
+["Ханты-Мансийский автономный округ — Югра","RU-KHM"],["Челябинская область","RU-CHE"],
+["Чеченская Республика","RU-CE"],["Чувашская Республика","RU-CU"],["Чукотский автономный округ","RU-CHU"],
+["Ямало-Ненецкий автономный округ","RU-YAN"],["Ярославская область","RU-YAR"]];
+
+const OVERPASS = ["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter"];
+const COLS = ["Название","Тип","Бренд/Оператор","Телефон","Адрес","Сайт","Координаты","Источник"];
+let allRows = [];      // всё собранное
+let currentRegion = "";
+
+// заполнить выпадашку
+const sel = document.getElementById('region');
+sel.innerHTML = '<option value="">— выбери регион —</option>' +
+  REGIONS.map(([n,c])=>`<option value="${c}" data-name="${n}">${n}</option>`).join('');
+sel.addEventListener('change',()=>{ if(sel.value) document.getElementById('regionManual').value=''; });
+
+function pickPhone(t){
+  for(const k of ["contact:phone","phone","contact:mobile","contact:phone:mobile"]){
+    if(t[k]) return t[k].split(";")[0].trim();
+  } return "";
+}
+function classify(t){
+  const lpg = t["fuel:lpg"]==="yes"||t["shop"]==="gas";
+  const cng = t["fuel:cng"]==="yes"||t["fuel:lng"]==="yes";
+  const liq = ["fuel:diesel","fuel:octane_92","fuel:octane_95","fuel:octane_98","fuel:octane_100","fuel:petrol"].some(k=>t[k]==="yes");
+  if((lpg||cng)&&liq) return "АЗС+АГЗС";
+  if(lpg||cng) return "АГЗС";
+  return "АЗС";
+}
+function pickAddr(t,region,lat,lon){
+  if(t["addr:full"]) return t["addr:full"];
+  const p=[];
+  for(const k of ["addr:city","addr:town","addr:village","addr:street","addr:housenumber"]) if(t[k]) p.push(t[k]);
+  if(p.length) return p.join(", ");
+  if(lat&&lon) return `${region} (по координатам ${(+lat).toFixed(5)}, ${(+lon).toFixed(5)})`;
+  return "";
+}
+function parseEl(el,region){
+  const t=el.tags||{};
+  const lat=el.lat||(el.center&&el.center.lat), lon=el.lon||(el.center&&el.center.lon);
+  return {
+    "Название": t.name||t.brand||t.operator||"Без названия",
+    "Тип": classify(t),
+    "Бренд/Оператор": t.operator||t.brand||"",
+    "Телефон": pickPhone(t),
+    "Адрес": pickAddr(t,region,lat,lon),
+    "Сайт": t.website||t["contact:website"]||"",
+    "Координаты": (lat&&lon)?`${lat}, ${lon}`:"",
+    "Источник": "OpenStreetMap"
+  };
+}
+
+async function overpassQuery(selector){
+  const q=`[out:json][timeout:180];area${selector}->.a;`+
+    `(node["amenity"="fuel"](area.a);way["amenity"="fuel"](area.a);`+
+    `node["shop"="gas"](area.a);way["shop"="gas"](area.a););out center tags;`;
+  let lastErr;
+  // 2 зеркала × 2 попытки — Overpass часто отвечает 504 под нагрузкой
+  for(let attempt=0;attempt<2;attempt++){
+    for(const url of OVERPASS){
+      try{
+        const r=await fetch(url,{method:"POST",body:"data="+encodeURIComponent(q),
+          headers:{"Content-Type":"application/x-www-form-urlencoded"}});
+        if(r.status===429||r.status===504){ lastErr=new Error("HTTP "+r.status); continue; }
+        if(!r.ok) throw new Error("HTTP "+r.status);
+        const j=await r.json();
+        return j.elements||[];
+      }catch(e){ lastErr=e; }
+    }
+    await new Promise(res=>setTimeout(res,2500));
+  }
+  throw lastErr||new Error("Overpass недоступен");
+}
+
+function applyFilters(){
+  const exFed=document.getElementById('fExFed').checked;
+  const onlyPhone=document.getElementById('fPhone').checked;
+  const no800=document.getElementById('fNo800').checked;
+  const words=document.getElementById('fedWords').value.toLowerCase()
+    .split(",").map(s=>s.trim()).filter(Boolean);
+  return allRows.filter(r=>{
+    if(onlyPhone && !r["Телефон"]) return false;
+    if(no800 && r["Телефон"] && r["Телефон"].replace(/\s/g,"").includes("800")) return false;
+    if(exFed){
+      const hay=(r["Название"]+" "+r["Бренд/Оператор"]).toLowerCase();
+      if(words.some(w=>hay.includes(w))) return false;
+    }
+    return true;
+  });
+}
+
+function render(){
+  const rows=applyFilters();
+  const withPhone=rows.filter(r=>r["Телефон"]).length;
+  document.getElementById('stats').innerHTML=
+    `<div class="stat"><b>${allRows.length}</b><span>всего найдено</span></div>`+
+    `<div class="stat"><b>${rows.length}</b><span>после фильтра</span></div>`+
+    `<div class="stat"><b>${withPhone}</b><span>с телефоном</span></div>`;
+  const tbl=document.getElementById('tbl');
+  const head="<tr>"+COLS.map(c=>`<th>${c}</th>`).join("")+"</tr>";
+  const body=rows.slice(0,50).map(r=>"<tr>"+COLS.map(c=>{
+    if(c==="Тип"){const g=r[c].includes("АГЗС");return `<td><span class="badge${g?' gas':''}">${r[c]}</span></td>`;}
+    const v=r[c]||'<span class="muted">—</span>';
+    return `<td>${v}</td>`;
+  }).join("")+"</tr>").join("");
+  tbl.innerHTML=head+body;
+  document.getElementById('dl').style.display = rows.length?'flex':'none';
+  document.getElementById('results').style.display='block';
+  window._filtered=rows;
+}
+
+function escQ(s){ return s.replace(/"/g,'\\"'); }
+async function collect(){
+  const manual=document.getElementById('regionManual').value.trim();
+  const code=sel.value;
+  let region, selector;
+  if(manual){
+    region=manual;
+    selector=`["name"="${escQ(manual)}"]["admin_level"="4"]`;
+  }else if(code){
+    region=sel.options[sel.selectedIndex].dataset.name;
+    selector=`["ISO3166-2"="${code}"]`;
+  }
+  const st=document.getElementById('status');
+  if(!region){ st.className="status err"; st.textContent="Выбери регион или впиши вручную."; return; }
+  currentRegion=region;
+  document.getElementById('go').disabled=true;
+  st.className="status"; st.innerHTML='<span class="spin"></span>Собираю заправки по региону «'+region+'»… (10–40 сек)';
+  try{
+    const els=await overpassQuery(selector);
+    if(!els.length){
+      st.className="status err";
+      st.textContent="Ничего не найдено. Проверь название региона (как в OSM) или впиши вручную.";
+      document.getElementById('go').disabled=false; return;
+    }
+    // парс + дедуп
+    const seen=new Set(); allRows=[];
+    for(const el of els){
+      const row=parseEl(el,region);
+      const key=row["Название"].toLowerCase()+"|"+row["Координаты"];
+      if(!seen.has(key)){ seen.add(key); allRows.push(row); }
+    }
+    st.className="status"; st.textContent="Готово: "+allRows.length+" заправок. Настрой фильтры — таблица и файл обновляются сразу.";
+    render();
+  }catch(e){
+    st.className="status err"; st.textContent="Ошибка: "+e.message+". Попробуй ещё раз через минуту (сервер OSM бывает загружен).";
+  }
+  document.getElementById('go').disabled=false;
+}
+
+function fileBase(){
+  return "azs_"+currentRegion.toLowerCase().replace(/[^a-zа-яё0-9]+/gi,"-").replace(/^-+|-+$/g,"");
+}
+function downloadXlsx(){
+  const rows=window._filtered||[];
+  if(!rows.length) return;
+  const ws=XLSX.utils.json_to_sheet(rows,{header:COLS});
+  ws['!cols']=[{wch:34},{wch:10},{wch:24},{wch:20},{wch:46},{wch:28},{wch:24},{wch:14}];
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,"АЗС и АГЗС");
+  XLSX.writeFile(wb,fileBase()+".xlsx");
+}
+function downloadCsv(){
+  const rows=window._filtered||[];
+  if(!rows.length) return;
+  const esc=v=>{v=(v==null?"":String(v));return /[",;\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+  const lines=[COLS.join(";")].concat(rows.map(r=>COLS.map(c=>esc(r[c])).join(";")));
+  const blob=new Blob(["﻿"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download=fileBase()+".csv"; a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+document.getElementById('go').addEventListener('click',collect);
+["fExFed","fPhone","fNo800"].forEach(id=>document.getElementById(id).addEventListener('change',()=>{if(allRows.length)render();}));
+document.getElementById('fedWords').addEventListener('input',()=>{if(allRows.length)render();});
+document.getElementById('dlXlsx').addEventListener('click',downloadXlsx);
+document.getElementById('dlCsv').addEventListener('click',downloadCsv);
+</script>
+</body>
+</html>
