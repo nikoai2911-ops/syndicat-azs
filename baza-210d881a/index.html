@@ -386,6 +386,9 @@ function downloadXlsx(){
   if(!rows.length) return;
   const ws=XLSX.utils.json_to_sheet(rows,{header:COLS});
   ws['!cols']=[{wch:34},{wch:10},{wch:24},{wch:20},{wch:46},{wch:28}];
+  const lastCol=XLSX.utils.encode_col(COLS.length-1); // F при 6 колонках
+  ws['!autofilter']={ref:`A1:${lastCol}${rows.length+1}`}; // фильтры в шапке
+  ws['!freeze']={xSplit:0,ySplit:1,topLeftCell:"A2",activePane:"bottomLeft",state:"frozen"};
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,"АЗС и АГЗС");
   XLSX.writeFile(wb,fileBase()+".xlsx");
