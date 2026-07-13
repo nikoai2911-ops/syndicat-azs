@@ -76,9 +76,32 @@
   .note{font-size:12px;color:var(--grey-brown);margin-top:14px;line-height:1.6}
   .note b{color:#d9c4ab;font-weight:500}
   .previewnote{font-size:12px;color:var(--grey-brown);margin-top:10px}
+  #gate{position:fixed;inset:0;z-index:9999;background:var(--studio-black);
+    display:flex;align-items:center;justify-content:center;padding:20px}
+  #gate .box{width:100%;max-width:360px;text-align:center}
+  #gate .lock{font-size:34px;margin-bottom:14px}
+  #gate h2{font-size:20px;font-weight:600;margin-bottom:6px}
+  #gate p{font-size:13px;color:var(--grey-brown);margin-bottom:22px}
+  #gate input{width:100%;background:#120a05;border:1px solid var(--cork-shadow);
+    color:var(--warm-cream);border-radius:10px;padding:14px;font-size:16px;text-align:center;
+    letter-spacing:1px;font-family:inherit}
+  #gate input:focus{outline:none;border-color:var(--burnt-sienna)}
+  #gate button{width:100%;margin-top:12px;background:var(--burnt-sienna);color:#fff;border:none;
+    border-radius:30px;padding:14px;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer}
+  #gate .err{color:#ff7a4d;font-size:13px;margin-top:12px;min-height:18px}
 </style>
 </head>
 <body>
+<div id="gate">
+  <div class="box">
+    <div class="lock">🔒</div>
+    <h2>SYNDICAT · База</h2>
+    <p>Внутренний инструмент. Введите код доступа.</p>
+    <input type="password" id="gatePw" placeholder="код доступа" autocomplete="off">
+    <button id="gateGo">Войти</button>
+    <div class="err" id="gateErr"></div>
+  </div>
+</div>
 <header>
   <div class="wrap">
     <div class="brand"><span>SYNDI<b>CAT</b></span></div>
@@ -149,6 +172,24 @@
 </div>
 
 <script>
+// ---- экран входа ----
+const PW_HASH="9f118ec2e24221277589bbfd037748ff1842fadd093014bc0b72c2dd35925a5f";
+async function sha256hex(s){
+  const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));
+  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
+}
+function openApp(){ document.getElementById('gate').style.display='none'; }
+async function tryUnlock(){
+  const v=document.getElementById('gatePw').value;
+  const h=await sha256hex(v);
+  if(h===PW_HASH){ sessionStorage.setItem('baza_ok','1'); openApp(); }
+  else{ document.getElementById('gateErr').textContent='Неверный код'; }
+}
+if(sessionStorage.getItem('baza_ok')==='1'){ openApp(); }
+document.getElementById('gateGo').addEventListener('click',tryUnlock);
+document.getElementById('gatePw').addEventListener('keydown',e=>{ if(e.key==='Enter') tryUnlock(); });
+document.getElementById('gatePw').focus();
+
 const REGIONS = [
 ["Алтайский край","RU-ALT"],["Амурская область","RU-AMU"],["Архангельская область","RU-ARK"],
 ["Астраханская область","RU-AST"],["Белгородская область","RU-BEL"],["Брянская область","RU-BRY"],
