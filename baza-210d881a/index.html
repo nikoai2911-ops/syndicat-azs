@@ -165,8 +165,10 @@
     <div class="tablewrap"><table id="tbl"></table></div>
     <div class="note">
       <b>Источник:</b> OpenStreetMap (открытые данные, обновляются сообществом).
-      Телефоны есть не у всех точек. <b>Оборот и ИНН</b> в этой веб-версии не подтягиваются
-      (для них нужен закрытый ключ) — их даёт локальный скрипт <b>tools/parse_azs.py</b>.
+      Телефоны есть не у всех точек — где пусто, жми <b>«🔍 найти телефон»</b> в колонке
+      2ГИС: откроется карточка заправки на 2gis.ru рядом с её точкой, там будет актуальный номер.
+      В Excel эта колонка — кликабельная ссылка. <b>Оборот и ИНН</b> в веб-версии не тянутся
+      (нужен закрытый ключ) — их даёт локальный скрипт <b>tools/parse_azs.py</b>.
     </div>
   </div>
 </div>
@@ -222,7 +224,7 @@ const REGIONS = [
 ["Ямало-Ненецкий автономный округ","RU-YAN"],["Ярославская область","RU-YAR"]];
 
 const OVERPASS = ["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter"];
-const COLS = ["Название","Тип","Телефон","Адрес","Сайт"];
+const COLS = ["Название","Тип","Телефон","Адрес","Сайт","2ГИС"];
 let allRows = [];      // всё собранное
 let currentRegion = "";
 
@@ -253,16 +255,24 @@ function pickAddr(t,region,lat,lon){
   if(lat&&lon) return `${region} (по координатам ${(+lat).toFixed(5)}, ${(+lon).toFixed(5)})`;
   return "";
 }
+function gis2Url(name,region,lat,lon){
+  const q=encodeURIComponent(name&&name!=="Без названия"?name:("АЗС "+region));
+  return (lat&&lon)
+    ? `https://2gis.ru/search/${q}?m=${lon}%2C${lat}%2F16`
+    : `https://2gis.ru/search/${encodeURIComponent((name||"АЗС")+" "+region)}`;
+}
 function parseEl(el,region){
   const t=el.tags||{};
   const lat=el.lat||(el.center&&el.center.lat), lon=el.lon||(el.center&&el.center.lon);
+  const name=t.name||t.brand||t.operator||"Без названия";
   return {
-    "Название": t.name||t.brand||t.operator||"Без названия",
+    "Название": name,
     "Тип": classify(t),
     "Бренд/Оператор": t.operator||t.brand||"",
     "Телефон": pickPhone(t),
     "Адрес": pickAddr(t,region,lat,lon),
     "Сайт": t.website||t["contact:website"]||"",
+    "2ГИС": gis2Url(name,region,lat,lon),
     "Координаты": (lat&&lon)?`${lat}, ${lon}`:""
   };
 }
@@ -330,6 +340,7 @@ function render(){
   const head="<tr>"+COLS.map(c=>`<th>${c}</th>`).join("")+"</tr>";
   const body=rows.slice(0,50).map(r=>"<tr>"+COLS.map(c=>{
     if(c==="Тип"){const g=r[c].includes("АГЗС");return `<td><span class="badge${g?' gas':''}">${r[c]}</span></td>`;}
+    if(c==="2ГИС"){return `<td><a href="${r[c]}" target="_blank" rel="noopener" style="color:var(--burnt-sienna);white-space:nowrap">🔍 найти телефон</a></td>`;}
     const v=r[c]||'<span class="muted">—</span>';
     return `<td>${v}</td>`;
   }).join("")+"</tr>").join("");
@@ -385,8 +396,17 @@ function downloadXlsx(){
   const rows=window._filtered||[];
   if(!rows.length) return;
   const ws=XLSX.utils.json_to_sheet(rows,{header:COLS});
-  ws['!cols']=[{wch:34},{wch:10},{wch:20},{wch:46},{wch:28}];
-  const lastCol=XLSX.utils.encode_col(COLS.length-1); // F при 6 колонках
+  ws['!cols']=[{wch:34},{wch:10},{wch:20},{wch:46},{wch:28},{wch:16}];
+  // колонку 2ГИС делаем кликабельной гиперссылкой с коротким текстом
+  const gisCol=COLS.indexOf("2ГИС");
+  if(gisCol>=0){
+    for(let i=0;i<rows.length;i++){
+      const url=rows[i]["2ГИС"]; if(!url) continue;
+      const addr=XLSX.utils.encode_cell({r:i+1,c:gisCol});
+      ws[addr]={t:"s",v:"🔍 2ГИС",l:{Target:url,Tooltip:"Открыть в 2ГИС"}};
+    }
+  }
+  const lastCol=XLSX.utils.encode_col(COLS.length-1);
   ws['!autofilter']={ref:`A1:${lastCol}${rows.length+1}`}; // фильтры в шапке
   ws['!freeze']={xSplit:0,ySplit:1,topLeftCell:"A2",activePane:"bottomLeft",state:"frozen"};
   const wb=XLSX.utils.book_new();
