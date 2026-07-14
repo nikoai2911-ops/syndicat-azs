@@ -158,9 +158,9 @@
   <div id="results" style="display:none">
     <div class="stats" id="stats"></div>
     <div class="dl" id="dl">
-      <button class="btn" id="dlSheets">📋 Копировать для Google Таблиц</button>
-      <a class="btn ghost" href="https://sheets.new" target="_blank" rel="noopener">➕ Открыть Google Таблицу</a>
-      <button class="btn ghost" id="dlXlsx">⬇ Excel (.xlsx)</button>
+      <button class="btn" id="dlSend">⬆ Отправить в Google Таблицу</button>
+      <button class="btn ghost" id="dlSheets">📋 Копировать</button>
+      <button class="btn ghost" id="dlXlsx">⬇ Excel</button>
       <button class="btn ghost" id="dlCsv">⬇ CSV</button>
     </div>
     <div class="previewnote" id="sheetsHint">Предпросмотр (первые 50 строк). В файл/буфер выгружаются все отфильтрованные.</div>
@@ -226,6 +226,9 @@ const REGIONS = [
 ["Ямало-Ненецкий автономный округ","RU-YAN"],["Ярославская область","RU-YAR"]];
 
 const OVERPASS = ["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter"];
+// Google Таблица (Apps Script веб-приложение)
+const GSHEET_URL="https://script.google.com/macros/s/AKfycbyqzUZQIFRT8y2UE71SsiveI8RuIkx9imA_22rxDrUpcL5gZX4wWjaLUSZaZweRHsQoRw/exec";
+const GSHEET_SECRET="sd-baza-2026";
 const COLS = ["Название","Тип","Телефон","Адрес","Сайт","2ГИС"];
 let allRows = [];      // всё собранное
 let currentRegion = "";
@@ -448,9 +451,30 @@ async function copyForSheets(){
   }
 }
 
+// Отправка в общую Google Таблицу (вкладка на регион, дедуп, пометки сохраняются).
+async function sendToSheet(){
+  const rows=window._filtered||[];
+  if(!rows.length) return;
+  const hint=document.getElementById('sheetsHint');
+  const btn=document.getElementById('dlSend');
+  btn.disabled=true;
+  hint.innerHTML=`<span class="spin"></span>Отправляю «${currentRegion}» в Google Таблицу…`;
+  try{
+    await fetch(GSHEET_URL,{method:'POST',mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({secret:GSHEET_SECRET,region:currentRegion,cols:COLS,rows})});
+    hint.innerHTML=`✅ Отправлено в Google Таблицу — вкладка «<b>${currentRegion}</b>» (${rows.length} строк). `+
+      `Новые заправки добавятся, а пометки в таблице не тронутся.`;
+  }catch(e){
+    hint.textContent="Не удалось отправить: "+e.message+". Попробуй ещё раз.";
+  }
+  btn.disabled=false;
+}
+
 document.getElementById('go').addEventListener('click',collect);
 ["fExFed","fPhone","fNo800"].forEach(id=>document.getElementById(id).addEventListener('change',()=>{if(allRows.length)render();}));
 document.getElementById('fedWords').addEventListener('input',()=>{if(allRows.length)render();});
+document.getElementById('dlSend').addEventListener('click',sendToSheet);
 document.getElementById('dlSheets').addEventListener('click',copyForSheets);
 document.getElementById('dlXlsx').addEventListener('click',downloadXlsx);
 document.getElementById('dlCsv').addEventListener('click',downloadCsv);
