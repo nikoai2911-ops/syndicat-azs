@@ -256,10 +256,13 @@ function pickAddr(t,region,lat,lon){
   return "";
 }
 function gis2Url(name,region,lat,lon){
-  const q=encodeURIComponent(name&&name!=="Без названия"?name:("АЗС "+region));
+  // «заправка» 2ГИС распознаёт как рубрику АЗС (без остановок/моек/мусора).
+  // Для безымянных и обобщённых названий ищем по рубрике, для брендов — по имени.
+  const generic = !name || name==="Без названия" || /^\s*(азс|агзс|заправ|topliv|fuel)/i.test(name);
+  const term = generic ? "заправка" : name;
   return (lat&&lon)
-    ? `https://2gis.ru/search/${q}?m=${lon}%2C${lat}%2F16`
-    : `https://2gis.ru/search/${encodeURIComponent((name||"АЗС")+" "+region)}`;
+    ? `https://2gis.ru/search/${encodeURIComponent(term)}?m=${lon}%2C${lat}%2F16`
+    : `https://2gis.ru/search/${encodeURIComponent(term+" "+region)}`;
 }
 function parseEl(el,region){
   const t=el.tags||{};
