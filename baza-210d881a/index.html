@@ -158,10 +158,12 @@
   <div id="results" style="display:none">
     <div class="stats" id="stats"></div>
     <div class="dl" id="dl">
-      <button class="btn" id="dlXlsx">⬇ Скачать Excel (.xlsx)</button>
-      <button class="btn ghost" id="dlCsv">⬇ Скачать CSV</button>
+      <button class="btn" id="dlSheets">📋 Копировать для Google Таблиц</button>
+      <a class="btn ghost" href="https://sheets.new" target="_blank" rel="noopener">➕ Открыть Google Таблицу</a>
+      <button class="btn ghost" id="dlXlsx">⬇ Excel (.xlsx)</button>
+      <button class="btn ghost" id="dlCsv">⬇ CSV</button>
     </div>
-    <div class="previewnote">Предпросмотр (первые 50 строк). В файл выгружаются все отфильтрованные.</div>
+    <div class="previewnote" id="sheetsHint">Предпросмотр (первые 50 строк). В файл/буфер выгружаются все отфильтрованные.</div>
     <div class="tablewrap"><table id="tbl"></table></div>
     <div class="note">
       <b>Источник:</b> OpenStreetMap (открытые данные, обновляются сообществом).
@@ -427,9 +429,29 @@ function downloadCsv(){
   URL.revokeObjectURL(a.href);
 }
 
+// Копирование для Google Таблиц: TSV (табы) — вставляется по колонкам через Ctrl+V.
+async function copyForSheets(){
+  const rows=window._filtered||[];
+  if(!rows.length) return;
+  const clean=v=>String(v==null?"":v).replace(/[\t\r\n]+/g," ").trim();
+  const tsv=[COLS.join("\t")].concat(rows.map(r=>COLS.map(c=>clean(r[c])).join("\t"))).join("\n");
+  const hint=document.getElementById('sheetsHint');
+  try{
+    await navigator.clipboard.writeText(tsv);
+    hint.innerHTML=`✅ Скопировано <b>${rows.length}</b> строк. Открой Google Таблицу и вставь: <b>Ctrl+V</b> (Cmd+V на Mac).`;
+  }catch(e){
+    // запасной путь, если буфер недоступен
+    const ta=document.createElement('textarea'); ta.value=tsv; document.body.appendChild(ta);
+    ta.select(); try{document.execCommand('copy');}catch(_){}
+    ta.remove();
+    hint.innerHTML=`✅ Скопировано <b>${rows.length}</b> строк. Вставь в Google Таблицу: <b>Ctrl+V</b>.`;
+  }
+}
+
 document.getElementById('go').addEventListener('click',collect);
 ["fExFed","fPhone","fNo800"].forEach(id=>document.getElementById(id).addEventListener('change',()=>{if(allRows.length)render();}));
 document.getElementById('fedWords').addEventListener('input',()=>{if(allRows.length)render();});
+document.getElementById('dlSheets').addEventListener('click',copyForSheets);
 document.getElementById('dlXlsx').addEventListener('click',downloadXlsx);
 document.getElementById('dlCsv').addEventListener('click',downloadCsv);
 </script>
