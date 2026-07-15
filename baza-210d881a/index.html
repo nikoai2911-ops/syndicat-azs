@@ -230,7 +230,7 @@ const OVERPASS = ["https://overpass-api.de/api/interpreter","https://overpass.ku
 // Google Таблица (Apps Script веб-приложение)
 const GSHEET_URL="https://script.google.com/macros/s/AKfycbyqzUZQIFRT8y2UE71SsiveI8RuIkx9imA_22rxDrUpcL5gZX4wWjaLUSZaZweRHsQoRw/exec";
 const GSHEET_SECRET="sd-baza-2026";
-const COLS = ["Название","Тип","Телефон","Адрес","Сайт","2ГИС"];
+const COLS = ["Название","Тип","Телефон","Email","Адрес","Сайт","2ГИС"];
 let allRows = [];      // всё собранное
 let currentRegion = "";
 
@@ -242,6 +242,11 @@ sel.addEventListener('change',()=>{ if(sel.value) document.getElementById('regio
 
 function pickPhone(t){
   for(const k of ["contact:phone","phone","contact:mobile","contact:phone:mobile"]){
+    if(t[k]) return t[k].split(";")[0].trim();
+  } return "";
+}
+function pickEmail(t){
+  for(const k of ["contact:email","email"]){
     if(t[k]) return t[k].split(";")[0].trim();
   } return "";
 }
@@ -279,6 +284,7 @@ function parseEl(el,region){
     "Тип": classify(t),
     "Бренд/Оператор": t.operator||t.brand||"",
     "Телефон": pickPhone(t),
+    "Email": pickEmail(t),
     "Адрес": pickAddr(t,region,lat,lon),
     "Сайт": t.website||t["contact:website"]||"",
     "2ГИС": gis2Url(name,region,lat,lon),
@@ -405,7 +411,7 @@ function downloadXlsx(){
   const rows=window._filtered||[];
   if(!rows.length) return;
   const ws=XLSX.utils.json_to_sheet(rows,{header:COLS});
-  ws['!cols']=[{wch:34},{wch:10},{wch:20},{wch:46},{wch:28},{wch:16}];
+  ws['!cols']=[{wch:34},{wch:10},{wch:20},{wch:28},{wch:46},{wch:28},{wch:16}];
   // колонку 2ГИС делаем кликабельной гиперссылкой с коротким текстом
   const gisCol=COLS.indexOf("2ГИС");
   if(gisCol>=0){
