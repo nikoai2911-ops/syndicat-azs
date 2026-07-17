@@ -297,17 +297,20 @@ async function overpassQuery(selector){
     `(node["amenity"="fuel"](area.a);way["amenity"="fuel"](area.a);`+
     `node["shop"="gas"](area.a);way["shop"="gas"](area.a););out center tags;`;
   let lastErr;
-  // 2 зеркала × 2 попытки — Overpass часто отвечает 504 под нагрузкой
+  // 2 зеркала × 2 попытки, у каждого запроса тайм-аут 75с (иначе висит вечно)
   for(let attempt=0;attempt<2;attempt++){
     for(const url of OVERPASS){
+      const ctrl=new AbortController();
+      const to=setTimeout(()=>ctrl.abort(), 75000);
       try{
         const r=await fetch(url,{method:"POST",body:"data="+encodeURIComponent(q),
-          headers:{"Content-Type":"application/x-www-form-urlencoded"}});
+          headers:{"Content-Type":"application/x-www-form-urlencoded"}, signal:ctrl.signal});
         if(r.status===429||r.status===504){ lastErr=new Error("HTTP "+r.status); continue; }
         if(!r.ok) throw new Error("HTTP "+r.status);
         const j=await r.json();
         return j.elements||[];
-      }catch(e){ lastErr=e; }
+      }catch(e){ lastErr = (e.name==='AbortError') ? new Error("тайм-аут (сервер OSM не ответил за 75с)") : e; }
+      finally{ clearTimeout(to); }
     }
     await new Promise(res=>setTimeout(res,2500));
   }
