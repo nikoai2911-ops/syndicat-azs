@@ -314,7 +314,10 @@
       "Bash(command -v pdftoppm)",
       "Bash(python3 -m pip install --quiet pymupdf)",
       "WebFetch(domain:sipuni.com)",
-      "WebFetch(domain:vats.megafon.ru)"
+      "WebFetch(domain:vats.megafon.ru)",
+      "Bash(dig +short sd-kt.ru MX)",
+      "Bash(dig +short sd-kt.ru TXT)",
+      "Bash(curl -sI https://sd-kt.ru)"
     ]
   }
 }
