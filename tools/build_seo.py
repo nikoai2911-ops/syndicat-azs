@@ -14,7 +14,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE = "https://sd-kt.ru"
 DATA = os.path.join(ROOT, "catalog-data.js")
 
-SECROOT = {"azs": "toplivorazdatochnoe-oborudovanie", "agzs": "gazorazdatochnoe-oborudovanie"}
+SECROOT = {"azs": "toplivorazdatochnoe-oborudovanie", "agzs": "gazorazdatochnoe-oborudovanie", "ezs": "elektrozaryadnye-stancii"}
 
 TR = {
  'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'e','ж':'zh','з':'z','и':'i',
@@ -48,10 +48,12 @@ prods = C['products']
 catbyu = {c['u']: c for c in cats}
 
 def section_of(c):
-    return 'agzs' if (c or '').startswith(SECROOT['agzs']) else 'azs'
+    if (c or '').startswith(SECROOT['agzs']): return 'agzs'
+    if (c or '').startswith(SECROOT['ezs']): return 'ezs'
+    return 'azs'
 
 def sec_word(c):
-    return 'АГЗС' if section_of(c) == 'agzs' else 'АЗС'
+    return {'agzs': 'АГЗС', 'ezs': 'ЭЗС'}.get(section_of(c), 'АЗС')
 
 def cat_chain(cu):
     """список категорий от корня к листу"""

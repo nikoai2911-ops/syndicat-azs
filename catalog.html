@@ -349,12 +349,13 @@
   <div class="page-head">
     <div class="crumbs"><a href="index.html">Главная</a> / Каталог</div>
     <h1>Каталог оборудования</h1>
-    <p class="lead">Выберите раздел — топливораздаточное (АЗС) или газораздаточное (АГЗС). Откройте карточку — внутри подбор по параметрам (диаметр, скоба, DN), характеристики и запрос цены.</p>
+    <p class="lead">Выберите раздел — топливораздаточное (АЗС), газораздаточное (АГЗС) или электрозарядные станции (ЭЗС). Откройте карточку — внутри подбор по параметрам (диаметр, скоба, DN), характеристики и запрос цены.</p>
   </div>
 
   <div class="sectabs" id="sectabs">
     <button class="sectab active" data-sec="azs">Топливораздаточное · АЗС <span>1034</span></button>
     <button class="sectab" data-sec="agzs">Газораздаточное · АГЗС <span>136</span></button>
+    <button class="sectab" data-sec="ezs">Электрозарядки · ЭЗС <span>21</span></button>
   </div>
 
   <div class="toolbar">
@@ -435,7 +436,7 @@
   var C=window.CATALOG, cats=C.cats, prods=C.products;
   var PAGE=48, PIST="toplivorazdatochnoe-oborudovanie/toplivorazdatochnye-pistolety";
   var AXES=["Диаметр носика","Тип скобы","Диаметр условного прохода DN (ДУ)","Резьба","Тип жидкости","Количество рукавов","Питание насоса","Тип индикации","Класс точности","Производительность","Мощность двигателя","Количество видов топлива"];
-  var SECROOT={azs:"toplivorazdatochnoe-oborudovanie",agzs:"gazorazdatochnoe-oborudovanie"};
+  var SECROOT={azs:"toplivorazdatochnoe-oborudovanie",agzs:"gazorazdatochnoe-oborudovanie",ezs:"elektrozaryadnye-stancii"};
   // категории-близнецы: один тип оборудования в обоих разделах (не взаимозаменяемы)
   var PAIRS=[
     {azs:"toplivorazdatochnoe-oborudovanie/rezervuarnaya-obvyazka", agzs:"gazorazdatochnoe-oborudovanie/zapornaya-armatura-sug"},
@@ -574,8 +575,8 @@
   function cnt(key){return prods.filter(function(p){return p.c===key||p.c.indexOf(key+'/')===0}).length}
   function hasKids(key){return cats.some(function(c){return c.p===key})}
   function updateHead(){
-    var secName=state.section==='azs'?'Топливораздаточное оборудование':'Газораздаточное оборудование';
-    var secTag=state.section==='azs'?'АЗС':'АГЗС';
+    var secName=state.section==='azs'?'Топливораздаточное оборудование':(state.section==='ezs'?'Электрозарядные станции':'Газораздаточное оборудование');
+    var secTag=state.section==='azs'?'АЗС':(state.section==='ezs'?'ЭЗС':'АГЗС');
     var h1=document.querySelector('.page-head h1'), cr=document.querySelector('.crumbs'), lead=document.querySelector('.page-head .lead');
     var tabs=document.getElementById('sectabs');
     if(lead) lead.style.display='none';
@@ -583,18 +584,19 @@
       var c2=state.cat?cats.filter(function(x){return x.u===state.cat})[0]:null;
       h1.textContent = c2 ? c2.n : 'Быстроизнашивающиеся детали';
       if(tabs) tabs.style.display='flex';
-      var aS=document.querySelector('.sectab[data-sec=azs] span'), gS=document.querySelector('.sectab[data-sec=agzs] span');
+      var aS=document.querySelector('.sectab[data-sec=azs] span'), gS=document.querySelector('.sectab[data-sec=agzs] span'), eS=document.querySelector('.sectab[data-sec=ezs] span');
       if(aS)aS.textContent=prods.filter(function(p){return p.w&&p.c.indexOf(SECROOT.azs)===0}).length;
       if(gS)gS.textContent=prods.filter(function(p){return p.w&&p.c.indexOf(SECROOT.agzs)===0}).length;
+      if(eS)eS.textContent=prods.filter(function(p){return p.w&&p.c.indexOf(SECROOT.ezs)===0}).length;
       cr.innerHTML='<a href="index.html">Главная</a> / <a href="catalog.html">Каталог</a> / Быстроизнашивающиеся детали ('+secTag+')'+(c2?' / '+esc(c2.n):'');
       return;
     }
     var pr = state.cat ? pairOf(state.cat) : null;
     // вкладки видны: на входе в раздел ИЛИ в категории-близнеце (где есть версия для обоих разделов)
     if(tabs) tabs.style.display = (!state.cat || pr) ? 'flex' : 'none';
-    var aSp=document.querySelector('.sectab[data-sec=azs] span'), gSp=document.querySelector('.sectab[data-sec=agzs] span');
-    if(pr){ if(aSp)aSp.textContent=cnt(pr.azs); if(gSp)gSp.textContent=cnt(pr.agzs); }
-    else { if(aSp)aSp.textContent=cnt(SECROOT.azs); if(gSp)gSp.textContent=cnt(SECROOT.agzs); }
+    var aSp=document.querySelector('.sectab[data-sec=azs] span'), gSp=document.querySelector('.sectab[data-sec=agzs] span'), eSp=document.querySelector('.sectab[data-sec=ezs] span');
+    if(pr){ if(aSp)aSp.textContent=cnt(pr.azs); if(gSp)gSp.textContent=cnt(pr.agzs); if(eSp)eSp.textContent=cnt(SECROOT.ezs); }
+    else { if(aSp)aSp.textContent=cnt(SECROOT.azs); if(gSp)gSp.textContent=cnt(SECROOT.agzs); if(eSp)eSp.textContent=cnt(SECROOT.ezs); }
     if(state.cat){
       var c=cats.filter(function(x){return x.u===state.cat})[0];
       h1.textContent=c?c.n:secName;
@@ -759,9 +761,9 @@
     if(op){ openProduct(+op.dataset.open); return; }
     if(e.target.closest('#emAll')){
       var qo=qObj(); if(!qo) return;
-      var na=0,ng=0;
-      prods.forEach(function(p,i){ if(!qTest(qo,i))return; if(p.c.indexOf(SECROOT.azs)===0)na++; else ng++; });
-      state.section = ng>na ? 'agzs':'azs';
+      var na=0,ng=0,ne=0;
+      prods.forEach(function(p,i){ if(!qTest(qo,i))return; if(p.c.indexOf(SECROOT.azs)===0)na++; else if(p.c.indexOf(SECROOT.ezs)===0)ne++; else ng++; });
+      state.section = (ne>na&&ne>ng) ? 'ezs' : (ng>na ? 'agzs':'azs');
       state.cat=''; state.brand=''; state.wear=false; state.limit=PAGE; bsel.value='';
       document.querySelectorAll('.sectab').forEach(function(x){x.classList.toggle('active',x.dataset.sec===state.section)});
       buildSide(); render();
@@ -929,7 +931,7 @@
 
   // ---- живые подсказки поиска ----
   var sugEl=document.getElementById('sug'), searchEl=document.getElementById('search');
-  function secTagOf(c){return (c||'').indexOf(SECROOT.agzs)===0?'АГЗС':'АЗС';}
+  function secTagOf(c){return (c||'').indexOf(SECROOT.agzs)===0?'АГЗС':((c||'').indexOf(SECROOT.ezs)===0?'ЭЗС':'АЗС');}
   function closeSug(){sugEl.classList.remove('open');sugEl.innerHTML='';}
   function buildSug(qraw){
     var q=(qraw||'').trim();
@@ -983,7 +985,7 @@
     if((t=e.target.closest('[data-sp]'))){ closeSug(); openProduct(+t.dataset.sp); return; }
     if((t=e.target.closest('[data-sc]'))){
       var u=t.dataset.sc;
-      state.section = u.indexOf(SECROOT.agzs)===0?'agzs':'azs';
+      state.section = u.indexOf(SECROOT.agzs)===0?'agzs':(u.indexOf(SECROOT.ezs)===0?'ezs':'azs');
       state.wear=false; state.cat=u; state.brand=''; bsel.value='';
       state.q=''; searchEl.value=''; state.limit=PAGE;
       document.querySelectorAll('.sectab').forEach(function(x){x.classList.toggle('active',x.dataset.sec===state.section)});
@@ -1029,8 +1031,8 @@
     var params=new URLSearchParams(location.search);
     var pcat=params.get('cat'), psec=params.get('sec'), pwear=params.get('wear');
     if(pwear==='azs'||pwear==='agzs'){ state.wear=true; state.section=pwear; }
-    else if(pcat){ state.cat=pcat; state.section=pcat.indexOf('gazorazdatochnoe')===0?'agzs':'azs'; }
-    else if(psec==='azs'||psec==='agzs'){ state.section=psec; }
+    else if(pcat){ state.cat=pcat; state.section=pcat.indexOf('gazorazdatochnoe')===0?'agzs':(pcat.indexOf('elektrozaryadnye')===0?'ezs':'azs'); }
+    else if(psec==='azs'||psec==='agzs'||psec==='ezs'){ state.section=psec; }
     var pbrand=params.get('brand'), pq=params.get('q'), psort=params.get('sort');
     if(pbrand){ state.brand=pbrand; bsel.value=pbrand; }
     if(pq){ state.q=pq; searchEl.value=pq; }
