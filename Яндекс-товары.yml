@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<yml_catalog date="2026-07-18 00:00">
+  <shop>
+    <name>SYNDICAT</name>
+    <company>SYNDICAT</company>
+    <url>https://sd-kt.ru/</url>
+    <currencies><currency id="RUB" rate="1"/></currencies>
+    <categories>
+      <category id="1">Комплектующие к насосам FD-150</category>
+      <category id="2">Комплектующие к насосам Z-2000</category>
+      <category id="3">Запорная арматура СУГ</category>
+      <category id="4">Комплектующие к насосам</category>
+    </categories>
+    <offers>
+      <offer id="0023" available="true">
+        <name>Торцевое уплотнение для насоса Corken FD-150 (аналог) арт.52421Х6</name>
+        <url>https://sd-kt.ru/p/torcevoe-uplotnenie-dlya-nasosa-corken-fd-150-analog-art-52421h6.html</url>
+        <price>11500</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>1</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-044.png</picture>
+        <description>Торцевое уплотнение для насоса Corken FD-150 (аналог) арт.52421Х6. Комплектующие к насосам FD-150 для АЗС и АГЗС. Проверенный аналог. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="0028" available="true">
+        <name>Торцевое уплотнение для насоса Corken Z-2000 (аналог) арт.4431ХА2</name>
+        <url>https://sd-kt.ru/p/torcevoe-uplotnenie-dlya-nasosa-corken-z-2000-analog-art-4431ha2.html</url>
+        <price>12500</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>2</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-046.png</picture>
+        <description>Торцевое уплотнение для насоса Corken Z-2000 (аналог) арт.4431ХА2. Комплектующие к насосам Z-2000 для АЗС и АГЗС. Проверенный аналог. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="0029" available="true">
+        <name>Подшипник 2759 для насоса FD-150 (аналог)</name>
+        <url>https://sd-kt.ru/p/podshipnik-2759-dlya-nasosa-fd-150-analog.html</url>
+        <price>2500</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>1</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-042.png</picture>
+        <description>Подшипник 2759 для насоса FD-150 (аналог). Комплектующие к насосам FD-150 для АЗС и АГЗС. Проверенный аналог. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="0030" available="true">
+        <name>Вал насоса FD-150</name>
+        <url>https://sd-kt.ru/p/val-nasosa-fd-150.html</url>
+        <price>6890</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>1</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-036.png</picture>
+        <vendor>Corken (США)</vendor>
+        <description>Вал насоса FD-150. Комплектующие к насосам FD-150 для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="0037" available="true">
+        <name>Вихревое колесо FD-150 Бронза арт.4250</name>
+        <url>https://sd-kt.ru/p/vihrevoe-koleso-fd-150-bronza-art-4250.html</url>
+        <price>18000</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>1</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-030.png</picture>
+        <vendor>Corken (США)</vendor>
+        <description>Вихревое колесо FD-150 Бронза арт.4250. Комплектующие к насосам FD-150 для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1189" available="true">
+        <name>Рабочее колесо насоса FD-150 аналог латунь арт.4250</name>
+        <url>https://sd-kt.ru/p/rabochee-koleso-nasosa-fd-150-analog-latun-art-4250.html</url>
+        <price>14300</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>1</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-030.png</picture>
+        <description>Рабочее колесо насоса FD-150 аналог латунь арт.4250. Комплектующие к насосам FD-150 для АЗС и АГЗС. Проверенный аналог. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1157" available="true">
+        <name>Ротор насоса FD-150 аналог Биметаллический арт.4250</name>
+        <url>https://sd-kt.ru/p/rotor-nasosa-fd-150-analog-bimetallicheskiy-art-4250.html</url>
+        <price>16250</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>1</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-028.png</picture>
+        <description>Ротор насоса FD-150 аналог Биметаллический арт.4250. Комплектующие к насосам FD-150 для АЗС и АГЗС. Проверенный аналог. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1158" available="true">
+        <name>Муфта насоса FD-150 ленточная</name>
+        <url>https://sd-kt.ru/p/mufta-nasosa-fd-150-lentochnaya.html</url>
+        <price>6500</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>1</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-034.png</picture>
+        <description>Муфта насоса FD-150 ленточная. Комплектующие к насосам FD-150 для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1159" available="true">
+        <name>Муфта насоса FD-150</name>
+        <url>https://sd-kt.ru/p/mufta-nasosa-fd-150.html</url>
+        <price>7200</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>1</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-038.png</picture>
+        <description>Муфта насоса FD-150. Комплектующие к насосам FD-150 для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1160" available="true">
+        <name>Муфта насоса Z-2000</name>
+        <url>https://sd-kt.ru/p/mufta-nasosa-z-2000.html</url>
+        <price>8450</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>2</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-038.png</picture>
+        <description>Муфта насоса Z-2000. Комплектующие к насосам Z-2000 для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1161" available="true">
+        <name>Шпонка насоса FD-150 6,35 мм</name>
+        <url>https://sd-kt.ru/p/shponka-nasosa-fd-150-6-35-mm.html</url>
+        <price>700</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>1</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-048.png</picture>
+        <description>Шпонка насоса FD-150 6,35 мм. Комплектующие к насосам FD-150 для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1162" available="true">
+        <name>Стопорные кольца ротора насоса FD-150 0,5 мм</name>
+        <url>https://sd-kt.ru/p/stopornye-kolca-rotora-nasosa-fd-150-0-5-mm.html</url>
+        <price>350</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>1</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-050.png</picture>
+        <description>Стопорные кольца ротора насоса FD-150 0,5 мм. Комплектующие к насосам FD-150 для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1163" available="true">
+        <name>Кольцо резиновое крышки насоса FD-150</name>
+        <url>https://sd-kt.ru/p/kolco-rezinovoe-kryshki-nasosa-fd-150.html</url>
+        <price>300</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>1</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-052.png</picture>
+        <description>Кольцо резиновое крышки насоса FD-150. Комплектующие к насосам FD-150 для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1164" available="true">
+        <name>Кольцо резиновое обоймы насоса FD-150</name>
+        <url>https://sd-kt.ru/p/kolco-rezinovoe-oboymy-nasosa-fd-150.html</url>
+        <price>250</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>1</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-054.png</picture>
+        <description>Кольцо резиновое обоймы насоса FD-150. Комплектующие к насосам FD-150 для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1165" available="true">
+        <name>Кольцо резиновое вала насоса FD-150</name>
+        <url>https://sd-kt.ru/p/kolco-rezinovoe-vala-nasosa-fd-150.html</url>
+        <price>250</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>1</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-054.png</picture>
+        <description>Кольцо резиновое вала насоса FD-150. Комплектующие к насосам FD-150 для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1187" available="true">
+        <name>Узел корпуса уплотнения насоса Corken FD-150</name>
+        <url>https://sd-kt.ru/p/uzel-korpusa-uplotneniya-nasosa-corken-fd-150.html</url>
+        <price>2100</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>1</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/art-1187.jpg</picture>
+        <description>Узел корпуса уплотнения насоса Corken FD-150. Комплектующие к насосам FD-150 для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1188" available="true">
+        <name>Уплотнение консистентной смазки (сальник) насоса FD-150</name>
+        <url>https://sd-kt.ru/p/uplotnenie-konsistentnoy-smazki-salnik-nasosa-fd-150.html</url>
+        <price>1700</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>1</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/art-1188.jpg</picture>
+        <description>Уплотнение консистентной смазки (сальник) насоса FD-150. Комплектующие к насосам FD-150 для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1166" available="true">
+        <name>Цилиндр насоса Z-2000 аналог арт. 4414</name>
+        <url>https://sd-kt.ru/p/cilindr-nasosa-z-2000-analog-art-4414.html</url>
+        <price>18000</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>2</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-058.png</picture>
+        <description>Цилиндр насоса Z-2000 аналог арт. 4414. Комплектующие к насосам Z-2000 для АЗС и АГЗС. Проверенный аналог. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1167" available="true">
+        <name>Муфта насоса Z-2000 ленточная</name>
+        <url>https://sd-kt.ru/p/mufta-nasosa-z-2000-lentochnaya.html</url>
+        <price>7800</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>2</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-060.png</picture>
+        <description>Муфта насоса Z-2000 ленточная. Комплектующие к насосам Z-2000 для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1168" available="true">
+        <name>Вал ротор насоса Z-2000 аналог арт.4430-X2R</name>
+        <url>https://sd-kt.ru/p/val-rotor-nasosa-z-2000-analog-art-4430-x2r.html</url>
+        <price>28000</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>2</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-062.png</picture>
+        <description>Вал ротор насоса Z-2000 аналог арт.4430-X2R. Комплектующие к насосам Z-2000 для АЗС и АГЗС. Проверенный аналог. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1169" available="true">
+        <name>Комплект лопаток и толкателей насоса Z2000 арт.4428 4262-X</name>
+        <url>https://sd-kt.ru/p/komplekt-lopatok-i-tolkateley-nasosa-z2000-art-4428-4262-x.html</url>
+        <price>10400</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>2</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-066.png</picture>
+        <description>Комплект лопаток и толкателей насоса Z2000 арт.4428 4262-X. Комплектующие к насосам Z-2000 для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1170" available="true">
+        <name>Соединитель сливного рукав ду38 М60</name>
+        <url>https://sd-kt.ru/p/soedinitel-slivnogo-rukav-du38-m60.html</url>
+        <price>1500</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>3</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-068.png</picture>
+        <description>Соединитель сливного рукав ду38 М60. Запорная арматура СУГ для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1171" available="true">
+        <name>Переходник 6ACME 1¾&quot;(ш) М60х4L(г)</name>
+        <url>https://sd-kt.ru/p/perehodnik-6acme-1-sh-m60h4l-g.html</url>
+        <price>1900</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>3</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-070.png</picture>
+        <description>Переходник 6ACME 1¾&quot;(ш) М60х4L(г). Запорная арматура СУГ для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1172" available="true">
+        <name>Заглушка М60</name>
+        <url>https://sd-kt.ru/p/zaglushka-m60.html</url>
+        <price>1500</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>3</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-072.png</picture>
+        <description>Заглушка М60. Запорная арматура СУГ для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1173" available="true">
+        <name>Комплект для установки запорного крана на рукав для слива М60</name>
+        <url>https://sd-kt.ru/p/komplekt-dlya-ustanovki-zapornogo-krana-na-rukav-dlya-sliva-m60.html</url>
+        <price>2800</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>3</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-074.png</picture>
+        <description>Комплект для установки запорного крана на рукав для слива М60. Запорная арматура СУГ для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1174" available="true">
+        <name>Соединитель сливного рукав ду38 М60</name>
+        <url>https://sd-kt.ru/p/soedinitel-slivnogo-rukav-du38-m60-2.html</url>
+        <price>1800</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>3</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-076.png</picture>
+        <description>Соединитель сливного рукав ду38 М60. Запорная арматура СУГ для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1175" available="true">
+        <name>Штуцер под приварку М60</name>
+        <url>https://sd-kt.ru/p/shtucer-pod-privarku-m60.html</url>
+        <price>1500</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>3</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-086.png</picture>
+        <description>Штуцер под приварку М60. Запорная арматура СУГ для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1176" available="true">
+        <name>Переходник для бытовых баллонов</name>
+        <url>https://sd-kt.ru/p/perehodnik-dlya-bytovyh-ballonov.html</url>
+        <price>1800</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>3</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-092.png</picture>
+        <description>Переходник для бытовых баллонов. Запорная арматура СУГ для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1177" available="true">
+        <name>Заправочник ВЗУ ГБО</name>
+        <url>https://sd-kt.ru/p/zapravochnik-vzu-gbo.html</url>
+        <price>1800</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>3</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/dgf-item-094.png</picture>
+        <description>Заправочник ВЗУ ГБО. Запорная арматура СУГ для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1178" available="true">
+        <name>ПОДШИПНИК опорный НАСОСА CORKEN Z-2000 арт.2754</name>
+        <url>https://sd-kt.ru/p/podshipnik-opornyy-nasosa-corken-z-2000-art-2754.html</url>
+        <price>6600</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>2</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/art-1178.jpg</picture>
+        <description>ПОДШИПНИК опорный НАСОСА CORKEN Z-2000 арт.2754. Комплектующие к насосам Z-2000 для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1179" available="true">
+        <name>ПОДШИПНИК упорный НАСОСА CORKEN Z-2000 арт.4432</name>
+        <url>https://sd-kt.ru/p/podshipnik-upornyy-nasosa-corken-z-2000-art-4432.html</url>
+        <price>2100</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>2</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/art-1179.jpg</picture>
+        <description>ПОДШИПНИК упорный НАСОСА CORKEN Z-2000 арт.4432. Комплектующие к насосам Z-2000 для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1180" available="true">
+        <name>Сальник насоса Z-2000 большой арт.4438</name>
+        <url>https://sd-kt.ru/p/salnik-nasosa-z-2000-bolshoy-art-4438.html</url>
+        <price>2100</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>2</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/art-1180.jpg</picture>
+        <description>Сальник насоса Z-2000 большой арт.4438. Комплектующие к насосам Z-2000 для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1181" available="true">
+        <name>Сальник насоса Z-2000 малый арт.4441</name>
+        <url>https://sd-kt.ru/p/salnik-nasosa-z-2000-malyy-art-4441.html</url>
+        <price>1800</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>2</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/art-1181.jpg</picture>
+        <description>Сальник насоса Z-2000 малый арт.4441. Комплектующие к насосам Z-2000 для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1182" available="true">
+        <name>Комплект РТИ насоса Z-2000</name>
+        <url>https://sd-kt.ru/p/komplekt-rti-nasosa-z-2000.html</url>
+        <price>2000</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>2</categoryId>
+        <description>Комплект РТИ насоса Z-2000. Комплектующие к насосам Z-2000 для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1183" available="true">
+        <name>Торцовое уплотнение насоса SIHI (СУГ)</name>
+        <url>https://sd-kt.ru/p/torcovoe-uplotnenie-nasosa-sihi-sug.html</url>
+        <price>27000</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>4</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/art-1183.jpg</picture>
+        <description>Торцовое уплотнение насоса SIHI (СУГ). Комплектующие к насосам для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1184" available="true">
+        <name>Торцевое уплотнение насоса SKD 3,4 серия (СУГ)</name>
+        <url>https://sd-kt.ru/p/torcevoe-uplotnenie-nasosa-skd-3-4-seriya-sug.html</url>
+        <price>13500</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>4</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/art-1184.jpg</picture>
+        <description>Торцевое уплотнение насоса SKD 3,4 серия (СУГ). Комплектующие к насосам для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1185" available="true">
+        <name>Торцевое уплотнение насоса SKD 5,6 серия (СУГ)</name>
+        <url>https://sd-kt.ru/p/torcevoe-uplotnenie-nasosa-skd-5-6-seriya-sug.html</url>
+        <price>18500</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>4</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/art-1185.jpg</picture>
+        <description>Торцевое уплотнение насоса SKD 5,6 серия (СУГ). Комплектующие к насосам для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+      <offer id="1186" available="true">
+        <name>Торцевое уплотнение насоса SKD 7,8 серия (СУГ)</name>
+        <url>https://sd-kt.ru/p/torcevoe-uplotnenie-nasosa-skd-7-8-seriya-sug.html</url>
+        <price>22000</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>4</categoryId>
+        <picture>https://sd-kt.ru/images/catalog/art-1186.jpg</picture>
+        <description>Торцевое уплотнение насоса SKD 7,8 серия (СУГ). Комплектующие к насосам для АЗС и АГЗС. Купить в SYNDICAT (sd-kt.ru): оригинал и аналоги, отгрузка из Екатеринбурга, доставка по России.</description>
+      </offer>
+    </offers>
+  </shop>
+</yml_catalog>
