@@ -226,7 +226,7 @@ const REGIONS = [
 ["Чеченская Республика","RU-CE"],["Чувашская Республика","RU-CU"],["Чукотский автономный округ","RU-CHU"],
 ["Ямало-Ненецкий автономный округ","RU-YAN"],["Ярославская область","RU-YAR"]];
 
-const OVERPASS = ["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter"];
+const OVERPASS = ["https://maps.mail.ru/osm/tools/overpass/api/interpreter","https://overpass-api.de/api/interpreter"];
 // Google Таблица (Apps Script веб-приложение)
 const GSHEET_URL="https://script.google.com/macros/s/AKfycbyqzUZQIFRT8y2UE71SsiveI8RuIkx9imA_22rxDrUpcL5gZX4wWjaLUSZaZweRHsQoRw/exec";
 const GSHEET_SECRET="sd-baza-2026";
@@ -301,7 +301,7 @@ async function overpassQuery(selector){
   for(let attempt=0;attempt<2;attempt++){
     for(const url of OVERPASS){
       const ctrl=new AbortController();
-      const to=setTimeout(()=>ctrl.abort(), 75000);
+      const to=setTimeout(()=>ctrl.abort(), 50000);
       try{
         const r=await fetch(url,{method:"POST",body:"data="+encodeURIComponent(q),
           headers:{"Content-Type":"application/x-www-form-urlencoded"}, signal:ctrl.signal});
