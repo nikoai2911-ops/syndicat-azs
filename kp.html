@@ -140,21 +140,21 @@ document.getElementById('gatePw').focus();
     <div class="card">
       <h2>2. Данные КП и клиента</h2>
       <div class="row3">
-        <div><label>№ КП</label><input id="m_num" oninput="render()"></div>
-        <div><label>Дата</label><input id="m_date" type="date" oninput="render()"></div>
-        <div><label>Действует до</label><input id="m_valid" oninput="render()" placeholder="напр. 14 дней"></div>
+        <div><label>№ КП</label><input id="m_num" oninput="recalc()"></div>
+        <div><label>Дата</label><input id="m_date" type="date" oninput="recalc()"></div>
+        <div><label>Действует до</label><input id="m_valid" oninput="recalc()" placeholder="напр. 14 дней"></div>
       </div>
-      <label>Менеджер</label><input id="m_mgr" oninput="render()" placeholder="ФИО, телефон">
-      <label>Клиент (компания / ИП / ФИО)</label><input id="c_name" oninput="render()">
+      <label>Менеджер</label><input id="m_mgr" oninput="recalc()" placeholder="ФИО, телефон">
+      <label>Клиент (компания / ИП / ФИО)</label><input id="c_name" oninput="recalc()">
       <div class="row2">
-        <div><label>ИНН клиента</label><input id="c_inn" oninput="render()"></div>
-        <div><label>Контактное лицо</label><input id="c_contact" oninput="render()"></div>
+        <div><label>ИНН клиента</label><input id="c_inn" oninput="recalc()"></div>
+        <div><label>Контактное лицо</label><input id="c_contact" oninput="recalc()"></div>
       </div>
       <div class="row2">
-        <div><label>Телефон клиента</label><input id="c_phone" oninput="render()"></div>
-        <div><label>E-mail клиента</label><input id="c_email" oninput="render()"></div>
+        <div><label>Телефон клиента</label><input id="c_phone" oninput="recalc()"></div>
+        <div><label>E-mail клиента</label><input id="c_email" oninput="recalc()"></div>
       </div>
-      <label>Комментарий / условия</label><textarea id="m_note" rows="2" oninput="render()" placeholder="Условия оплаты, доставки, гарантия…"></textarea>
+      <label>Комментарий / условия</label><textarea id="m_note" rows="2" oninput="recalc()" placeholder="Условия оплаты, доставки, гарантия…"></textarea>
     </div>
   </div>
 
@@ -185,25 +185,25 @@ document.getElementById('gatePw').focus();
   <div class="card">
     <h2>4. Реквизиты вашей компании (заполнить один раз — сохранится)</h2>
     <div class="row2">
-      <div><label>Наименование (ООО «…» / ИП …)</label><input id="co_name" oninput="render()"></div>
-      <div><label>Сайт</label><input id="co_site" oninput="render()"></div>
+      <div><label>Наименование (ООО «…» / ИП …)</label><input id="co_name" oninput="recalc()"></div>
+      <div><label>Сайт</label><input id="co_site" oninput="recalc()"></div>
     </div>
     <div class="row3">
-      <div><label>ИНН</label><input id="co_inn" oninput="render()"></div>
-      <div><label>КПП</label><input id="co_kpp" oninput="render()"></div>
-      <div><label>ОГРН/ОГРНИП</label><input id="co_ogrn" oninput="render()"></div>
+      <div><label>ИНН</label><input id="co_inn" oninput="recalc()"></div>
+      <div><label>КПП</label><input id="co_kpp" oninput="recalc()"></div>
+      <div><label>ОГРН/ОГРНИП</label><input id="co_ogrn" oninput="recalc()"></div>
     </div>
-    <label>Юридический адрес</label><input id="co_addr" oninput="render()">
+    <label>Юридический адрес</label><input id="co_addr" oninput="recalc()">
     <div class="row2">
-      <div><label>Расчётный счёт</label><input id="co_rs" oninput="render()"></div>
-      <div><label>Банк</label><input id="co_bank" oninput="render()"></div>
+      <div><label>Расчётный счёт</label><input id="co_rs" oninput="recalc()"></div>
+      <div><label>Банк</label><input id="co_bank" oninput="recalc()"></div>
     </div>
     <div class="row3">
-      <div><label>БИК</label><input id="co_bik" oninput="render()"></div>
-      <div><label>Корр. счёт</label><input id="co_ks" oninput="render()"></div>
-      <div><label>Телефон</label><input id="co_phone" oninput="render()"></div>
+      <div><label>БИК</label><input id="co_bik" oninput="recalc()"></div>
+      <div><label>Корр. счёт</label><input id="co_ks" oninput="recalc()"></div>
+      <div><label>Телефон</label><input id="co_phone" oninput="recalc()"></div>
     </div>
-    <label>E-mail</label><input id="co_email" oninput="render()">
+    <label>E-mail</label><input id="co_email" oninput="recalc()">
     <div style="margin-top:10px"><button class="btn ghost sm" onclick="saveCompany()">Сохранить реквизиты</button> <span id="coSaved" class="hint"></span></div>
   </div>
 </div>
@@ -276,7 +276,7 @@ function addCustom(){
   render();
 }
 function removeItem(i){ kp.items.splice(i,1); render(); saveDraft(); }
-function upd(i,field,v){ if(field==='qty'||field==='price'){v=parseFloat((''+v).replace(',','.'))||0;} kp.items[i][field]=v; render(); saveDraft(); }
+function upd(i,field,v){ if(field==='qty'||field==='price'){v=parseFloat((''+v).replace(',','.'))||0;} kp.items[i][field]=v; recalc(); saveDraft(); }
 
 // ---------- расчёты ----------
 function totals(){
@@ -308,7 +308,14 @@ function render(){
     tb.appendChild(tr);
   });
   document.getElementById('emptyItems').style.display = kp.items.length?'none':'block';
+  recalc();
+}
+
+// Пересчёт сумм/итогов/предпросмотра БЕЗ пересоздания полей ввода (чтобы не слетал фокус при печати).
+function recalc(){
   var t=totals();
+  var trs=document.getElementById('itemsBody').children;
+  for(var i=0;i<kp.items.length;i++){ var tr=trs[i]; if(tr){ var sc=tr.querySelector('.sum'); if(sc) sc.textContent=fmt(kp.items[i].qty*kp.items[i].price); } }
   document.getElementById('t_net').textContent=fmt(t.net)+' ₽';
   document.getElementById('t_vat').textContent=(t.mode==='none'?'—':fmt(t.vat)+' ₽');
   document.getElementById('t_total').textContent=fmt(t.total)+' ₽';
