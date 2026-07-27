@@ -171,12 +171,12 @@ document.getElementById('gatePw').focus();
       <div class="tr"><span>НДС</span>
         <select id="vat" style="width:auto" onchange="render()">
           <option value="none">Без НДС</option>
-          <option value="add">НДС 20% сверху</option>
-          <option value="incl">НДС 20% в т.ч.</option>
+          <option value="add">НДС 22% сверху</option>
+          <option value="incl">НДС 22% в т.ч.</option>
         </select>
       </div>
       <div class="tr"><span>Сумма без НДС</span><span id="t_net">0 ₽</span></div>
-      <div class="tr"><span>НДС 20%</span><span id="t_vat">0 ₽</span></div>
+      <div class="tr"><span>НДС 22%</span><span id="t_vat">0 ₽</span></div>
       <div class="tr big"><span>ИТОГО</span><span id="t_total">0 ₽</span></div>
     </div>
   </div>
@@ -282,8 +282,8 @@ function upd(i,field,v){ if(field==='qty'||field==='price'){v=parseFloat((''+v).
 function totals(){
   var sub=kp.items.reduce(function(s,it){return s+(it.qty*it.price)},0);
   var mode=val('vat'), net=sub, vat=0, total=sub;
-  if(mode==='add'){ net=sub; vat=sub*0.2; total=sub*1.2; }
-  else if(mode==='incl'){ net=sub/1.2; vat=sub-net; total=sub; }
+  if(mode==='add'){ net=sub; vat=sub*0.22; total=sub*1.22; }
+  else if(mode==='incl'){ net=sub/1.22; vat=sub-net; total=sub; }
   else { net=sub; vat=0; total=sub; }
   return {sub:sub,net:net,vat:vat,total:total,mode:mode};
 }
@@ -337,7 +337,7 @@ function renderDoc(t){
   if(val('c_phone'))cli.push('тел. '+esc(val('c_phone')));
   if(val('c_email'))cli.push(esc(val('c_email')));
 
-  var vatLabel = t.mode==='none' ? 'Без НДС' : (t.mode==='incl'?'в т.ч. НДС 20%':'НДС 20% сверху');
+  var vatLabel = t.mode==='none' ? 'Без НДС' : (t.mode==='incl'?'в т.ч. НДС 22%':'НДС 22% сверху');
 
   doc.innerHTML =
    '<div class="dhead"><div class="co">'+
@@ -358,7 +358,7 @@ function renderDoc(t){
    '</tbody></table>'+
    '<div class="dtot">'+
       '<div class="tr"><span>Сумма без НДС</span><span>'+fmt(t.net)+' ₽</span></div>'+
-      '<div class="tr"><span>НДС 20%</span><span>'+(t.mode==='none'?'—':fmt(t.vat)+' ₽')+'</span></div>'+
+      '<div class="tr"><span>НДС 22%</span><span>'+(t.mode==='none'?'—':fmt(t.vat)+' ₽')+'</span></div>'+
       '<div class="tr big"><span>ИТОГО ('+vatLabel+')</span><span>'+fmt(t.total)+' ₽</span></div>'+
    '</div>'+
    (val('m_note')?'<div class="dfoot"><b>Условия:</b> '+esc(val('m_note')).replace(/\n/g,'<br>')+'</div>':'')+
@@ -380,7 +380,7 @@ function exportExcel(){
     h+='<tr><td>'+(i+1)+'</td><td>'+esc(it.art)+'</td><td>'+esc(it.name)+'</td><td>'+it.qty+'</td><td>'+(it.price||'')+'</td><td>'+(it.price?it.qty*it.price:'')+'</td></tr>';
   });
   h+='<tr><td colspan="5" style="text-align:right"><b>Сумма без НДС</b></td><td>'+Math.round(t.net*100)/100+'</td></tr>';
-  h+='<tr><td colspan="5" style="text-align:right">НДС 20%</td><td>'+(t.mode==='none'?'—':Math.round(t.vat*100)/100)+'</td></tr>';
+  h+='<tr><td colspan="5" style="text-align:right">НДС 22%</td><td>'+(t.mode==='none'?'—':Math.round(t.vat*100)/100)+'</td></tr>';
   h+='<tr><td colspan="5" style="text-align:right"><b>ИТОГО</b></td><td><b>'+Math.round(t.total*100)/100+'</b></td></tr>';
   h+='</table>';
   var blob=new Blob(['﻿'+h],{type:'application/vnd.ms-excel'});
