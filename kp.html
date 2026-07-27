@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Конструктор КП — SYNDICAT (внутренний)</title>
+<style>
+:root{--bd:#d8dee6;--mut:#6b7280;--accent:#dc5000;--bg:#f4f6f8;--ink:#1f2733}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.4;font-size:14px}
+.screen{max-width:1200px;margin:0 auto;padding:18px}
+h1{font-size:20px;margin-bottom:2px}
+.sub{color:var(--mut);font-size:12px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:#fff;border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:16px}
+.card h2{font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin-bottom:10px}
+label{display:block;font-size:11px;color:var(--mut);margin:8px 0 3px}
+input,select,textarea{width:100%;padding:8px 10px;border:1px solid var(--bd);border-radius:7px;font-size:13px;font-family:inherit;background:#fff}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer}
+.btn:hover{opacity:.9}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--bd)}
+.btn.sm{padding:6px 10px;font-size:12px}
+.btn.danger{background:#fff;color:#c0392b;border:1px solid #e3b7b1}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 18px}
+.search-res{max-height:340px;overflow:auto;border:1px solid var(--bd);border-radius:8px;margin-top:8px}
+.sr{display:flex;align-items:center;gap:10px;padding:8px 10px;border-bottom:1px solid #eef1f4;cursor:pointer}
+.sr:last-child{border-bottom:none}
+.sr:hover{background:#faf6f2}
+.sr img{width:40px;height:40px;object-fit:contain;background:#f4f6f8;border-radius:5px;flex:none}
+.sr .n{flex:1;font-size:12.5px}
+.sr .a{font-size:11px;color:var(--mut)}
+.sr .p{font-size:12px;font-weight:600;white-space:nowrap}
+table.items{width:100%;border-collapse:collapse;margin-top:6px}
+table.items th{font-size:11px;color:var(--mut);text-align:left;padding:6px 6px;border-bottom:1px solid var(--bd);font-weight:600}
+table.items td{padding:6px 6px;border-bottom:1px solid #eef1f4;vertical-align:middle}
+table.items img{width:44px;height:44px;object-fit:contain;background:#f4f6f8;border-radius:5px}
+table.items input{padding:6px 6px}
+.qty{width:64px;text-align:center}
+.price{width:100px;text-align:right}
+.sum{text-align:right;white-space:nowrap;font-weight:600}
+.tot{margin-top:12px;margin-left:auto;width:320px;max-width:100%}
+.tot .tr{display:flex;justify-content:space-between;padding:5px 0;font-size:13px}
+.tot .tr.big{font-size:17px;font-weight:700;border-top:2px solid var(--ink);margin-top:6px;padding-top:10px}
+.hint{font-size:11px;color:var(--mut);margin-top:4px}
+.x{color:#c0392b;cursor:pointer;font-weight:700;padding:0 6px}
+
+/* ---------- ПЕЧАТНЫЙ ДОКУМЕНТ ---------- */
+#doc{background:#fff;max-width:900px;margin:0 auto 40px;padding:28px 32px;border:1px solid var(--bd);border-radius:10px}
+#doc .dhead{display:flex;justify-content:space-between;gap:20px;border-bottom:2px solid var(--accent);padding-bottom:12px;margin-bottom:14px}
+#doc .dhead .co{font-size:12px;color:#333;line-height:1.5}
+#doc .dhead .co b{font-size:16px;color:var(--ink)}
+#doc .logo{font-size:22px;font-weight:700;letter-spacing:1px}
+#doc .logo span{color:var(--accent)}
+#doc h3{font-size:18px;margin:8px 0 4px}
+#doc .meta{font-size:12px;color:#333;margin-bottom:10px;line-height:1.6}
+#doc .cli{background:#f7f9fb;border:1px solid var(--bd);border-radius:8px;padding:10px 12px;font-size:12px;margin-bottom:14px;line-height:1.6}
+#doc table{width:100%;border-collapse:collapse;font-size:12px}
+#doc table th{background:#f0f3f6;border:1px solid var(--bd);padding:7px 6px;text-align:left;font-size:11px}
+#doc table td{border:1px solid var(--bd);padding:6px 6px;vertical-align:middle}
+#doc table td.c{text-align:center}#doc table td.r{text-align:right;white-space:nowrap}
+#doc table img{width:52px;height:52px;object-fit:contain}
+#doc .dtot{margin:12px 0 0 auto;width:340px}
+#doc .dtot .tr{display:flex;justify-content:space-between;padding:4px 0}
+#doc .dtot .tr.big{font-size:16px;font-weight:700;border-top:2px solid var(--ink);margin-top:6px;padding-top:8px}
+#doc .dfoot{margin-top:20px;font-size:12px;color:#333;line-height:1.6;border-top:1px solid var(--bd);padding-top:12px}
+.doc-wrap-title{max-width:900px;margin:0 auto 8px;font-size:12px;color:var(--mut)}
+
+@media print{
+  @page{margin:14mm}
+  body{background:#fff;font-size:12px}
+  .screen,.doc-wrap-title{display:none!important}
+  #doc{border:none;border-radius:0;margin:0;padding:0;max-width:100%}
+  #doc table th{background:#f0f3f6!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #doc .dhead{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  tr{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<div class="screen">
+  <h1>Конструктор КП <span style="color:var(--accent)">SYNDICAT</span></h1>
+  <div class="sub">Внутренний инструмент. Добавьте позиции из каталога, заполните клиента — и выгрузите в PDF или Excel. Черновик и реквизиты сохраняются в этом браузере.</div>
+
+  <div class="toolbar">
+    <button class="btn" onclick="window.print()">🖨 Печать / PDF</button>
+    <button class="btn ghost" onclick="exportExcel()">⭳ Excel</button>
+    <button class="btn ghost sm" onclick="saveDraft(true)">💾 Сохранить черновик</button>
+    <button class="btn danger sm" onclick="clearKP()">Очистить КП</button>
+  </div>
+
+  <div class="grid">
+    <!-- поиск по каталогу -->
+    <div class="card">
+      <h2>1. Добавить позиции из каталога</h2>
+      <input id="q" placeholder="Поиск: название, артикул, бренд…" oninput="doSearch()">
+      <div class="hint">Найдено в каталоге: <span id="catcount">0</span> позиций всего</div>
+      <div class="search-res" id="results"></div>
+      <div style="margin-top:10px"><button class="btn ghost sm" onclick="addCustom()">+ Произвольная строка (услуга, доставка…)</button></div>
+    </div>
+
+    <!-- данные КП и клиента -->
+    <div class="card">
+      <h2>2. Данные КП и клиента</h2>
+      <div class="row3">
+        <div><label>№ КП</label><input id="m_num" oninput="render()"></div>
+        <div><label>Дата</label><input id="m_date" type="date" oninput="render()"></div>
+        <div><label>Действует до</label><input id="m_valid" oninput="render()" placeholder="напр. 14 дней"></div>
+      </div>
+      <label>Менеджер</label><input id="m_mgr" oninput="render()" placeholder="ФИО, телефон">
+      <label>Клиент (компания / ИП / ФИО)</label><input id="c_name" oninput="render()">
+      <div class="row2">
+        <div><label>ИНН клиента</label><input id="c_inn" oninput="render()"></div>
+        <div><label>Контактное лицо</label><input id="c_contact" oninput="render()"></div>
+      </div>
+      <div class="row2">
+        <div><label>Телефон клиента</label><input id="c_phone" oninput="render()"></div>
+        <div><label>E-mail клиента</label><input id="c_email" oninput="render()"></div>
+      </div>
+      <label>Комментарий / условия</label><textarea id="m_note" rows="2" oninput="render()" placeholder="Условия оплаты, доставки, гарантия…"></textarea>
+    </div>
+  </div>
+
+  <!-- позиции -->
+  <div class="card">
+    <h2>3. Позиции КП</h2>
+    <table class="items">
+      <thead><tr><th></th><th>Фото</th><th>Наименование / артикул</th><th>Кол-во</th><th>Цена, ₽</th><th>Сумма, ₽</th></tr></thead>
+      <tbody id="itemsBody"></tbody>
+    </table>
+    <div id="emptyItems" class="hint" style="padding:10px 0">Пока пусто — добавьте позиции из каталога слева.</div>
+
+    <div class="tot">
+      <div class="tr"><span>НДС</span>
+        <select id="vat" style="width:auto" onchange="render()">
+          <option value="none">Без НДС</option>
+          <option value="add">НДС 20% сверху</option>
+          <option value="incl">НДС 20% в т.ч.</option>
+        </select>
+      </div>
+      <div class="tr"><span>Сумма без НДС</span><span id="t_net">0 ₽</span></div>
+      <div class="tr"><span>НДС 20%</span><span id="t_vat">0 ₽</span></div>
+      <div class="tr big"><span>ИТОГО</span><span id="t_total">0 ₽</span></div>
+    </div>
+  </div>
+
+  <!-- реквизиты компании -->
+  <div class="card">
+    <h2>4. Реквизиты вашей компании (заполнить один раз — сохранится)</h2>
+    <div class="row2">
+      <div><label>Наименование (ООО «…» / ИП …)</label><input id="co_name" oninput="render()"></div>
+      <div><label>Сайт</label><input id="co_site" oninput="render()"></div>
+    </div>
+    <div class="row3">
+      <div><label>ИНН</label><input id="co_inn" oninput="render()"></div>
+      <div><label>КПП</label><input id="co_kpp" oninput="render()"></div>
+      <div><label>ОГРН/ОГРНИП</label><input id="co_ogrn" oninput="render()"></div>
+    </div>
+    <label>Юридический адрес</label><input id="co_addr" oninput="render()">
+    <div class="row2">
+      <div><label>Расчётный счёт</label><input id="co_rs" oninput="render()"></div>
+      <div><label>Банк</label><input id="co_bank" oninput="render()"></div>
+    </div>
+    <div class="row3">
+      <div><label>БИК</label><input id="co_bik" oninput="render()"></div>
+      <div><label>Корр. счёт</label><input id="co_ks" oninput="render()"></div>
+      <div><label>Телефон</label><input id="co_phone" oninput="render()"></div>
+    </div>
+    <label>E-mail</label><input id="co_email" oninput="render()">
+    <div style="margin-top:10px"><button class="btn ghost sm" onclick="saveCompany()">Сохранить реквизиты</button> <span id="coSaved" class="hint"></span></div>
+  </div>
+</div>
+
+<!-- ЖИВОЙ ПРЕДПРОСМОТР / ПЕЧАТНЫЙ ДОКУМЕНТ -->
+<div class="doc-wrap-title">▼ Предпросмотр документа (так распечатается / сохранится в PDF):</div>
+<div id="doc"></div>
+
+<script src="catalog-data.js"></script>
+<script>
+var PRODUCTS = (window.CATALOG && window.CATALOG.products) ? window.CATALOG.products : [];
+document.getElementById('catcount').textContent = PRODUCTS.length;
+
+var kp = { items:[] };
+
+// ---------- сохранение ----------
+var DKEY='kp_draft_v1', CKEY='kp_company_v1';
+function collect(){
+  return {
+    items: kp.items,
+    m:{num:val('m_num'),date:val('m_date'),valid:val('m_valid'),mgr:val('m_mgr'),note:val('m_note')},
+    c:{name:val('c_name'),inn:val('c_inn'),contact:val('c_contact'),phone:val('c_phone'),email:val('c_email')},
+    vat:val('vat')
+  };
+}
+function saveDraft(msg){ try{localStorage.setItem(DKEY,JSON.stringify(collect()));}catch(e){} if(msg) alert('Черновик сохранён в этом браузере.'); }
+function loadDraft(){
+  try{var d=JSON.parse(localStorage.getItem(DKEY)); if(!d)return;
+    kp.items=d.items||[];
+    set('m_num',d.m.num);set('m_date',d.m.date);set('m_valid',d.m.valid);set('m_mgr',d.m.mgr);set('m_note',d.m.note);
+    set('c_name',d.c.name);set('c_inn',d.c.inn);set('c_contact',d.c.contact);set('c_phone',d.c.phone);set('c_email',d.c.email);
+    set('vat',d.vat||'none');
+  }catch(e){}
+}
+var COMPANY_DEFAULT={co_name:'',co_site:'sd-kt.ru',co_inn:'',co_kpp:'',co_ogrn:'',co_addr:'г. Екатеринбург, ул. Окружная, 88/2',co_rs:'',co_bank:'',co_bik:'',co_ks:'',co_phone:'+7 343 266-40-66',co_email:'m2@sd-kt.ru'};
+function saveCompany(){ var o={}; Object.keys(COMPANY_DEFAULT).forEach(function(k){o[k]=val(k)}); try{localStorage.setItem(CKEY,JSON.stringify(o));}catch(e){} document.getElementById('coSaved').textContent='✓ сохранено'; setTimeout(function(){document.getElementById('coSaved').textContent=''},2000); }
+function loadCompany(){ var o; try{o=JSON.parse(localStorage.getItem(CKEY));}catch(e){} o=o||COMPANY_DEFAULT; Object.keys(COMPANY_DEFAULT).forEach(function(k){ set(k, o[k]!==undefined?o[k]:COMPANY_DEFAULT[k]); }); }
+
+function val(id){var e=document.getElementById(id);return e?e.value:'';}
+function set(id,v){var e=document.getElementById(id);if(e&&v!=null)e.value=v;}
+
+// ---------- поиск ----------
+var st;
+function doSearch(){ clearTimeout(st); st=setTimeout(runSearch,120); }
+function runSearch(){
+  var q=val('q').trim().toLowerCase();
+  var box=document.getElementById('results'); box.innerHTML='';
+  if(!q){box.innerHTML='<div class="sr"><span class="n" style="color:#6b7280">Введите запрос…</span></div>';return;}
+  var terms=q.split(/\s+/), out=[];
+  for(var i=0;i<PRODUCTS.length && out.length<60;i++){
+    var p=PRODUCTS[i]; var hay=((p.n||'')+' '+(p.art||'')+' '+(p.b||'')).toLowerCase();
+    if(terms.every(function(t){return hay.indexOf(t)>-1})) out.push(p);
+  }
+  if(!out.length){box.innerHTML='<div class="sr"><span class="n" style="color:#6b7280">Ничего не найдено</span></div>';return;}
+  out.forEach(function(p){
+    var d=document.createElement('div'); d.className='sr';
+    var img=p.img?'<img src="'+esc(p.img)+'" onerror="this.style.visibility=\'hidden\'">':'<span style="width:40px;flex:none"></span>';
+    d.innerHTML=img+'<span class="n">'+esc(p.n||'')+'<div class="a">арт. '+esc(p.art||'')+(p.b?' · '+esc(p.b):'')+'</div></span><span class="p">'+(p.pr?fmt(p.pr)+' ₽':'по запросу')+'</span>';
+    d.onclick=function(){ addItem(p); };
+    box.appendChild(d);
+  });
+}
+
+function addItem(p){
+  kp.items.push({art:p.art||'',name:p.n||'',img:p.img||'',qty:1,price:p.pr||0});
+  render(); saveDraft();
+}
+function addCustom(){
+  kp.items.push({art:'',name:'',img:'',qty:1,price:0,custom:true});
+  render();
+}
+function removeItem(i){ kp.items.splice(i,1); render(); saveDraft(); }
+function upd(i,field,v){ if(field==='qty'||field==='price'){v=parseFloat((''+v).replace(',','.'))||0;} kp.items[i][field]=v; render(); saveDraft(); }
+
+// ---------- расчёты ----------
+function totals(){
+  var sub=kp.items.reduce(function(s,it){return s+(it.qty*it.price)},0);
+  var mode=val('vat'), net=sub, vat=0, total=sub;
+  if(mode==='add'){ net=sub; vat=sub*0.2; total=sub*1.2; }
+  else if(mode==='incl'){ net=sub/1.2; vat=sub-net; total=sub; }
+  else { net=sub; vat=0; total=sub; }
+  return {sub:sub,net:net,vat:vat,total:total,mode:mode};
+}
+function fmt(n){ n=Math.round((n||0)*100)/100; var s=n.toLocaleString('ru-RU',{minimumFractionDigits:(n%1?2:0),maximumFractionDigits:2}); return s; }
+function esc(s){return (s==null?'':(''+s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ---------- рендер редактора позиций ----------
+function render(){
+  var tb=document.getElementById('itemsBody'); tb.innerHTML='';
+  kp.items.forEach(function(it,i){
+    var tr=document.createElement('tr');
+    var img = it.custom ? '—' : (it.img?'<img src="'+esc(it.img)+'" onerror="this.style.visibility=\'hidden\'">':'');
+    var nameCell = it.custom
+      ? '<input value="'+esc(it.name)+'" placeholder="Наименование строки" oninput="upd('+i+',\'name\',this.value)">'
+      : esc(it.name)+'<div class="a" style="font-size:11px;color:#6b7280">арт. '+esc(it.art)+'</div>';
+    tr.innerHTML='<td><span class="x" onclick="removeItem('+i+')">✕</span></td>'+
+      '<td>'+img+'</td>'+
+      '<td>'+nameCell+'</td>'+
+      '<td><input class="qty" value="'+it.qty+'" oninput="upd('+i+',\'qty\',this.value)"></td>'+
+      '<td><input class="price" value="'+it.price+'" oninput="upd('+i+',\'price\',this.value)"></td>'+
+      '<td class="sum">'+fmt(it.qty*it.price)+'</td>';
+    tb.appendChild(tr);
+  });
+  document.getElementById('emptyItems').style.display = kp.items.length?'none':'block';
+  var t=totals();
+  document.getElementById('t_net').textContent=fmt(t.net)+' ₽';
+  document.getElementById('t_vat').textContent=(t.mode==='none'?'—':fmt(t.vat)+' ₽');
+  document.getElementById('t_total').textContent=fmt(t.total)+' ₽';
+  renderDoc(t);
+}
+
+// ---------- рендер печатного документа ----------
+function renderDoc(t){
+  var doc=document.getElementById('doc');
+  var co={}; Object.keys(COMPANY_DEFAULT).forEach(function(k){co[k]=val(k)});
+  var rows=kp.items.map(function(it,i){
+    return '<tr><td class="c">'+(i+1)+'</td>'+
+      '<td class="c">'+(it.img&&!it.custom?'<img src="'+esc(it.img)+'">':'')+'</td>'+
+      '<td>'+esc(it.name)+(it.art?'<br><span style="color:#6b7280;font-size:11px">арт. '+esc(it.art)+'</span>':'')+'</td>'+
+      '<td class="c">'+fmt(it.qty)+'</td>'+
+      '<td class="r">'+(it.price?fmt(it.price):'по запросу')+'</td>'+
+      '<td class="r">'+(it.price?fmt(it.qty*it.price):'—')+'</td></tr>';
+  }).join('');
+
+  var reqline=[co.co_inn?'ИНН '+esc(co.co_inn):'',co.co_kpp?'КПП '+esc(co.co_kpp):'',co.co_ogrn?'ОГРН '+esc(co.co_ogrn):''].filter(Boolean).join(' · ');
+  var bankline=[co.co_rs?'р/с '+esc(co.co_rs):'',co.co_bank?esc(co.co_bank):'',co.co_bik?'БИК '+esc(co.co_bik):'',co.co_ks?'к/с '+esc(co.co_ks):''].filter(Boolean).join(' · ');
+
+  var cli=[]; if(val('c_name'))cli.push('<b>'+esc(val('c_name'))+'</b>');
+  if(val('c_inn'))cli.push('ИНН '+esc(val('c_inn')));
+  if(val('c_contact'))cli.push('Контакт: '+esc(val('c_contact')));
+  if(val('c_phone'))cli.push('тел. '+esc(val('c_phone')));
+  if(val('c_email'))cli.push(esc(val('c_email')));
+
+  var vatLabel = t.mode==='none' ? 'Без НДС' : (t.mode==='incl'?'в т.ч. НДС 20%':'НДС 20% сверху');
+
+  doc.innerHTML =
+   '<div class="dhead"><div class="co">'+
+      '<b>'+(esc(co.co_name)||'SYNDICAT')+'</b><br>'+
+      (co.co_addr?esc(co.co_addr)+'<br>':'')+
+      (reqline?reqline+'<br>':'')+
+      (co.co_phone?esc(co.co_phone)+'  ':'')+(co.co_email?esc(co.co_email):'')+(co.co_site?'  '+esc(co.co_site):'')+
+   '</div><div class="logo">SYNDI<span>CAT</span></div></div>'+
+   '<h3>Коммерческое предложение'+(val('m_num')?' № '+esc(val('m_num')):'')+'</h3>'+
+   '<div class="meta">'+
+      (val('m_date')?'Дата: '+esc(fmtDate(val('m_date')))+' &nbsp; ':'')+
+      (val('m_valid')?'Действует: '+esc(val('m_valid')):'')+
+      (val('m_mgr')?'<br>Менеджер: '+esc(val('m_mgr')):'')+
+   '</div>'+
+   (cli.length?'<div class="cli">Кому: '+cli.join(' · ')+'</div>':'')+
+   '<table><thead><tr><th style="width:28px">№</th><th style="width:64px">Фото</th><th>Наименование</th><th style="width:60px">Кол-во</th><th style="width:100px">Цена, ₽</th><th style="width:110px">Сумма, ₽</th></tr></thead><tbody>'+
+   (rows||'<tr><td colspan="6" class="c" style="color:#6b7280;padding:16px">Нет позиций</td></tr>')+
+   '</tbody></table>'+
+   '<div class="dtot">'+
+      '<div class="tr"><span>Сумма без НДС</span><span>'+fmt(t.net)+' ₽</span></div>'+
+      '<div class="tr"><span>НДС 20%</span><span>'+(t.mode==='none'?'—':fmt(t.vat)+' ₽')+'</span></div>'+
+      '<div class="tr big"><span>ИТОГО ('+vatLabel+')</span><span>'+fmt(t.total)+' ₽</span></div>'+
+   '</div>'+
+   (val('m_note')?'<div class="dfoot"><b>Условия:</b> '+esc(val('m_note')).replace(/\n/g,'<br>')+'</div>':'')+
+   '<div class="dfoot">'+(bankline?bankline+'<br>':'')+'Цены указаны в рублях. Предложение носит информационный характер и не является публичной офертой.</div>';
+}
+function fmtDate(d){ if(!d)return''; var p=d.split('-'); return p.length===3?(p[2]+'.'+p[1]+'.'+p[0]):d; }
+
+// ---------- экспорт Excel (.xls, открывается в Excel) ----------
+function exportExcel(){
+  var t=totals();
+  var co={}; Object.keys(COMPANY_DEFAULT).forEach(function(k){co[k]=val(k)});
+  var h='<meta charset="UTF-8"><table border="1">';
+  h+='<tr><td colspan="6"><b>'+esc(co.co_name||'SYNDICAT')+'</b></td></tr>';
+  h+='<tr><td colspan="6">Коммерческое предложение'+(val('m_num')?' № '+esc(val('m_num')):'')+(val('m_date')?' от '+esc(fmtDate(val('m_date'))):'')+'</td></tr>';
+  if(val('c_name'))h+='<tr><td colspan="6">Клиент: '+esc(val('c_name'))+(val('c_inn')?' (ИНН '+esc(val('c_inn'))+')':'')+'</td></tr>';
+  h+='<tr><td colspan="6"></td></tr>';
+  h+='<tr><th>№</th><th>Артикул</th><th>Наименование</th><th>Кол-во</th><th>Цена</th><th>Сумма</th></tr>';
+  kp.items.forEach(function(it,i){
+    h+='<tr><td>'+(i+1)+'</td><td>'+esc(it.art)+'</td><td>'+esc(it.name)+'</td><td>'+it.qty+'</td><td>'+(it.price||'')+'</td><td>'+(it.price?it.qty*it.price:'')+'</td></tr>';
+  });
+  h+='<tr><td colspan="5" style="text-align:right"><b>Сумма без НДС</b></td><td>'+Math.round(t.net*100)/100+'</td></tr>';
+  h+='<tr><td colspan="5" style="text-align:right">НДС 20%</td><td>'+(t.mode==='none'?'—':Math.round(t.vat*100)/100)+'</td></tr>';
+  h+='<tr><td colspan="5" style="text-align:right"><b>ИТОГО</b></td><td><b>'+Math.round(t.total*100)/100+'</b></td></tr>';
+  h+='</table>';
+  var blob=new Blob(['﻿'+h],{type:'application/vnd.ms-excel'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='KP'+(val('m_num')?'_'+val('m_num'):'')+'.xls'; a.click();
+}
+
+function clearKP(){ if(confirm('Очистить текущее КП? Реквизиты компании останутся.')){ kp.items=[]; ['m_num','m_valid','m_mgr','m_note','c_name','c_inn','c_contact','c_phone','c_email'].forEach(function(id){set(id,'')}); render(); saveDraft(); } }
+
+// ---------- старт ----------
+loadCompany(); loadDraft();
+if(!val('m_date')){ /* сегодня */ try{var d=new Date();set('m_date',d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2));}catch(e){} }
+runSearch(); render();
+setInterval(function(){saveDraft(false)},15000);
+</script>
+</body>
+</html>

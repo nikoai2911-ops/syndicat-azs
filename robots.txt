@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /baza-210d881a/
+Disallow: /kp.html
 
 Sitemap: https://sd-kt.ru/sitemap.xml
