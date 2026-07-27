@@ -120,7 +120,7 @@ document.getElementById('gatePw').focus();
   <div class="sub">Внутренний инструмент. Добавьте позиции из каталога, заполните клиента — и выгрузите в PDF или Excel. Черновик и реквизиты сохраняются в этом браузере.</div>
 
   <div class="toolbar">
-    <button class="btn" onclick="window.print()">🖨 Печать / PDF</button>
+    <button class="btn" onclick="printKP()">🖨 Печать / PDF</button>
     <button class="btn ghost" onclick="exportExcel()">⭳ Excel</button>
     <button class="btn ghost sm" onclick="saveDraft(true)">💾 Сохранить черновик</button>
     <button class="btn danger sm" onclick="clearKP()">Очистить КП</button>
@@ -375,6 +375,7 @@ function fmtDate(d){ if(!d)return''; var p=d.split('-'); return p.length===3?(p[
 
 // ---------- экспорт Excel (.xls, открывается в Excel) ----------
 function exportExcel(){
+  ensureKpNum();
   var t=totals();
   var co={}; Object.keys(COMPANY_DEFAULT).forEach(function(k){co[k]=val(k)});
   var h='<meta charset="UTF-8"><table border="1">';
@@ -394,6 +395,15 @@ function exportExcel(){
   var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
   a.download='KP'+(val('m_num')?'_'+val('m_num'):'')+'.xls'; a.click();
 }
+
+// ---------- авто-номер КП + печать в PDF с номером в имени файла ----------
+function fmtSeq(n){ return String(n).padStart(4,'0'); }
+function nextSeq(){ var n=parseInt(localStorage.getItem('kp_seq')||'0',10)||0; n++; try{localStorage.setItem('kp_seq',n);}catch(e){} return n; }
+// Присваивает номер по порядку (0001, 0002…), если он ещё не задан вручную. Возвращает номер.
+function ensureKpNum(){ if(!val('m_num')){ set('m_num', fmtSeq(nextSeq())); recalc(); saveDraft(); } return val('m_num'); }
+var _docTitle=document.title;
+function printKP(){ var num=ensureKpNum(); document.title='KP_'+num; window.print(); }
+window.addEventListener('afterprint', function(){ document.title=_docTitle; });
 
 function clearKP(){ if(confirm('Очистить текущее КП? Реквизиты компании останутся.')){ kp.items=[]; ['m_num','m_valid','m_mgr','m_note','c_name','c_inn','c_contact','c_phone','c_email'].forEach(function(id){set(id,'')}); render(); saveDraft(); } }
 
