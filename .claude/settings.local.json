@@ -386,7 +386,16 @@
       "Bash(curl -sL --max-time 25 -A \"Mozilla/5.0\" -H \"Cookie: beget=begetok\" \"https://aztgrup.ru/toplivorazdatochnye-kolonki/trk-kvant/\" -o kvant.html)",
       "Bash(curl -sL --max-time 30 \"https://www.azsk74.ru/upload/iblock/a82/w8boa8z8yk1g941e7rckty34dzmqd97a/Rukovodstvo-KVANT_503.pdf\" -o kvant503.pdf)",
       "Bash(curl -sL -A \"Mozilla/5.0\" -H \"Cookie: beget=begetok\" \"https://aztgrup.ru/wa-data/public/shop/products/14/06/614/images/4766/23x.750.jpg\" -o topaz_s230.jpg)",
-      "Bash(sips -g pixelWidth -g pixelHeight topaz_s230.jpg)"
+      "Bash(sips -g pixelWidth -g pixelHeight topaz_s230.jpg)",
+      "Bash(curl -s \"https://api.telegram.org/bot8743383390:AAHk-koov9qxS35sPyxwQBbD70C91t9ZpmQ/getMe\")",
+      "Bash(python3 -m json.tool)",
+      "Bash(curl -s -X POST https://api.telegram.org/bot8743383390:AAHk-koov9qxS35sPyxwQBbD70C91t9ZpmQ/sendMessage -d chat_id=-5394858081 -d parse_mode=HTML --data-urlencode 'text=✅ <b>Проверка связи</b> *)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('отправлено ✅' if d.get\\('ok'\\) else \\('ошибка: '+str\\(d\\)\\)\\)\")",
+      "WebFetch(domain:www.neftprod.ru)",
+      "Bash(git commit -m 'Конструктор КП: фикс потери фокуса в полях позиций \\(кол-во/цена\\) при вводе — не пересоздаём инпуты на каждый символ *)",
+      "Bash(git commit -m 'Конструктор КП: авто-номер КП \\(0001, 0002…\\) присваивается при сохранении и подставляется в имя PDF/Excel и в шапку документа *)",
+      "Bash(ls -la ~/Downloads/ | grep -i -E \"стиль|тз|бренд|design|brand\")",
+      "Bash('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' --headless=new --disable-gpu --no-first-run --no-default-browser-check --no-pdf-header-footer --run-all-compositor-stages-before-draw --virtual-time-budget=20000 --print-to-pdf=/Users/nikitasazonov/Downloads/INTIMA-WAVE-brendbuk.pdf file:///private/tmp/claude-501/-Users-nikitasazonov-Desktop------------------/64321406-6cd1-41c9-a590-c58292d924e8/scratchpad/print/print.html)"
     ]
   }
 }
