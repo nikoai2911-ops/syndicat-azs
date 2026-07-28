@@ -42,6 +42,7 @@ table.items img{width:44px;height:44px;object-fit:contain;background:#f4f6f8;bor
 table.items input{padding:6px 6px}
 .qty{width:64px;text-align:center}
 .price{width:100px;text-align:right}
+.pname{width:100%}
 .sum{text-align:right;white-space:nowrap;font-weight:600}
 .tot{margin-top:12px;margin-left:auto;width:320px;max-width:100%}
 .tot .tr{display:flex;justify-content:space-between;padding:5px 0;font-size:13px}
@@ -306,9 +307,8 @@ function render(){
   kp.items.forEach(function(it,i){
     var tr=document.createElement('tr');
     var img = it.custom ? '—' : (it.img?'<img src="'+esc(it.img)+'" onerror="this.style.visibility=\'hidden\'">':'');
-    var nameCell = it.custom
-      ? '<input value="'+esc(it.name)+'" placeholder="Наименование строки" oninput="upd('+i+',\'name\',this.value)">'
-      : esc(it.name)+'<div class="a" style="font-size:11px;color:#6b7280">арт. '+esc(it.art)+'</div>';
+    var nameCell = '<input class="pname" value="'+esc(it.name)+'" placeholder="Наименование позиции" oninput="upd('+i+',\'name\',this.value)">'
+      + (it.custom ? '' : '<div class="a" style="font-size:11px;color:#6b7280">арт. '+esc(it.art)+'</div>');
     tr.innerHTML='<td><span class="x" onclick="removeItem('+i+')">✕</span></td>'+
       '<td>'+img+'</td>'+
       '<td>'+nameCell+'</td>'+
