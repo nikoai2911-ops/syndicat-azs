@@ -140,11 +140,21 @@ document.getElementById('gatePw').focus();
     <div class="card">
       <h2>2. Данные КП и клиента</h2>
       <div class="row3">
-        <div><label>№ КП</label><input id="m_num" oninput="recalc()"></div>
+        <div><label>№ КП (авто)</label>
+          <div style="display:flex;gap:6px">
+            <input id="m_num" oninput="recalc()" style="flex:1">
+            <button class="btn ghost sm" title="Следующий свободный номер" onclick="newNum()" style="white-space:nowrap">↻ №</button>
+          </div>
+        </div>
         <div><label>Дата</label><input id="m_date" type="date" oninput="recalc()"></div>
         <div><label>Действует до</label><input id="m_valid" oninput="recalc()" placeholder="напр. 14 дней"></div>
       </div>
-      <label>Менеджер</label><input id="m_mgr" oninput="recalc()" placeholder="ФИО, телефон">
+      <label>Менеджер (кто выставил КП) — запоминается, можно менять</label>
+      <input id="m_mgr" oninput="saveMgr();recalc()" placeholder="ФИО менеджера">
+      <div class="row2" style="margin-top:6px">
+        <div><input id="m_mgr_phone" oninput="saveMgr();recalc()" placeholder="Телефон менеджера"></div>
+        <div><input id="m_mgr_email" oninput="saveMgr();recalc()" placeholder="E-mail менеджера"></div>
+      </div>
       <label>Клиент (компания / ИП / ФИО)</label><input id="c_name" oninput="recalc()">
       <div class="row2">
         <div><label>ИНН клиента</label><input id="c_inn" oninput="recalc()"></div>
@@ -224,7 +234,7 @@ var DKEY='kp_draft_v1', CKEY='kp_company_v1';
 function collect(){
   return {
     items: kp.items,
-    m:{num:val('m_num'),date:val('m_date'),valid:val('m_valid'),mgr:val('m_mgr'),note:val('m_note')},
+    m:{num:val('m_num'),date:val('m_date'),valid:val('m_valid'),note:val('m_note')},
     c:{name:val('c_name'),inn:val('c_inn'),contact:val('c_contact'),phone:val('c_phone'),email:val('c_email')},
     vat:val('vat')
   };
@@ -233,7 +243,7 @@ function saveDraft(msg){ try{localStorage.setItem(DKEY,JSON.stringify(collect())
 function loadDraft(){
   try{var d=JSON.parse(localStorage.getItem(DKEY)); if(!d)return;
     kp.items=d.items||[];
-    set('m_num',d.m.num);set('m_date',d.m.date);set('m_valid',d.m.valid);set('m_mgr',d.m.mgr);set('m_note',d.m.note);
+    set('m_num',d.m.num);set('m_date',d.m.date);set('m_valid',d.m.valid);set('m_note',d.m.note);
     set('c_name',d.c.name);set('c_inn',d.c.inn);set('c_contact',d.c.contact);set('c_phone',d.c.phone);set('c_email',d.c.email);
     set('vat',d.vat||'none');
   }catch(e){}
@@ -357,7 +367,7 @@ function renderDoc(t){
    '<div class="meta">'+
       (val('m_date')?'Дата: '+esc(fmtDate(val('m_date')))+' &nbsp; ':'')+
       (val('m_valid')?'Действует: '+esc(val('m_valid')):'')+
-      (val('m_mgr')?'<br>Менеджер: '+esc(val('m_mgr')):'')+
+      (mgrLine()?'<br>Менеджер: '+esc(mgrLine()):'')+
    '</div>'+
    (cli.length?'<div class="cli">Кому: '+cli.join(' · ')+'</div>':'')+
    '<table><thead><tr><th style="width:28px">№</th><th style="width:64px">Фото</th><th>Наименование</th><th style="width:60px">Кол-во</th><th style="width:100px">Цена, ₽</th><th style="width:110px">Сумма, ₽</th></tr></thead><tbody>'+
@@ -382,6 +392,7 @@ function exportExcel(){
   h+='<tr><td colspan="6"><b>'+esc(co.co_name||'SYNDICAT')+'</b></td></tr>';
   h+='<tr><td colspan="6">Коммерческое предложение'+(val('m_num')?' № '+esc(val('m_num')):'')+(val('m_date')?' от '+esc(fmtDate(val('m_date'))):'')+'</td></tr>';
   if(val('c_name'))h+='<tr><td colspan="6">Клиент: '+esc(val('c_name'))+(val('c_inn')?' (ИНН '+esc(val('c_inn'))+')':'')+'</td></tr>';
+  if(mgrLine())h+='<tr><td colspan="6">Менеджер: '+esc(mgrLine())+'</td></tr>';
   h+='<tr><td colspan="6"></td></tr>';
   h+='<tr><th>№</th><th>Артикул</th><th>Наименование</th><th>Кол-во</th><th>Цена</th><th>Сумма</th></tr>';
   kp.items.forEach(function(it,i){
@@ -393,23 +404,35 @@ function exportExcel(){
   h+='</table>';
   var blob=new Blob(['﻿'+h],{type:'application/vnd.ms-excel'});
   var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
-  a.download='KP'+(val('m_num')?'_'+val('m_num'):'')+'.xls'; a.click();
+  a.download=fileBase()+'.xls'; a.click();
 }
 
-// ---------- авто-номер КП + печать в PDF с номером в имени файла ----------
+// ---------- авто-номер КП (0001, 0002…) + печать в PDF с номером в имени ----------
 function fmtSeq(n){ return String(n).padStart(4,'0'); }
-function nextSeq(){ var n=parseInt(localStorage.getItem('kp_seq')||'0',10)||0; n++; try{localStorage.setItem('kp_seq',n);}catch(e){} return n; }
-// Присваивает номер по порядку (0001, 0002…), если он ещё не задан вручную. Возвращает номер.
-function ensureKpNum(){ if(!val('m_num')){ set('m_num', fmtSeq(nextSeq())); recalc(); saveDraft(); } return val('m_num'); }
+function peekSeq(){ return (parseInt(localStorage.getItem('kp_seq')||'0',10)||0)+1; }        // следующий номер, счётчик пока не тратится
+function commitSeq(n){ n=parseInt(n,10); if(!isNaN(n)){ var cur=parseInt(localStorage.getItem('kp_seq')||'0',10)||0; if(n>cur){ try{localStorage.setItem('kp_seq',n);}catch(e){} } } }
+// Подставить номер, если пусто
+function ensureKpNum(){ if(!val('m_num')){ set('m_num', fmtSeq(peekSeq())); recalc(); saveDraft(); } return val('m_num'); }
+// Кнопка «↻ №» — взять следующий свободный номер
+function newNum(){ commitSeq(val('m_num')); set('m_num', fmtSeq(peekSeq())); recalc(); saveDraft(); }
+// Имя файла: KP_<номер>_<клиент>
+function fileBase(){ var num=ensureKpNum(); commitSeq(num); var cl=val('c_name').replace(/[^\wА-Яа-яЁё0-9-]+/g,'_').replace(/_+/g,'_').replace(/^_|_$/g,''); return 'KP_'+num+(cl?'_'+cl:''); }
 var _docTitle=document.title;
-function printKP(){ var num=ensureKpNum(); document.title='KP_'+num; window.print(); }
+function printKP(){ document.title=fileBase(); window.print(); }
 window.addEventListener('afterprint', function(){ document.title=_docTitle; });
 
-function clearKP(){ if(confirm('Очистить текущее КП? Реквизиты компании останутся.')){ kp.items=[]; ['m_num','m_valid','m_mgr','m_note','c_name','c_inn','c_contact','c_phone','c_email'].forEach(function(id){set(id,'')}); render(); saveDraft(); } }
+// ---------- менеджер (кто выставил КП) — запоминается отдельно, редактируемый ----------
+var MKEY='kp_mgr_v1';
+function saveMgr(){ try{localStorage.setItem(MKEY,JSON.stringify({n:val('m_mgr'),p:val('m_mgr_phone'),e:val('m_mgr_email')}));}catch(e){} }
+function loadMgr(){ try{var m=JSON.parse(localStorage.getItem(MKEY)); if(m){set('m_mgr',m.n);set('m_mgr_phone',m.p);set('m_mgr_email',m.e);}}catch(e){} }
+function mgrLine(){ return [val('m_mgr'),val('m_mgr_phone'),val('m_mgr_email')].filter(Boolean).join(' · '); }
+
+function clearKP(){ if(confirm('Начать новое КП? Позиции и данные клиента очистятся. Реквизиты и менеджер сохранятся, номер станет следующим.')){ kp.items=[]; ['m_valid','m_note','c_name','c_inn','c_contact','c_phone','c_email'].forEach(function(id){set(id,'')}); commitSeq(val('m_num')); set('m_num', fmtSeq(peekSeq())); render(); saveDraft(); } }
 
 // ---------- старт ----------
-loadCompany(); loadDraft();
+loadCompany(); loadMgr(); loadDraft();
 if(!val('m_date')){ /* сегодня */ try{var d=new Date();set('m_date',d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2));}catch(e){} }
+ensureKpNum();   // подставить № сразу, чтобы был виден
 runSearch(); render();
 setInterval(function(){saveDraft(false)},15000);
 </script>
