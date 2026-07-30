@@ -69,6 +69,12 @@ table.items input{padding:6px 6px}
 #doc .dtot .tr{display:flex;justify-content:space-between;padding:4px 0}
 #doc .dtot .tr.big{font-size:16px;font-weight:700;border-top:2px solid var(--ink);margin-top:6px;padding-top:8px}
 #doc .dfoot{margin-top:20px;font-size:12px;color:#333;line-height:1.6;border-top:1px solid var(--bd);padding-top:12px}
+#doc .dsign{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-top:26px}
+#doc .dsign-l{font-size:12px;color:#333}
+#doc .dsign-l .ln{margin-top:26px;letter-spacing:1px}
+#doc .dsign-r{min-width:180px;text-align:center;position:relative}
+#doc .dsign-r .dstamp{width:160px;height:auto;opacity:.9}
+#doc .dsign-r .mp{color:#8a929c;font-size:12px}
 .doc-wrap-title{max-width:900px;margin:0 auto 8px;font-size:12px;color:var(--mut)}
 
 @media print{
@@ -217,6 +223,22 @@ document.getElementById('gatePw').focus();
     <label>E-mail</label><input id="co_email" oninput="recalc()">
     <div style="margin-top:10px"><button class="btn ghost sm" onclick="saveCompany()">Сохранить реквизиты</button> <span id="coSaved" class="hint"></span></div>
   </div>
+
+  <div class="card">
+    <h2>5. Печать и подпись (группа компаний) — хранятся ТОЛЬКО в этом браузере</h2>
+    <div class="row2">
+      <div><label>Печать на этом КП</label><select id="stampSel" onchange="onStampSel()"></select></div>
+      <div><label>Показывать печать</label><select id="stampShow" onchange="recalc();saveDraft()"><option value="1">Да</option><option value="0">Нет</option></select></div>
+    </div>
+    <label style="margin-top:10px">Добавить печать компании (лучше PNG с прозрачным фоном)</label>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <input id="stampName" placeholder="Название (напр. ООО «АМТ»)" style="flex:1;min-width:170px">
+      <input type="file" id="stampFile" accept="image/*" style="flex:1;min-width:170px">
+      <button class="btn ghost sm" onclick="addStamp()">＋ Добавить</button>
+      <button class="btn danger sm" onclick="delStamp()">Удалить выбранную</button>
+    </div>
+    <div class="hint">🔒 Печати и подписи никуда не отправляются — только в память этого браузера. В файл сайта не попадают.</div>
+  </div>
 </div>
 
 <!-- ЖИВОЙ ПРЕДПРОСМОТР / ПЕЧАТНЫЙ ДОКУМЕНТ -->
@@ -237,7 +259,9 @@ function collect(){
     items: kp.items,
     m:{num:val('m_num'),date:val('m_date'),valid:val('m_valid'),note:val('m_note')},
     c:{name:val('c_name'),inn:val('c_inn'),contact:val('c_contact'),phone:val('c_phone'),email:val('c_email')},
-    vat:val('vat')
+    vat:val('vat'),
+    stamp:(document.getElementById('stampSel')||{}).value||'',
+    stampShow:val('stampShow')
   };
 }
 function saveDraft(msg){ try{localStorage.setItem(DKEY,JSON.stringify(collect()));}catch(e){} if(msg) alert('Черновик сохранён в этом браузере.'); }
@@ -247,11 +271,47 @@ function loadDraft(){
     set('m_num',d.m.num);set('m_date',d.m.date);set('m_valid',d.m.valid);set('m_note',d.m.note);
     set('c_name',d.c.name);set('c_inn',d.c.inn);set('c_contact',d.c.contact);set('c_phone',d.c.phone);set('c_email',d.c.email);
     set('vat',d.vat||'none');
+    if(d.stampShow!=null) set('stampShow',d.stampShow);
+    if(d.stamp){ var ss=document.getElementById('stampSel'); if(ss) ss.value=d.stamp; }
   }catch(e){}
 }
 var COMPANY_DEFAULT={co_name:'',co_site:'sd-kt.ru',co_inn:'',co_kpp:'',co_ogrn:'',co_addr:'г. Екатеринбург, ул. Окружная, 88/2',co_rs:'',co_bank:'',co_bik:'',co_ks:'',co_phone:'+7 343 266-40-66',co_email:'m2@sd-kt.ru'};
 function saveCompany(){ var o={}; Object.keys(COMPANY_DEFAULT).forEach(function(k){o[k]=val(k)}); try{localStorage.setItem(CKEY,JSON.stringify(o));}catch(e){} document.getElementById('coSaved').textContent='✓ сохранено'; setTimeout(function(){document.getElementById('coSaved').textContent=''},2000); }
 function loadCompany(){ var o; try{o=JSON.parse(localStorage.getItem(CKEY));}catch(e){} o=o||COMPANY_DEFAULT; Object.keys(COMPANY_DEFAULT).forEach(function(k){ set(k, o[k]!==undefined?o[k]:COMPANY_DEFAULT[k]); }); }
+
+// ---------- печати компаний (только localStorage этого браузера) ----------
+var STKEY='kp_stamps_v1';
+function getStamps(){ try{return JSON.parse(localStorage.getItem(STKEY))||[]}catch(e){return[]} }
+function setStamps(a){ try{localStorage.setItem(STKEY,JSON.stringify(a));return true}catch(e){alert('Не удалось сохранить печать — не хватает места в браузере. Загрузите картинку поменьше.');return false} }
+function renderStampSel(){
+  var a=getStamps(), sel=document.getElementById('stampSel'); if(!sel)return; var cur=sel.value;
+  sel.innerHTML='<option value="">— без печати —</option>'+a.map(function(s){return '<option value="'+s.id+'">'+esc(s.name)+'</option>'}).join('');
+  if(cur) sel.value=cur;
+}
+function onStampSel(){ recalc(); saveDraft(); }
+function addStamp(){
+  var f=(document.getElementById('stampFile').files||[])[0]; var nm=val('stampName').trim();
+  if(!f){alert('Выберите файл печати');return;}
+  if(!nm){alert('Введите название компании');return;}
+  var r=new FileReader();
+  r.onload=function(){
+    var a=getStamps(), id='s'+(a.length+1)+'_'+nm.replace(/\W+/g,'').slice(0,6);
+    a.push({id:id,name:nm,uri:r.result});
+    if(setStamps(a)){ renderStampSel(); document.getElementById('stampSel').value=id; set('stampName',''); document.getElementById('stampFile').value=''; recalc(); saveDraft(); }
+  };
+  r.readAsDataURL(f);
+}
+function delStamp(){
+  var id=document.getElementById('stampSel').value; if(!id){alert('Сначала выберите печать в списке');return;}
+  if(!confirm('Удалить эту печать из браузера?'))return;
+  setStamps(getStamps().filter(function(s){return s.id!==id}));
+  renderStampSel(); document.getElementById('stampSel').value=''; recalc(); saveDraft();
+}
+function currentStampURI(){
+  if(val('stampShow')==='0')return '';
+  var sel=document.getElementById('stampSel'); if(!sel||!sel.value)return '';
+  var s=getStamps().filter(function(x){return x.id===sel.value})[0]; return s?s.uri:'';
+}
 
 function val(id){var e=document.getElementById(id);return e?e.value:'';}
 function set(id,v){var e=document.getElementById(id);if(e&&v!=null)e.value=v;}
@@ -355,6 +415,9 @@ function renderDoc(t){
   if(val('c_email'))cli.push(esc(val('c_email')));
 
   var vatLabel = t.mode==='none' ? 'Без НДС' : (t.mode==='incl'?'в т.ч. НДС 22%':'НДС 22% сверху');
+  var stampU=currentStampURI();
+  var signBlock='<div class="dsign"><div class="dsign-l">Поставщик · Директор<div class="ln">_______________________</div></div>'+
+     '<div class="dsign-r">'+(stampU?'<img class="dstamp" src="'+stampU+'" alt="печать">':'<span class="mp">М.П. / подпись</span>')+'</div></div>';
 
   doc.innerHTML =
    '<div class="dhead"><div class="co">'+
@@ -379,7 +442,8 @@ function renderDoc(t){
       '<div class="tr big"><span>ИТОГО ('+vatLabel+')</span><span>'+fmt(t.total)+' ₽</span></div>'+
    '</div>'+
    (val('m_note')?'<div class="dfoot"><b>Условия:</b> '+esc(val('m_note')).replace(/\n/g,'<br>')+'</div>':'')+
-   '<div class="dfoot">'+(bankline?bankline+'<br>':'')+'Цены указаны в рублях. Предложение носит информационный характер и не является публичной офертой.</div>';
+   '<div class="dfoot">'+(bankline?bankline+'<br>':'')+'Цены указаны в рублях. Предложение носит информационный характер и не является публичной офертой.</div>'+
+   signBlock;
 }
 function fmtDate(d){ if(!d)return''; var p=d.split('-'); return p.length===3?(p[2]+'.'+p[1]+'.'+p[0]):d; }
 
@@ -430,7 +494,7 @@ function mgrLine(){ return [val('m_mgr'),val('m_mgr_phone'),val('m_mgr_email')].
 function clearKP(){ if(confirm('Начать новое КП? Позиции и данные клиента очистятся. Реквизиты и менеджер сохранятся, номер станет следующим.')){ kp.items=[]; ['m_valid','m_note','c_name','c_inn','c_contact','c_phone','c_email'].forEach(function(id){set(id,'')}); commitSeq(val('m_num')); set('m_num', fmtSeq(peekSeq())); render(); saveDraft(); } }
 
 // ---------- старт ----------
-loadCompany(); loadMgr(); loadDraft();
+loadCompany(); loadMgr(); renderStampSel(); loadDraft();
 if(!val('m_date')){ /* сегодня */ try{var d=new Date();set('m_date',d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2));}catch(e){} }
 ensureKpNum();   // подставить № сразу, чтобы был виден
 runSearch(); render();
