@@ -69,13 +69,12 @@ table.items input{padding:6px 6px}
 #doc .dtot .tr{display:flex;justify-content:space-between;padding:4px 0}
 #doc .dtot .tr.big{font-size:16px;font-weight:700;border-top:2px solid var(--ink);margin-top:6px;padding-top:8px}
 #doc .dfoot{margin-top:20px;font-size:12px;color:#333;line-height:1.6;border-top:1px solid var(--bd);padding-top:12px}
-#doc .dsign{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-top:30px}
-#doc .dsign-l{font-size:12px;color:#333}
-#doc .dsign-l .ln{margin-top:26px;letter-spacing:1px}
-#doc .dsign-l .lbl-mp{margin-top:8px;font-size:11px;color:#8a929c}
-#doc .dsign-r{min-width:260px;text-align:center;position:relative}
-#doc .dsign-r .dstamp{width:250px;height:auto;opacity:.92}
-#doc .dsign-r .mp{color:#8a929c;font-size:12px}
+#doc .dsign{position:relative;margin-top:78px;min-height:120px}
+#doc .sline{display:flex;align-items:flex-end;gap:12px;font-size:12px;color:#333}
+#doc .sline .lab{white-space:nowrap}
+#doc .sline .sig{flex:1;max-width:300px;border-bottom:1px solid #555;height:0;margin-bottom:2px}
+#doc .sline .mp{color:#8a929c;white-space:nowrap;margin-left:18px}
+#doc .dstamp{position:absolute;width:200px;height:auto;opacity:.8;right:55px;top:-82px;pointer-events:none}
 .doc-wrap-title{max-width:900px;margin:0 auto 8px;font-size:12px;color:var(--mut)}
 
 @media print{
@@ -201,7 +200,14 @@ document.getElementById('gatePw').focus();
 
   <!-- реквизиты компании -->
   <div class="card">
-    <h2>4. Реквизиты вашей компании (заполнить один раз — сохранится)</h2>
+    <h2>4. Реквизиты компании-поставщика (профили для группы компаний)</h2>
+    <label>Компания-поставщик</label>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px">
+      <select id="companySel" onchange="selectCompany()" style="flex:1;min-width:200px"></select>
+      <button class="btn ghost sm" onclick="saveCompanyProfile()">💾 Сохранить компанию</button>
+      <button class="btn danger sm" onclick="delCompany()">Удалить</button>
+    </div>
+    <div class="hint" style="margin-bottom:8px">Выбор компании подставит её реквизиты и печать. «Сохранить компанию» — запомнить текущие реквизиты + выбранную печать под названием. Хранится только в этом браузере.</div>
     <div class="row2">
       <div><label>Наименование (ООО «…» / ИП …)</label><input id="co_name" oninput="recalc()"></div>
       <div><label>Сайт</label><input id="co_site" oninput="recalc()"></div>
@@ -314,6 +320,39 @@ function currentStampURI(){
   var s=getStamps().filter(function(x){return x.id===sel.value})[0]; return s?s.uri:'';
 }
 
+// ---------- профили компаний (реквизиты + печать), только localStorage ----------
+var CMPKEY='kp_companies_v1';
+function getCompanies(){ try{return JSON.parse(localStorage.getItem(CMPKEY))||[]}catch(e){return[]} }
+function setCompanies(a){ try{localStorage.setItem(CMPKEY,JSON.stringify(a))}catch(e){} }
+function renderCompanySel(){
+  var a=getCompanies(), sel=document.getElementById('companySel'); if(!sel)return; var cur=sel.value;
+  sel.innerHTML='<option value="">— выбрать компанию —</option>'+a.map(function(c){return '<option value="'+c.id+'">'+esc(c.name)+'</option>'}).join('');
+  if(cur) sel.value=cur;
+}
+function saveCompanyProfile(){
+  var nm=prompt('Название компании (профиля):', val('co_name')||''); if(!nm)return; nm=nm.trim(); if(!nm)return;
+  var co={}; Object.keys(COMPANY_DEFAULT).forEach(function(k){co[k]=val(k)});
+  var stampId=(document.getElementById('stampSel')||{}).value||'';
+  var a=getCompanies(); var ex=a.filter(function(c){return c.name.toLowerCase()===nm.toLowerCase()})[0];
+  if(ex){ ex.co=co; ex.stampId=stampId; }
+  else { ex={id:'c'+(a.length+1)+'_'+nm.replace(/\W+/g,'').slice(0,6),name:nm,co:co,stampId:stampId}; a.push(ex); }
+  setCompanies(a); renderCompanySel(); document.getElementById('companySel').value=ex.id;
+  alert('Компания «'+nm+'» сохранена.');
+}
+function selectCompany(){
+  var id=document.getElementById('companySel').value; if(!id)return;
+  var c=getCompanies().filter(function(x){return x.id===id})[0]; if(!c)return;
+  Object.keys(COMPANY_DEFAULT).forEach(function(k){ set(k, (c.co&&c.co[k]!=null)?c.co[k]:''); });
+  var ss=document.getElementById('stampSel'); if(ss){ ss.value = c.stampId && getStamps().some(function(s){return s.id===c.stampId}) ? c.stampId : ''; }
+  recalc(); saveDraft();
+}
+function delCompany(){
+  var id=document.getElementById('companySel').value; if(!id){alert('Сначала выберите компанию');return;}
+  if(!confirm('Удалить профиль компании? (реквизиты в полях останутся)'))return;
+  setCompanies(getCompanies().filter(function(c){return c.id!==id}));
+  renderCompanySel(); document.getElementById('companySel').value='';
+}
+
 function val(id){var e=document.getElementById(id);return e?e.value:'';}
 function set(id,v){var e=document.getElementById(id);if(e&&v!=null)e.value=v;}
 
@@ -417,9 +456,8 @@ function renderDoc(t){
 
   var vatLabel = t.mode==='none' ? 'Без НДС' : (t.mode==='incl'?'в т.ч. НДС 22%':'НДС 22% сверху');
   var stampU=currentStampURI();
-  var signBlock = stampU
-    ? '<div class="dsign"><div class="dsign-l">Поставщик · Директор<div class="lbl-mp">М.П. / подпись</div></div><div class="dsign-r"><img class="dstamp" src="'+stampU+'" alt="печать и подпись"></div></div>'
-    : '<div class="dsign"><div class="dsign-l">Поставщик · Директор<div class="ln">_______________________</div></div><div class="dsign-r"><span class="mp">М.П. / подпись</span></div></div>';
+  var signBlock='<div class="dsign"><div class="sline"><span class="lab">Поставщик · Директор</span> <span class="sig"></span> <span class="mp">М.П.</span></div>'
+    +(stampU?'<img class="dstamp" src="'+stampU+'" alt="печать и подпись">':'')+'</div>';
 
   doc.innerHTML =
    '<div class="dhead"><div class="co">'+
@@ -496,7 +534,7 @@ function mgrLine(){ return [val('m_mgr'),val('m_mgr_phone'),val('m_mgr_email')].
 function clearKP(){ if(confirm('Начать новое КП? Позиции и данные клиента очистятся. Реквизиты и менеджер сохранятся, номер станет следующим.')){ kp.items=[]; ['m_valid','m_note','c_name','c_inn','c_contact','c_phone','c_email'].forEach(function(id){set(id,'')}); commitSeq(val('m_num')); set('m_num', fmtSeq(peekSeq())); render(); saveDraft(); } }
 
 // ---------- старт ----------
-loadCompany(); loadMgr(); renderStampSel(); loadDraft();
+loadCompany(); loadMgr(); renderStampSel(); renderCompanySel(); loadDraft();
 if(!val('m_date')){ /* сегодня */ try{var d=new Date();set('m_date',d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2));}catch(e){} }
 ensureKpNum();   // подставить № сразу, чтобы был виден
 runSearch(); render();
