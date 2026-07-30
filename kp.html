@@ -69,11 +69,12 @@ table.items input{padding:6px 6px}
 #doc .dtot .tr{display:flex;justify-content:space-between;padding:4px 0}
 #doc .dtot .tr.big{font-size:16px;font-weight:700;border-top:2px solid var(--ink);margin-top:6px;padding-top:8px}
 #doc .dfoot{margin-top:20px;font-size:12px;color:#333;line-height:1.6;border-top:1px solid var(--bd);padding-top:12px}
-#doc .dsign{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-top:26px}
+#doc .dsign{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-top:30px}
 #doc .dsign-l{font-size:12px;color:#333}
 #doc .dsign-l .ln{margin-top:26px;letter-spacing:1px}
-#doc .dsign-r{min-width:180px;text-align:center;position:relative}
-#doc .dsign-r .dstamp{width:160px;height:auto;opacity:.9}
+#doc .dsign-l .lbl-mp{margin-top:8px;font-size:11px;color:#8a929c}
+#doc .dsign-r{min-width:260px;text-align:center;position:relative}
+#doc .dsign-r .dstamp{width:250px;height:auto;opacity:.92}
 #doc .dsign-r .mp{color:#8a929c;font-size:12px}
 .doc-wrap-title{max-width:900px;margin:0 auto 8px;font-size:12px;color:var(--mut)}
 
@@ -416,8 +417,9 @@ function renderDoc(t){
 
   var vatLabel = t.mode==='none' ? 'Без НДС' : (t.mode==='incl'?'в т.ч. НДС 22%':'НДС 22% сверху');
   var stampU=currentStampURI();
-  var signBlock='<div class="dsign"><div class="dsign-l">Поставщик · Директор<div class="ln">_______________________</div></div>'+
-     '<div class="dsign-r">'+(stampU?'<img class="dstamp" src="'+stampU+'" alt="печать">':'<span class="mp">М.П. / подпись</span>')+'</div></div>';
+  var signBlock = stampU
+    ? '<div class="dsign"><div class="dsign-l">Поставщик · Директор<div class="lbl-mp">М.П. / подпись</div></div><div class="dsign-r"><img class="dstamp" src="'+stampU+'" alt="печать и подпись"></div></div>'
+    : '<div class="dsign"><div class="dsign-l">Поставщик · Директор<div class="ln">_______________________</div></div><div class="dsign-r"><span class="mp">М.П. / подпись</span></div></div>';
 
   doc.innerHTML =
    '<div class="dhead"><div class="co">'+
