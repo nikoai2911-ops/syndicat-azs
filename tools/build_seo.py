@@ -165,12 +165,29 @@ def render_product(i):
     img_abs = f"{BASE}/{img}" if img else f"{BASE}/apple-touch-icon.png"
     img_rel = f"../{img}" if img else ""
 
-    title = f"{name} — купить, цена | SYNDICAT"
-    if len(title) > 70: title = f"{name[:55]}… — SYNDICAT"
-    desc = f"{name}. " + (f"{brand}. " if brand else "") + \
-           f"Купить для {secw}: оборудование и комплектующие SYNDICAT. Доставка по России, цена и наличие по запросу. Оригинал и аналоги."
+    art = p.get('art', '')
+    # --- TITLE: добавляем бренд, если его нет в названии; держим в пределах ~65 симв ---
+    brand_in_name = bool(brand) and brand.lower() in name.lower()
+    core = f"{name} {brand}" if (brand and not brand_in_name) else name
+    # название всегда целиком (это ключевые слова); при нехватке места укорачиваем хвост
+    title = f"{core} — купить, цена | SYNDICAT"
+    if len(title) > 62:
+        title = f"{core} — купить | SYNDICAT"
+    if len(title) > 62:
+        title = f"{name} | SYNDICAT"
+    # --- DESCRIPTION: уникальное на каждую страницу; продающая фраза сразу после
+    #     названия (чтобы не обрезалась), категория с защитой от дубля «для АЗС для АЗС» ---
+    tail_sec = "" if secw.lower() in leaf.lower() else f" для {secw}"
+    desc = f"{name} — купить в SYNDICAT. Оригинал и аналог, цена и наличие по запросу, " \
+        + f"доставка по России. Раздел: {leaf}{tail_sec}." \
+        + (f" {brand}." if brand and not brand_in_name else "") \
+        + (f" Арт. {art}." if art else "")
+    desc = re.sub(r"\s+", " ", desc).strip()
+    if len(desc) <= 178:
+        meta_desc = desc
+    else:
+        meta_desc = desc[:178].rsplit(" ", 1)[0].rstrip(" ,.;:—-") + "…"
     desc = desc[:300]
-    meta_desc = desc[:165]
 
     # хлебные крошки (визуальные)
     crumbs = ['<a href="../index.html">Главная</a>', '<a href="../catalog.html">Каталог</a>']
