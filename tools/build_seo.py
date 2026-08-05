@@ -148,6 +148,33 @@ def members_of(i):
     k = gkey(prods[i])
     return groups.get(k, [i]) if k else [i]
 
+# ---- слаги статических лендингов категорий (файлы в /k/<slug>.html) ----
+cat_slug = {}
+_cs_count = {}
+for c in cats:
+    base = slugify((c['u'] or '').split('/')[-1] or c['n'])
+    n = _cs_count.get(base, 0) + 1
+    _cs_count[base] = n
+    cat_slug[c['u']] = base if n == 1 else f"{base}-{n}"
+
+def kids_of(u):
+    """прямые подкатегории категории u (в порядке cats)"""
+    return [c for c in cats if (c.get('p') or '') == u]
+
+def pages_under(u):
+    """индексы страниц-товаров в категории u и во всех её подкатегориях"""
+    res = []
+    for i in page_indices:
+        c = prods[i].get('c') or ''
+        if c == u or c.startswith(u + '/'):
+            res.append(i)
+    return res
+
+def cat_href(u, prefix="../"):
+    """ссылка на лендинг категории; фолбэк на интерактивный каталог, если лендинга нет"""
+    s = cat_slug.get(u)
+    return f"{prefix}k/{s}.html" if s else f"{prefix}catalog.html?cat={u}"
+
 # ---------- шаблон страницы ----------
 HEAD_LOGO = ('<a href="../index.html" class="brand">SYNDI<b>CAT</b></a>')
 
@@ -192,7 +219,7 @@ def render_product(i):
     # хлебные крошки (визуальные)
     crumbs = ['<a href="../index.html">Главная</a>', '<a href="../catalog.html">Каталог</a>']
     for ci in chain:
-        crumbs.append(f'<a href="../catalog.html?cat={esc(ci["u"])}">{esc(ci["n"])}</a>')
+        crumbs.append(f'<a href="{esc(cat_href(ci["u"]))}">{esc(ci["n"])}</a>')
     crumbs.append(f'<span>{esc(name)}</span>')
     crumbs_html = ' / '.join(crumbs)
 
@@ -274,7 +301,7 @@ def render_product(i):
     pos = 3
     for ci in chain:
         bc_items.append({"@type": "ListItem", "position": pos, "name": ci['n'],
-                         "item": f"{BASE}/catalog.html?cat={ci['u']}"})
+                         "item": f"{BASE}/k/{cat_slug[ci['u']]}.html"})
         pos += 1
     bc_items.append({"@type": "ListItem", "position": pos, "name": name, "item": url})
     breadcrumb_ld = {"@context": "https://schema.org/", "@type": "BreadcrumbList", "itemListElement": bc_items}
@@ -287,9 +314,9 @@ def render_product(i):
     return f"""<!DOCTYPE html>
 <html lang="ru">
 <head>
-{METRIKA}
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{METRIKA}
 <title>{esc(title)}</title>
 <meta name="description" content="{esc(meta_desc)}">
 <link rel="canonical" href="{esc(url)}">
@@ -321,7 +348,7 @@ def render_product(i):
       <div class="p-art">Артикул: <b>{esc(p.get('art',''))}</b></div>
       {price_html}
       {f'<div class="p-brand">{esc(brand)}</div>' if brand else ''}
-      <div class="p-cat">Раздел: <a href="../catalog.html?cat={esc(c)}">{esc(leaf)}</a> · {secw}</div>
+      <div class="p-cat">Раздел: <a href="{esc(cat_href(c))}">{esc(leaf)}</a> · {secw}</div>
       {orig_html}
       {specs}
       {alt_html}
@@ -343,6 +370,135 @@ def render_product(i):
 </footer>
 </body>
 </html>"""
+
+def render_category(c):
+    u = c['u']
+    name = c['n']
+    secw = sec_word(u)
+    slug = cat_slug[u]
+    url = f"{BASE}/k/{slug}.html"
+    chain = cat_chain(u)                     # включает саму категорию последним элементом
+    sec_in = secw.lower() in name.lower()
+    core = name if sec_in else f"{name} для {secw}"
+
+    kids = kids_of(u)
+    pgs = pages_under(u)
+    n_prod = len(pgs)
+
+    # --- title ---
+    title = f"{core} — купить, цена | SYNDICAT"
+    if len(title) > 62: title = f"{core} — купить | SYNDICAT"
+    if len(title) > 62: title = f"{core} | SYNDICAT"
+
+    # --- description (уникальное) ---
+    kid_names = ", ".join(k['n'] for k in kids[:4])
+    if kid_names:
+        desc = f"{core} — купить в SYNDICAT: {kid_names}. Всего {n_prod} позиций, оригинал и аналог, цена по запросу, доставка по России."
+    else:
+        desc = f"{core} — купить в SYNDICAT. {n_prod} позиций, оригинал и аналог, цена и наличие по запросу, доставка по России."
+    desc = re.sub(r"\s+", " ", desc).strip()
+    meta_desc = desc if len(desc) <= 178 else desc[:178].rsplit(" ", 1)[0].rstrip(" ,.;:—-") + "…"
+
+    # --- хлебные крошки (chain включает себя — последний как span) ---
+    crumbs = ['<a href="../index.html">Главная</a>', '<a href="../catalog.html">Каталог</a>']
+    for ci in chain[:-1]:
+        crumbs.append(f'<a href="{esc(cat_href(ci["u"]))}">{esc(ci["n"])}</a>')
+    crumbs.append(f'<span>{esc(name)}</span>')
+    crumbs_html = ' / '.join(crumbs)
+
+    # --- подкатегории ---
+    subcats_html = ''
+    if kids:
+        cards = ''
+        for k in kids:
+            kn = len(pages_under(k['u']))
+            cards += (f'<a class="k-card" href="{esc(cat_href(k["u"]))}">'
+                      f'<span class="k-name">{esc(k["n"])}</span>'
+                      f'<span class="k-count">{kn} поз.</span></a>')
+        subcats_html = f'<section class="k-block"><h2>Подкатегории</h2><div class="k-grid">{cards}</div></section>'
+
+    # --- список товаров (с ограничением) ---
+    CAP = 400
+    prod_items = ''
+    for i in pgs[:CAP]:
+        p = prods[i]
+        art = p.get('art', '')
+        prod_items += (f'<li><a href="../p/{esc(slug_by_page[i])}.html">{esc(p.get("n"))}</a>'
+                       + (f' <span class="pa">арт. {esc(art)}</span>' if art else '') + '</li>')
+    more = (f'<p class="muted">Показаны первые {CAP} из {n_prod}. '
+            f'Полный список — <a href="../catalog.html?cat={esc(u)}">в каталоге с фильтрами</a>.</p>'
+            if n_prod > CAP else '')
+    prods_html = ''
+    if prod_items:
+        prods_html = (f'<section class="k-block"><h2>Товары в разделе «{esc(name)}» ({n_prod})</h2>'
+                      f'<ul class="k-list">{prod_items}</ul>{more}</section>')
+
+    intro = (f'<p class="k-intro">{esc(core)} от компании SYNDICAT — поставка оборудования и '
+             f'комплектующих для авто- и газозаправочных станций по всей России. '
+             f'В разделе {n_prod} позиций: оригинал и аналоги, цена и наличие по запросу. '
+             f'Подберём под задачу и рассчитаем доставку.</p>')
+
+    # --- JSON-LD ---
+    bc_items = [{"@type": "ListItem", "position": 1, "name": "Главная", "item": f"{BASE}/"},
+                {"@type": "ListItem", "position": 2, "name": "Каталог", "item": f"{BASE}/catalog.html"}]
+    pos = 3
+    for ci in chain:
+        bc_items.append({"@type": "ListItem", "position": pos, "name": ci['n'],
+                         "item": f"{BASE}/k/{cat_slug[ci['u']]}.html"})
+        pos += 1
+    breadcrumb_ld = {"@context": "https://schema.org/", "@type": "BreadcrumbList", "itemListElement": bc_items}
+    collection_ld = {"@context": "https://schema.org/", "@type": "CollectionPage",
+                     "name": core, "description": meta_desc, "url": url,
+                     "isPartOf": {"@type": "WebSite", "name": "SYNDICAT", "url": f"{BASE}/"}}
+    ld = (f'<script type="application/ld+json">{json.dumps(collection_ld, ensure_ascii=False)}</script>'
+          f'<script type="application/ld+json">{json.dumps(breadcrumb_ld, ensure_ascii=False)}</script>')
+
+    return f"""<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+{METRIKA}
+<title>{esc(title)}</title>
+<meta name="description" content="{esc(meta_desc)}">
+<link rel="canonical" href="{esc(url)}">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{esc(core)}">
+<meta property="og:description" content="{esc(meta_desc)}">
+<meta property="og:url" content="{esc(url)}">
+<meta property="og:site_name" content="SYNDICAT">
+<meta property="og:locale" content="ru_RU">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/product.css">
+{ld}
+</head>
+<body>
+<header><div class="wrap nav">{HEAD_LOGO}
+  <div class="nav-right"><a href="../catalog.html">Каталог</a><a href="tel:+73432664066" class="ph">+7 343 266-40-66</a></div>
+</div></header>
+<main class="wrap">
+  <nav class="crumbs">{crumbs_html}</nav>
+  <h1 class="k-h1">{esc(name)} <span class="k-sec">· {secw}</span></h1>
+  {intro}
+  <div class="p-actions">
+    <a class="btn" href="mailto:m2@sd-kt.ru?subject={esc('Запрос по разделу: ' + name)}">Запросить прайс раздела</a>
+    <a class="btn ghost" href="tel:+73432664066">Позвонить</a>
+    <a class="btn ghost" href="../catalog.html?cat={esc(u)}">Открыть с фильтрами</a>
+  </div>
+  {subcats_html}
+  {prods_html}
+</main>
+<footer class="wrap">
+  <span>© 2026 SYNDICAT · sd-kt.ru · Екатеринбург, ул. Окружная, 88/2</span>
+  <span class="foot-contacts"><a href="tel:+73432664066">+7 343 266-40-66</a> <a href="mailto:m2@sd-kt.ru">m2@sd-kt.ru</a> <a href="https://t.me/+79068084908" target="_blank" rel="noopener">Telegram</a> <a href="https://wa.me/79068084908" target="_blank" rel="noopener">WhatsApp</a></span>
+</footer>
+</body>
+</html>"""
+
 
 CSS = """:root{--studio-black:#100904;--warm-cream:#ffedd7;--cork-shadow:#40372e;--dark-cork:#382416;--burnt-sienna:#dc5000;--grey-brown:#6c5f51;--font:'Figtree',ui-sans-serif,system-ui,-apple-system,sans-serif;--maxw:1100px}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -403,6 +559,22 @@ footer{margin-top:30px;padding:30px 0;border-top:1px dashed var(--cork-shadow);f
 footer a:hover{color:var(--burnt-sienna)}
 .foot-contacts a+a{margin-left:16px}
 @media(max-width:760px){.wrap{padding:0 16px}.p-top{grid-template-columns:1fr;gap:20px}.p-img{height:300px}.p-variants ul{columns:1}.nav-right a:not(.ph){display:none}}
+/* --- лендинги категорий --- */
+.k-h1{font-size:28px;font-weight:600;line-height:1.15;margin:6px 0 12px}
+.k-sec{color:var(--grey-brown);font-weight:400;font-size:18px}
+.k-intro{font-size:15px;color:#cdbfae;max-width:820px;margin-bottom:22px}
+.k-block{border-top:1px dashed var(--cork-shadow);padding:24px 0}
+.k-block h2{font-size:18px;font-weight:600;margin-bottom:16px}
+.k-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.k-card{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--cork-shadow);border-radius:10px;padding:14px 16px;transition:border-color .15s}
+.k-card:hover{border-color:var(--burnt-sienna)}
+.k-name{font-size:14px;font-weight:500}
+.k-count{font-size:11px;color:var(--grey-brown);white-space:nowrap}
+.k-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:6px 24px}
+.k-list li{font-size:13.5px;padding:6px 0;border-bottom:1px dashed var(--cork-shadow)}
+.k-list a:hover{color:var(--burnt-sienna)}
+.k-list .pa{color:var(--grey-brown);font-size:11.5px;white-space:nowrap}
+@media(max-width:760px){.k-list{grid-template-columns:1fr}.k-h1{font-size:23px}}
 """
 
 def main():
@@ -414,11 +586,17 @@ def main():
         page = render_product(i)
         open(os.path.join(ROOT, "p", slug_by_page[i] + ".html"), "w", encoding="utf-8").write(page)
 
+    # статические лендинги категорий
+    os.makedirs(os.path.join(ROOT, "k"), exist_ok=True)
+    for c in cats:
+        page = render_category(c)
+        open(os.path.join(ROOT, "k", cat_slug[c['u']] + ".html"), "w", encoding="utf-8").write(page)
+
     # sitemap
     urls = [f"{BASE}/", f"{BASE}/catalog.html", f"{BASE}/uslugi.html", f"{BASE}/faq.html"]
-    # категории как лендинги
+    # категории — статические лендинги (не параметрические ?cat=)
     for c in cats:
-        urls.append(f"{BASE}/catalog.html?cat={c['u']}")
+        urls.append(f"{BASE}/k/{cat_slug[c['u']]}.html")
     for i in page_indices:
         urls.append(f"{BASE}/p/{slug_by_page[i]}.html")
     sm = ['<?xml version="1.0" encoding="UTF-8"?>',
