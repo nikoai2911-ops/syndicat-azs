@@ -1,0 +1,7 @@
+# Закрыть прямой доступ к файлу с токеном
+<Files "tg_config.php">
+  Require all denied
+</Files>
+<Files "tg_config.example.php">
+  Require all denied
+</Files>
