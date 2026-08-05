@@ -1189,5 +1189,22 @@
   if(new URLSearchParams(location.search).get('cart')==='1' && cart.length) openCart();
 })();
 </script>
+<script>
+/* Релей заявок в Telegram (Cloudflare Worker, см. tools/telegram-relay/).
+   Пока RELAY_URL пуст — ничего не делает, письмо через formsubmit идёт как обычно. */
+(function(){
+  var RELAY_URL = ""; // ← адрес воркера вида https://syndicat-relay.xxx.workers.dev
+  if(!RELAY_URL) return;
+  document.querySelectorAll('form[action*="formsubmit"]').forEach(function(f){
+    f.addEventListener("submit", function(){
+      try{
+        var fd = new FormData(f);
+        fd.append("Страница", location.pathname + location.search);
+        fetch(RELAY_URL, {method:"POST", body:fd, keepalive:true});
+      }catch(e){}
+    });
+  });
+})();
+</script>
 </body>
 </html>
