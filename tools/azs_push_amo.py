@@ -93,6 +93,7 @@ def create_entry(phone, c, region, due_ts):
         "custom_fields_values": [
             {"field_code": "PHONE", "values": [{"value": phone, "enum_code": "WORK"}]},
         ] + ([{"field_code": "WEB", "values": [{"value": c["site"]}]}] if c.get("site") else [])
+          + ([{"field_code": "EMAIL", "values": [{"value": c["email"], "enum_code": "WORK"}]}] if c.get("email") else [])
           + ([{"field_code": "ADDRESS", "values": [{"value": c["addrs"][0]}]}] if c.get("addrs") else []),
     }]
     comp = post("/companies", company_payload)

@@ -1,102 +1,122 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Синхронизация общей Google Таблицы с amoCRM.
+Синхронизация общей Google Таблицы «Базы» с amoCRM.
 
-Менеджеры с любого компьютера (Safari, Windows — неважно) вставляют строки
-в общую Google Таблицу. Этот скрипт (запускается GitHub Actions каждый час)
-скачивает таблицу как CSV и заливает НОВЫЕ номера в amoCRM:
-компания + сделка «Холодный обзвон → Взят в работу» + задача на завтра.
-Номера, уже существующие в amo, пропускаются — можно гнать хоть каждую
-минуту, дублей не будет.
+Менеджеры парсят со своих компьютеров в общую таблицу (один лист = один
+регион; сводные листы с колонкой «Регион» тоже поддерживаются). Скрипт
+скачивает документ целиком (export xlsx) и заливает в amoCRM все НОВЫЕ
+номера: компания (телефон, email, адрес, сайт, заметки менеджера в
+примечании) + сделка «Холодный обзвон → Взят в работу» + задача на завтра.
 
-Ожидаемые колонки листа (порядок не важен, лишние игнорируются):
-    Регион | Название | Телефон | Адрес | Сайт | Комментарий
-Обязательные: Телефон и Название (или Регион — иначе тег «холодная база» без региона).
+Дедупликация по телефону: номера, уже существующие в amo, пропускаются,
+поэтому запуск идемпотентен — хоть каждый час, дублей не будет.
+Строки без телефона игнорируются (звонить некуда).
 
-URL публикации CSV берётся из переменной окружения SHEET_CSV_URL
-(Файл → Поделиться → Опубликовать в интернете → лист → CSV)
-или из tools/sheet_url.txt.
+Ссылка на таблицу: env SHEET_URL (или tools/sheet_url.txt) — обычная ссылка
+из адресной строки; таблица должна быть доступна «всем, у кого есть ссылка».
 
 Запуск руками: python3 tools/amo_sheet_sync.py
+GitHub Actions гоняет его каждый час (.github/workflows/amo-sheet-sync.yml).
 """
-import csv
 import io
 import os
+import re
 import sys
 import time
 import urllib.request
 
-from amo_api import TOKEN_FILE  # noqa: F401  (общий пакет tools/)
 from azs_push_amo import create_entry, norm_phone, phone_exists, tomorrow_ts
 
 URL_FILE = os.path.join(os.path.dirname(__file__), "sheet_url.txt")
+SERVICE_SHEETS_WITH_REGION_COL = True  # листы без колонки «Регион» берут регион из названия листа
 
 
-def sheet_url():
-    if os.environ.get("SHEET_CSV_URL"):
-        return os.environ["SHEET_CSV_URL"].strip()
-    if os.path.exists(URL_FILE):
+def sheet_id():
+    url = os.environ.get("SHEET_URL", "").strip()
+    if not url and os.path.exists(URL_FILE):
         with open(URL_FILE) as f:
-            return f.read().strip()
-    sys.exit("Нет ссылки на таблицу: задайте SHEET_CSV_URL или создайте tools/sheet_url.txt")
+            url = f.read().strip()
+    if not url:
+        sys.exit("Нет ссылки: задайте SHEET_URL или создайте tools/sheet_url.txt")
+    m = re.search(r"/spreadsheets/d/([A-Za-z0-9_\-]+)", url)
+    return m.group(1) if m else url  # можно передать и голый id
 
 
-def fetch_rows(url):
+def download_xlsx(sid):
+    url = "https://docs.google.com/spreadsheets/d/%s/export?format=xlsx" % sid
     with urllib.request.urlopen(url) as r:
-        text = r.read().decode("utf-8-sig")
-    reader = csv.reader(io.StringIO(text))
-    rows = list(reader)
-    if not rows:
-        return []
-    header = [h.strip().lower() for h in rows[0]]
+        return io.BytesIO(r.read())
 
-    def col(*names):
-        for n in names:
-            if n in header:
-                return header.index(n)
-        return None
 
-    i_phone = col("телефон", "phone")
-    i_name = col("название", "компания", "name")
-    i_region = col("регион", "город", "region")
-    i_addr = col("адрес", "address")
-    i_site = col("сайт", "web")
-    i_comment = col("комментарий", "примечание", "comment")
-    if i_phone is None:
-        sys.exit("В таблице нет колонки «Телефон» (первая строка листа — заголовки)")
+def rows_from_workbook(buf):
+    """Все листы -> записи {phone, name, region, addr, site, email, comment}."""
+    import openpyxl
+    wb = openpyxl.load_workbook(buf, read_only=True)
+    for ws in wb.worksheets:
+        rows = ws.iter_rows(values_only=True)
+        try:
+            header = [str(h).strip().lower() if h else "" for h in next(rows)]
+        except StopIteration:
+            continue
 
-    out = []
-    for row in rows[1:]:
-        def cell(i):
-            return row[i].strip() if i is not None and i < len(row) else ""
-        out.append({
-            "phone": cell(i_phone),
-            "name": cell(i_name),
-            "region": cell(i_region),
-            "addr": cell(i_addr),
-            "site": cell(i_site),
-            "comment": cell(i_comment),
-        })
-    return out
+        def col(*names):
+            for n in names:
+                if n in header:
+                    return header.index(n)
+            return None
+
+        i_phone = col("телефон")
+        i_name = col("название")
+        if i_phone is None or i_name is None:
+            continue  # служебный лист
+        i_region = col("регион")
+        i_addr = col("адрес")
+        i_site = col("сайт")
+        i_email = col("email", "почта")
+        i_type = col("тип")
+        i_brand = col("сеть", "бренд")
+        i_status = col("статус")
+        i_notes = col("заметки", "комментарий", "примечание")
+
+        for row in rows:
+            def cell(i):
+                v = row[i] if i is not None and i < len(row) else None
+                return str(v).strip() if v is not None else ""
+            phone = norm_phone(cell(i_phone))
+            if not phone:
+                continue
+            comment_bits = [b for b in (cell(i_status), cell(i_notes)) if b]
+            yield {
+                "phone": phone,
+                "name": cell(i_name) or phone,
+                "region": cell(i_region) or ws.title.strip(),
+                "addr": cell(i_addr),
+                "site": cell(i_site),
+                "email": cell(i_email),
+                "type": cell(i_type),
+                "brand": cell(i_brand),
+                "comment": " | ".join(comment_bits),
+            }
 
 
 def main():
-    rows = fetch_rows(sheet_url())
-    print("строк в таблице:", len(rows))
-
-    companies = {}   # phone -> запись (дедуп внутри таблицы)
-    for r in rows:
-        phone = norm_phone(r["phone"])
-        if not phone:
-            continue
-        c = companies.setdefault(phone, {
-            "name": r["name"] or phone, "type": "", "brand": "", "head": "",
-            "addrs": [], "site": r["site"], "comment": r["comment"],
-            "region": r["region"] or "без региона",
+    buf = download_xlsx(sheet_id())
+    companies = {}
+    total = 0
+    for r in rows_from_workbook(buf):
+        total += 1
+        c = companies.setdefault(r["phone"], {
+            "name": r["name"], "type": r["type"], "brand": r["brand"],
+            "head": "", "addrs": [], "site": r["site"],
+            "comment": r["comment"], "region": r["region"],
         })
         if r["addr"] and r["addr"] not in c["addrs"]:
             c["addrs"].append(r["addr"])
+        if c["name"].lower() in ("без названия", "азс", "агзс") and \
+                r["name"].lower() not in ("без названия", "азс", "агзс"):
+            c["name"] = r["name"]
+    print("строк с телефоном: %d | уникальных номеров: %d" % (total, len(companies)))
 
     due_ts = tomorrow_ts()
     created = skipped = 0
@@ -106,9 +126,8 @@ def main():
             continue
         lead_id = create_entry(phone, c, c["region"], due_ts)
         created += 1
-        print("  создано: %s %s (сделка %d)" % (c["name"], phone, lead_id))
+        print("  создано: %s [%s] %s (сделка %d)" % (c["name"], c["region"], phone, lead_id))
         time.sleep(0.25)
-
     print("итого: новых %d, уже были в amo %d" % (created, skipped))
 
 
