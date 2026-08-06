@@ -1,0 +1,19 @@
+name: amoCRM autotask
+
+on:
+  schedule:
+    - cron: "0 3 * * *"   # ежедневно 08:00 Екатеринбург
+  workflow_dispatch:
+
+jobs:
+  autotask:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Поставить задачи сделкам без задач
+        env:
+          AMO_TOKEN: ${{ secrets.AMO_TOKEN }}
+        run: python3 tools/amo_autotask.py

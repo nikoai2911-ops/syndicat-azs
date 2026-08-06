@@ -5,5 +5,9 @@ gas.html
 # Собранные базы лидов — НЕ публиковать в открытый репозиторий
 tools/azs_*.xlsx
 tools/azs_*.csv
+tools/azs2gis_*.xlsx
 tools/~$*.xlsx
+# Профиль Chrome для парсера 2ГИС (куки/сессия)
+tools/.2gis_profile/
 images/_catalog_orig_backup/
+tools/amo_token.txt
