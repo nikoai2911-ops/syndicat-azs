@@ -1,0 +1,21 @@
+name: amoCRM sheet sync
+
+on:
+  # расписание включается после добавления секрета SHEET_CSV_URL:
+  # schedule:
+  #   - cron: "15 * * * *"   # каждый час в :15
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Залить новые строки Google Таблицы в amoCRM
+        env:
+          AMO_TOKEN: ${{ secrets.AMO_TOKEN }}
+          SHEET_CSV_URL: ${{ secrets.SHEET_CSV_URL }}
+        run: python3 tools/amo_sheet_sync.py

@@ -18,8 +18,6 @@ import re
 import sys
 import time
 
-import openpyxl
-
 from amo_api import (PIPELINE_COLD, STATUS_COLD_NEW, USER_NIKITA, get, post)
 
 
@@ -35,6 +33,7 @@ def norm_phone(raw):
 
 
 def load_companies(src_path, region):
+    import openpyxl
     wb = openpyxl.load_workbook(src_path)
     ws = wb.active
     header = [c.value for c in ws[1]]
@@ -81,65 +80,74 @@ def phone_exists(phone):
     return False
 
 
+def tomorrow_ts():
+    t = datetime.datetime.now().replace(hour=18, minute=0, second=0) + datetime.timedelta(days=1)
+    return int(t.timestamp())
+
+
+def create_entry(phone, c, region, due_ts):
+    """Компания + примечание + сделка в холодной воронке + задача. Возвращает id сделки."""
+    company_payload = [{
+        "name": "%s (%s)" % (c["name"], region),
+        "responsible_user_id": USER_NIKITA,
+        "custom_fields_values": [
+            {"field_code": "PHONE", "values": [{"value": phone, "enum_code": "WORK"}]},
+        ] + ([{"field_code": "WEB", "values": [{"value": c["site"]}]}] if c.get("site") else [])
+          + ([{"field_code": "ADDRESS", "values": [{"value": c["addrs"][0]}]}] if c.get("addrs") else []),
+    }]
+    comp = post("/companies", company_payload)
+    comp_id = comp["_embedded"]["companies"][0]["id"]
+
+    note_parts = []
+    if c.get("type"):
+        note_parts.append("Тип: " + c["type"])
+    if c.get("brand") and c["brand"] != c["name"]:
+        note_parts.append("Бренд: " + c["brand"])
+    if c.get("head"):
+        note_parts.append("Руководитель: " + c["head"])
+    if len(c.get("addrs") or []) > 1:
+        note_parts.append("Точки (%d): %s" % (len(c["addrs"]), "; ".join(c["addrs"])))
+    if c.get("comment"):
+        note_parts.append(c["comment"])
+    if note_parts:
+        post("/companies/notes", [{"entity_id": comp_id, "note_type": "common",
+                                   "params": {"text": " | ".join(note_parts)}}])
+
+    lead = post("/leads", [{
+        "name": "Обзвон: " + c["name"],
+        "pipeline_id": PIPELINE_COLD,
+        "status_id": STATUS_COLD_NEW,
+        "responsible_user_id": USER_NIKITA,
+        "_embedded": {
+            "companies": [{"id": comp_id}],
+            "tags": [{"name": "холодная база"}, {"name": region.lower()}],
+        },
+    }])
+    lead_id = lead["_embedded"]["leads"][0]["id"]
+
+    post("/tasks", [{
+        "task_type_id": 1,
+        "text": "Первый звонок по базе: представиться, выявить потребность в запчастях АЗС/АГЗС",
+        "complete_till": due_ts,
+        "entity_id": lead_id,
+        "entity_type": "leads",
+        "responsible_user_id": USER_NIKITA,
+    }])
+    return lead_id
+
+
 def push(src_path, region):
     companies = load_companies(src_path, region)
     print("в файле после дедупа: %d организаций" % len(companies))
 
-    tomorrow = datetime.datetime.now().replace(hour=18, minute=0, second=0) + datetime.timedelta(days=1)
-    due_ts = int(tomorrow.timestamp())
+    due_ts = tomorrow_ts()
     created = skipped = 0
-
     for phone, c in companies.items():
         if phone_exists(phone):
             skipped += 1
             print("  пропуск (уже в amo): %s %s" % (c["name"], phone))
             continue
-
-        company_payload = [{
-            "name": "%s (%s)" % (c["name"], region),
-            "responsible_user_id": USER_NIKITA,
-            "custom_fields_values": [
-                {"field_code": "PHONE", "values": [{"value": phone, "enum_code": "WORK"}]},
-            ] + ([{"field_code": "WEB", "values": [{"value": c["site"]}]}] if c["site"] else [])
-              + ([{"field_code": "ADDRESS", "values": [{"value": c["addrs"][0]}]}] if c["addrs"] else []),
-        }]
-        comp = post("/companies", company_payload)
-        comp_id = comp["_embedded"]["companies"][0]["id"]
-
-        note_parts = []
-        if c["type"]:
-            note_parts.append("Тип: " + c["type"])
-        if c["brand"] and c["brand"] != c["name"]:
-            note_parts.append("Бренд: " + c["brand"])
-        if c["head"]:
-            note_parts.append("Руководитель: " + c["head"])
-        if len(c["addrs"]) > 1:
-            note_parts.append("Точки (%d): %s" % (len(c["addrs"]), "; ".join(c["addrs"])))
-        if note_parts:
-            post("/companies/notes", [{"entity_id": comp_id, "note_type": "common",
-                                       "params": {"text": " | ".join(note_parts)}}])
-
-        lead = post("/leads", [{
-            "name": "Обзвон: " + c["name"],
-            "pipeline_id": PIPELINE_COLD,
-            "status_id": STATUS_COLD_NEW,
-            "responsible_user_id": USER_NIKITA,
-            "_embedded": {
-                "companies": [{"id": comp_id}],
-                "tags": [{"name": "холодная база"}, {"name": region.lower()}],
-            },
-        }])
-        lead_id = lead["_embedded"]["leads"][0]["id"]
-
-        post("/tasks", [{
-            "task_type_id": 1,
-            "text": "Первый звонок по базе: представиться, выявить потребность в запчастях АЗС/АГЗС",
-            "complete_till": due_ts,
-            "entity_id": lead_id,
-            "entity_type": "leads",
-            "responsible_user_id": USER_NIKITA,
-        }])
-
+        lead_id = create_entry(phone, c, region, due_ts)
         created += 1
         print("  создано: %s %s (сделка %d)" % (c["name"], phone, lead_id))
         time.sleep(0.25)

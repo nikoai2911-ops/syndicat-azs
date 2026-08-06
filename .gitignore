@@ -11,3 +11,4 @@ tools/~$*.xlsx
 tools/.2gis_profile/
 images/_catalog_orig_backup/
 tools/amo_token.txt
+tools/sheet_url.txt
