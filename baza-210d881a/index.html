@@ -372,13 +372,17 @@ function escQ(s){ return s.replace(/"/g,'\\"'); }
 async function collect(){
   const manual=document.getElementById('regionManual').value.trim();
   const code=sel.value;
-  let region, selector;
+  let region, selectors=[];
   if(manual){
     region=manual;
-    selector=`["name"="${escQ(manual)}"]["admin_level"="4"]`;
+    // ручной ввод: ищем по name, затем по name:ru (для зарубежья, напр. «Минск»→OSM «Мінск»)
+    selectors=[
+      `["name"="${escQ(manual)}"]["admin_level"="4"]`,
+      `["name:ru"="${escQ(manual)}"]["admin_level"="4"]`,
+    ];
   }else if(code){
     region=sel.options[sel.selectedIndex].dataset.name;
-    selector=`["ISO3166-2"="${code}"]`;
+    selectors=[`["ISO3166-2"="${code}"]`];
   }
   const st=document.getElementById('status');
   if(!region){ st.className="status err"; st.textContent="Выбери регион или впиши вручную."; return; }
@@ -386,7 +390,8 @@ async function collect(){
   document.getElementById('go').disabled=true;
   st.className="status"; st.innerHTML='<span class="spin"></span>Собираю заправки по региону «'+region+'»… (10–40 сек)';
   try{
-    const els=await overpassQuery(selector);
+    let els=[];
+    for(const s of selectors){ els=await overpassQuery(s); if(els.length) break; }
     if(!els.length){
       st.className="status err";
       st.textContent="Ничего не найдено. Проверь название региона (как в OSM) или впиши вручную.";
