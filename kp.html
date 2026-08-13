@@ -40,6 +40,13 @@ table.items th{font-size:11px;color:var(--mut);text-align:left;padding:6px 6px;b
 table.items td{padding:6px 6px;border-bottom:1px solid #eef1f4;vertical-align:middle}
 table.items img{width:44px;height:44px;object-fit:contain;background:#f4f6f8;border-radius:5px}
 table.items input{padding:6px 6px}
+.photocell{white-space:nowrap;text-align:center}
+.photobox{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;background:#f4f6f8;border:1px dashed var(--bd);border-radius:5px;cursor:pointer;overflow:hidden}
+.photobox:hover{border-color:var(--accent)}
+.photobox img{width:100%;height:100%;object-fit:contain;background:#fff;border-radius:0;margin:0}
+.photobox .ph{font-size:9px;color:var(--mut);text-align:center;line-height:1.1;padding:2px}
+.photodel{display:block;font-size:10px;color:#c0392b;cursor:pointer;margin-top:2px}
+.photodel:hover{text-decoration:underline}
 .qty{width:64px;text-align:center}
 .price{width:100px;text-align:right}
 .pname{width:100%}
@@ -389,6 +396,37 @@ function addCustom(){
 function removeItem(i){ kp.items.splice(i,1); render(); saveDraft(); }
 function upd(i,field,v){ if(field==='qty'||field==='price'){v=parseFloat((''+v).replace(',','.'))||0;} kp.items[i][field]=v; recalc(); saveDraft(); }
 
+// ---------- фото позиции: загрузка/замена/очистка ----------
+// Картинка ужимается до 520px и жмётся в JPEG, чтобы не переполнять localStorage.
+function resizeImage(file, maxW, cb){
+  var r=new FileReader();
+  r.onload=function(){
+    var im=new Image();
+    im.onload=function(){
+      var sc=Math.min(1, maxW/(im.width||maxW));
+      var w=Math.max(1,Math.round(im.width*sc)), h=Math.max(1,Math.round(im.height*sc));
+      var cv=document.createElement('canvas'); cv.width=w; cv.height=h;
+      var ctx=cv.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,w,h); ctx.drawImage(im,0,0,w,h);
+      var uri; try{ uri=cv.toDataURL('image/jpeg',0.85); }catch(e){ uri=r.result; }
+      cb(uri);
+    };
+    im.onerror=function(){ cb(r.result); };
+    im.src=r.result;
+  };
+  r.onerror=function(){ alert('Не удалось прочитать файл.'); };
+  r.readAsDataURL(file);
+}
+function setPhoto(i, input){
+  var f=(input.files||[])[0]; if(!f)return;
+  if(!/^image\//.test(f.type)){ alert('Выберите файл изображения.'); return; }
+  resizeImage(f, 520, function(uri){
+    kp.items[i].img=uri; render();
+    try{ localStorage.setItem(DKEY,JSON.stringify(collect())); }
+    catch(e){ alert('Фото добавлено в этот КП, но черновик не сохранился — в браузере мало места (много крупных фото/печатей). При перезагрузке фото может пропасть.'); }
+  });
+}
+function clearPhoto(i){ kp.items[i].img=''; render(); saveDraft(); }
+
 // ---------- расчёты ----------
 function totals(){
   var sub=kp.items.reduce(function(s,it){return s+(it.qty*it.price)},0);
@@ -406,11 +444,20 @@ function render(){
   var tb=document.getElementById('itemsBody'); tb.innerHTML='';
   kp.items.forEach(function(it,i){
     var tr=document.createElement('tr');
-    var img = it.custom ? '—' : (it.img?'<img src="'+esc(it.img)+'" onerror="this.style.visibility=\'hidden\'">':'');
+    var photoInner = it.img
+      ? '<img src="'+esc(it.img)+'" onerror="this.parentNode.innerHTML=\'<span class=&quot;ph&quot;>＋ фото</span>\'">'
+      : '<span class="ph">＋ фото</span>';
+    var photoCell = '<td class="photocell">'
+      + '<label class="photobox" title="Загрузить или заменить фото">'
+      +   '<input type="file" accept="image/*" style="display:none" onchange="setPhoto('+i+',this)">'
+      +   photoInner
+      + '</label>'
+      + (it.img?'<span class="photodel" onclick="clearPhoto('+i+')">убрать</span>':'')
+      + '</td>';
     var nameCell = '<input class="pname" value="'+esc(it.name)+'" placeholder="Наименование позиции" oninput="upd('+i+',\'name\',this.value)">'
       + (it.custom ? '' : '<div class="a" style="font-size:11px;color:#6b7280">арт. '+esc(it.art)+'</div>');
     tr.innerHTML='<td><span class="x" onclick="removeItem('+i+')">✕</span></td>'+
-      '<td>'+img+'</td>'+
+      photoCell+
       '<td>'+nameCell+'</td>'+
       '<td><input class="qty" value="'+it.qty+'" oninput="upd('+i+',\'qty\',this.value)"></td>'+
       '<td><input class="price" value="'+it.price+'" oninput="upd('+i+',\'price\',this.value)"></td>'+
@@ -438,7 +485,7 @@ function renderDoc(t){
   var co={}; Object.keys(COMPANY_DEFAULT).forEach(function(k){co[k]=val(k)});
   var rows=kp.items.map(function(it,i){
     return '<tr><td class="c">'+(i+1)+'</td>'+
-      '<td class="c">'+(it.img&&!it.custom?'<img src="'+esc(it.img)+'">':'')+'</td>'+
+      '<td class="c">'+(it.img?'<img src="'+esc(it.img)+'">':'')+'</td>'+
       '<td>'+esc(it.name)+(it.art?'<br><span style="color:#6b7280;font-size:11px">арт. '+esc(it.art)+'</span>':'')+'</td>'+
       '<td class="c">'+fmt(it.qty)+'</td>'+
       '<td class="r">'+(it.price?fmt(it.price):'по запросу')+'</td>'+
