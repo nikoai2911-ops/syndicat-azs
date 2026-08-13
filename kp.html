@@ -45,8 +45,10 @@ table.items input{padding:6px 6px}
 .photobox:hover{border-color:var(--accent)}
 .photobox img{width:100%;height:100%;object-fit:contain;background:#fff;border-radius:0;margin:0}
 .photobox .ph{font-size:9px;color:var(--mut);text-align:center;line-height:1.1;padding:2px}
-.photodel{display:block;font-size:10px;color:#c0392b;cursor:pointer;margin-top:2px}
-.photodel:hover{text-decoration:underline}
+.photoacts{margin-top:3px;font-size:10px;line-height:1.3;display:flex;gap:8px;justify-content:center}
+.photolink{color:var(--accent);cursor:pointer}
+.photolink:hover{text-decoration:underline}
+.photolink.del{color:#c0392b}
 .qty{width:64px;text-align:center}
 .price{width:100px;text-align:right}
 .pname{width:100%}
@@ -445,14 +447,15 @@ function render(){
   kp.items.forEach(function(it,i){
     var tr=document.createElement('tr');
     var photoInner = it.img
-      ? '<img src="'+esc(it.img)+'" onerror="this.parentNode.innerHTML=\'<span class=&quot;ph&quot;>＋ фото</span>\'">'
+      ? '<img src="'+esc(it.img)+'" onerror="this.outerHTML=\'<span class=&quot;ph&quot;>＋ фото</span>\'">'
       : '<span class="ph">＋ фото</span>';
     var photoCell = '<td class="photocell">'
-      + '<label class="photobox" title="Загрузить или заменить фото">'
-      +   '<input type="file" accept="image/*" style="display:none" onchange="setPhoto('+i+',this)">'
-      +   photoInner
-      + '</label>'
-      + (it.img?'<span class="photodel" onclick="clearPhoto('+i+')">убрать</span>':'')
+      + '<input type="file" id="pf'+i+'" accept="image/*" style="display:none" onchange="setPhoto('+i+',this)">'
+      + '<label for="pf'+i+'" class="photobox" title="Нажмите, чтобы выбрать фото">'+photoInner+'</label>'
+      + '<div class="photoacts">'
+      +   '<label for="pf'+i+'" class="photolink">'+(it.img?'заменить':'добавить')+'</label>'
+      +   (it.img?'<span class="photolink del" onclick="clearPhoto('+i+')">убрать</span>':'')
+      + '</div>'
       + '</td>';
     var nameCell = '<input class="pname" value="'+esc(it.name)+'" placeholder="Наименование позиции" oninput="upd('+i+',\'name\',this.value)">'
       + (it.custom ? '' : '<div class="a" style="font-size:11px;color:#6b7280">арт. '+esc(it.art)+'</div>');
