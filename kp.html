@@ -283,7 +283,7 @@ function collect(){
 function saveDraft(msg){ try{localStorage.setItem(DKEY,JSON.stringify(collect()));}catch(e){} if(msg) alert('Черновик сохранён в этом браузере.'); }
 function loadDraft(){
   try{var d=JSON.parse(localStorage.getItem(DKEY)); if(!d)return;
-    kp.items=d.items||[];
+    kp.items=(d.items||[]).map(function(it){ it.price=toNum(it.price); it.qty=toNum(it.qty); return it; });
     set('m_num',d.m.num);set('m_date',d.m.date);set('m_valid',d.m.valid);set('m_note',d.m.note);
     set('c_name',d.c.name);set('c_inn',d.c.inn);set('c_contact',d.c.contact);set('c_phone',d.c.phone);set('c_email',d.c.email);
     set('vat',d.vat||'none');
@@ -388,7 +388,7 @@ function runSearch(){
 }
 
 function addItem(p){
-  kp.items.push({art:p.art||'',name:p.n||'',img:p.img||'',qty:1,price:p.pr||0});
+  kp.items.push({art:p.art||'',name:p.n||'',img:p.img||'',qty:1,price:toNum(p.pr)});
   render(); saveDraft();
 }
 function addCustom(){
@@ -396,7 +396,7 @@ function addCustom(){
   render();
 }
 function removeItem(i){ kp.items.splice(i,1); render(); saveDraft(); }
-function upd(i,field,v){ if(field==='qty'||field==='price'){v=parseFloat((''+v).replace(',','.'))||0;} kp.items[i][field]=v; recalc(); saveDraft(); }
+function upd(i,field,v){ if(field==='qty'||field==='price'){v=toNum(v);} kp.items[i][field]=v; recalc(); saveDraft(); }
 
 // ---------- фото позиции: загрузка/замена/очистка ----------
 // Картинка ужимается до 520px и жмётся в JPEG, чтобы не переполнять localStorage.
@@ -431,7 +431,7 @@ function clearPhoto(i){ kp.items[i].img=''; render(); saveDraft(); }
 
 // ---------- расчёты ----------
 function totals(){
-  var sub=kp.items.reduce(function(s,it){return s+(it.qty*it.price)},0);
+  var sub=kp.items.reduce(function(s,it){return s+lineSum(it)},0);
   var mode=val('vat'), net=sub, vat=0, total=sub;
   if(mode==='add'){ net=sub; vat=sub*0.22; total=sub*1.22; }
   else if(mode==='incl'){ net=sub/1.22; vat=sub-net; total=sub; }
@@ -439,6 +439,16 @@ function totals(){
   return {sub:sub,net:net,vat:vat,total:total,mode:mode};
 }
 function fmt(n){ n=Math.round((n||0)*100)/100; var s=n.toLocaleString('ru-RU',{minimumFractionDigits:(n%1?2:0),maximumFractionDigits:2}); return s; }
+// Надёжный разбор чисел: убирает пробелы-разделители тысяч (в т.ч. неразрывные),
+// принимает запятую как десятичный разделитель. «1 288 117» -> 1288117, «1 234,50» -> 1234.5
+function toNum(v){
+  if(typeof v==='number') return isFinite(v)?v:0;
+  var s=(''+v).replace(/\s/g,'').replace(/[^0-9.,\-]/g,'');
+  if(s.indexOf(',')>-1 && s.indexOf('.')>-1){ s=s.replace(/\./g,'').replace(',','.'); }
+  else { s=s.replace(',','.'); }
+  var n=parseFloat(s); return isFinite(n)?n:0;
+}
+function lineSum(it){ return toNum(it.qty)*toNum(it.price); }
 function esc(s){return (s==null?'':(''+s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 // ---------- рендер редактора позиций ----------
@@ -464,7 +474,7 @@ function render(){
       '<td>'+nameCell+'</td>'+
       '<td><input class="qty" value="'+it.qty+'" oninput="upd('+i+',\'qty\',this.value)"></td>'+
       '<td><input class="price" value="'+it.price+'" oninput="upd('+i+',\'price\',this.value)"></td>'+
-      '<td class="sum">'+fmt(it.qty*it.price)+'</td>';
+      '<td class="sum">'+fmt(lineSum(it))+'</td>';
     tb.appendChild(tr);
   });
   document.getElementById('emptyItems').style.display = kp.items.length?'none':'block';
@@ -475,7 +485,7 @@ function render(){
 function recalc(){
   var t=totals();
   var trs=document.getElementById('itemsBody').children;
-  for(var i=0;i<kp.items.length;i++){ var tr=trs[i]; if(tr){ var sc=tr.querySelector('.sum'); if(sc) sc.textContent=fmt(kp.items[i].qty*kp.items[i].price); } }
+  for(var i=0;i<kp.items.length;i++){ var tr=trs[i]; if(tr){ var sc=tr.querySelector('.sum'); if(sc) sc.textContent=fmt(lineSum(kp.items[i])); } }
   document.getElementById('t_net').textContent=fmt(t.net)+' ₽';
   document.getElementById('t_vat').textContent=(t.mode==='none'?'—':fmt(t.vat)+' ₽');
   document.getElementById('t_total').textContent=fmt(t.total)+' ₽';
@@ -492,7 +502,7 @@ function renderDoc(t){
       '<td>'+esc(it.name)+(it.art?'<br><span style="color:#6b7280;font-size:11px">арт. '+esc(it.art)+'</span>':'')+'</td>'+
       '<td class="c">'+fmt(it.qty)+'</td>'+
       '<td class="r">'+(it.price?fmt(it.price):'по запросу')+'</td>'+
-      '<td class="r">'+(it.price?fmt(it.qty*it.price):'—')+'</td></tr>';
+      '<td class="r">'+(it.price?fmt(lineSum(it)):'—')+'</td></tr>';
   }).join('');
 
   var reqline=[co.co_inn?'ИНН '+esc(co.co_inn):'',co.co_kpp?'КПП '+esc(co.co_kpp):'',co.co_ogrn?'ОГРН '+esc(co.co_ogrn):''].filter(Boolean).join(' · ');
@@ -550,7 +560,7 @@ function exportExcel(){
   h+='<tr><td colspan="6"></td></tr>';
   h+='<tr><th>№</th><th>Артикул</th><th>Наименование</th><th>Кол-во</th><th>Цена</th><th>Сумма</th></tr>';
   kp.items.forEach(function(it,i){
-    h+='<tr><td>'+(i+1)+'</td><td>'+esc(it.art)+'</td><td>'+esc(it.name)+'</td><td>'+it.qty+'</td><td>'+(it.price||'')+'</td><td>'+(it.price?it.qty*it.price:'')+'</td></tr>';
+    h+='<tr><td>'+(i+1)+'</td><td>'+esc(it.art)+'</td><td>'+esc(it.name)+'</td><td>'+it.qty+'</td><td>'+(it.price||'')+'</td><td>'+(it.price?lineSum(it):'')+'</td></tr>';
   });
   h+='<tr><td colspan="5" style="text-align:right"><b>Сумма без НДС</b></td><td>'+Math.round(t.net*100)/100+'</td></tr>';
   h+='<tr><td colspan="5" style="text-align:right">НДС 22%</td><td>'+(t.mode==='none'?'—':Math.round(t.vat*100)/100)+'</td></tr>';
@@ -581,11 +591,13 @@ function saveMgr(){ try{localStorage.setItem(MKEY,JSON.stringify({n:val('m_mgr')
 function loadMgr(){ try{var m=JSON.parse(localStorage.getItem(MKEY)); if(m){set('m_mgr',m.n);set('m_mgr_phone',m.p);set('m_mgr_email',m.e);}}catch(e){} }
 function mgrLine(){ return [val('m_mgr'),val('m_mgr_phone'),val('m_mgr_email')].filter(Boolean).join(' · '); }
 
-function clearKP(){ if(confirm('Начать новое КП? Позиции и данные клиента очистятся. Реквизиты и менеджер сохранятся, номер станет следующим.')){ kp.items=[]; ['m_valid','m_note','c_name','c_inn','c_contact','c_phone','c_email'].forEach(function(id){set(id,'')}); commitSeq(val('m_num')); set('m_num', fmtSeq(peekSeq())); render(); saveDraft(); } }
+function todayISO(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
+function clearKP(){ if(confirm('Начать новое КП? Позиции и данные клиента очистятся. Реквизиты и менеджер сохранятся, номер станет следующим.')){ kp.items=[]; ['m_valid','m_note','c_name','c_inn','c_contact','c_phone','c_email'].forEach(function(id){set(id,'')}); set('m_date', todayISO()); commitSeq(val('m_num')); set('m_num', fmtSeq(peekSeq())); render(); saveDraft(); } }
 
 // ---------- старт ----------
 loadCompany(); loadMgr(); renderStampSel(); renderCompanySel(); loadDraft();
-if(!val('m_date')){ /* сегодня */ try{var d=new Date();set('m_date',d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2));}catch(e){} }
+// дата по умолчанию — сегодня; если в черновике осталась вчерашняя/старая — обновляем на сегодня
+try{ var _t=todayISO(); if(!val('m_date') || val('m_date') < _t){ set('m_date', _t); } }catch(e){}
 ensureKpNum();   // подставить № сразу, чтобы был виден
 runSearch(); render();
 setInterval(function(){saveDraft(false)},15000);
