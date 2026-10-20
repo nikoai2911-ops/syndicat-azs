@@ -291,7 +291,7 @@ function loadDraft(){
     if(d.stamp){ var ss=document.getElementById('stampSel'); if(ss) ss.value=d.stamp; }
   }catch(e){}
 }
-var COMPANY_DEFAULT={co_name:'',co_site:'sd-kt.ru',co_inn:'',co_kpp:'',co_ogrn:'',co_addr:'г. Екатеринбург, ул. Окружная, 88/2',co_rs:'',co_bank:'',co_bik:'',co_ks:'',co_phone:'+7 343 266-40-66',co_email:'m2@sd-kt.ru'};
+var COMPANY_DEFAULT={co_name:'',co_site:'sd-kt.ru',co_inn:'',co_kpp:'',co_ogrn:'',co_addr:'г. Екатеринбург, ул. Николая Островского, 2/2',co_rs:'',co_bank:'',co_bik:'',co_ks:'',co_phone:'+7 343 266-40-66',co_email:'m2@sd-kt.ru'};
 function saveCompany(){ var o={}; Object.keys(COMPANY_DEFAULT).forEach(function(k){o[k]=val(k)}); try{localStorage.setItem(CKEY,JSON.stringify(o));}catch(e){} document.getElementById('coSaved').textContent='✓ сохранено'; setTimeout(function(){document.getElementById('coSaved').textContent=''},2000); }
 function loadCompany(){ var o; try{o=JSON.parse(localStorage.getItem(CKEY));}catch(e){} o=o||COMPANY_DEFAULT; Object.keys(COMPANY_DEFAULT).forEach(function(k){ set(k, o[k]!==undefined?o[k]:COMPANY_DEFAULT[k]); }); }
 
