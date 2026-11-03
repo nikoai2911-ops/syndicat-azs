@@ -138,8 +138,21 @@ document.getElementById('gatePw').focus();
   <div class="toolbar">
     <button class="btn" onclick="printKP()">🖨 Печать / PDF</button>
     <button class="btn ghost" onclick="exportExcel()">⭳ Excel</button>
+    <button class="btn ghost sm" onclick="saveToArchive()">📁 Сохранить КП в список</button>
     <button class="btn ghost sm" onclick="saveDraft(true)">💾 Сохранить черновик</button>
-    <button class="btn danger sm" onclick="clearKP()">Очистить КП</button>
+    <button class="btn danger sm" onclick="clearKP()">Новое / очистить</button>
+  </div>
+
+  <!-- список сохранённых КП -->
+  <div class="card">
+    <h2>📁 Сохранённые КП — открыть и отредактировать</h2>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <select id="savedSel" style="flex:1;min-width:240px"></select>
+      <button class="btn sm" onclick="openSaved()">✎ Открыть для редактирования</button>
+      <button class="btn ghost sm" onclick="dupSaved()">⧉ Копия нового №</button>
+      <button class="btn danger sm" onclick="delSaved()">Удалить из списка</button>
+    </div>
+    <div class="hint" style="margin-top:6px"><b id="curSaved" style="color:var(--accent)"></b> Кнопка «📁 Сохранить КП в список» вверху добавляет текущее КП в этот список (а если открыто из списка — обновляет его). Открыли → поправили → снова «Сохранить КП в список». Список хранится только в этом браузере.</div>
   </div>
 
   <div class="grid">
@@ -281,15 +294,84 @@ function collect(){
   };
 }
 function saveDraft(msg){ try{localStorage.setItem(DKEY,JSON.stringify(collect()));}catch(e){} if(msg) alert('Черновик сохранён в этом браузере.'); }
-function loadDraft(){
-  try{var d=JSON.parse(localStorage.getItem(DKEY)); if(!d)return;
-    kp.items=(d.items||[]).map(function(it){ it.price=toNum(it.price); it.qty=toNum(it.qty); return it; });
-    set('m_num',d.m.num);set('m_date',d.m.date);set('m_valid',d.m.valid);set('m_note',d.m.note);
-    set('c_name',d.c.name);set('c_inn',d.c.inn);set('c_contact',d.c.contact);set('c_phone',d.c.phone);set('c_email',d.c.email);
-    set('vat',d.vat||'none');
-    if(d.stampShow!=null) set('stampShow',d.stampShow);
-    if(d.stamp){ var ss=document.getElementById('stampSel'); if(ss) ss.value=d.stamp; }
-  }catch(e){}
+function applyData(d){
+  if(!d||!d.m||!d.c)return;
+  kp.items=(d.items||[]).map(function(it){ it.price=toNum(it.price); it.qty=toNum(it.qty); return it; });
+  set('m_num',d.m.num);set('m_date',d.m.date);set('m_valid',d.m.valid);set('m_note',d.m.note);
+  set('c_name',d.c.name);set('c_inn',d.c.inn);set('c_contact',d.c.contact);set('c_phone',d.c.phone);set('c_email',d.c.email);
+  set('vat',d.vat||'none');
+  if(d.stampShow!=null) set('stampShow',d.stampShow);
+  if(d.stamp){ var ss=document.getElementById('stampSel'); if(ss) ss.value=d.stamp; }
+}
+function loadDraft(){ try{ applyData(JSON.parse(localStorage.getItem(DKEY))); }catch(e){} }
+
+// ---------- архив готовых КП (список, только localStorage этого браузера) ----------
+var AKEY='kp_archive_v1';
+var currentSavedId=null;
+function getArchive(){ try{return JSON.parse(localStorage.getItem(AKEY))||[]}catch(e){return[]} }
+function setArchive(a){ try{localStorage.setItem(AKEY,JSON.stringify(a));return true}catch(e){alert('Не удалось сохранить в список — в браузере мало места. Удалите старые КП из списка или фото потяжелее.');return false} }
+function uid(){ return 'k'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+function snapshotCo(){ var o={}; Object.keys(COMPANY_DEFAULT).forEach(function(k){o[k]=val(k)}); return o; }
+function setCurSaved(txt){ var e=document.getElementById('curSaved'); if(e) e.textContent=txt||''; }
+
+function saveToArchive(){
+  ensureKpNum();
+  var t=totals();
+  var rec={
+    id: currentSavedId || uid(),
+    num: val('m_num'), client: val('c_name'), date: val('m_date'), total: t.total, saved: todayISO(),
+    data: collect(),
+    co: snapshotCo(),
+    mgr:{n:val('m_mgr'),p:val('m_mgr_phone'),e:val('m_mgr_email')}
+  };
+  var a=getArchive(), idx=-1;
+  for(var i=0;i<a.length;i++){ if(a[i].id===rec.id){ idx=i; break; } }
+  var upd=idx>-1;
+  if(upd){ a[idx]=rec; } else { a.unshift(rec); }
+  if(setArchive(a)){
+    currentSavedId=rec.id; commitSeq(val('m_num'));
+    renderArchive(); setCurSaved('В списке: № '+(rec.num||'—'));
+    alert(upd ? 'КП № '+(rec.num||'')+' обновлено в списке.' : 'КП № '+(rec.num||'')+' сохранено в список.');
+  }
+}
+function renderArchive(){
+  var a=getArchive(), sel=document.getElementById('savedSel'); if(!sel)return;
+  if(!a.length){ sel.innerHTML='<option value="">— пока нет сохранённых КП —</option>'; return; }
+  sel.innerHTML='<option value="">— выберите КП из списка —</option>'+a.map(function(r){
+    var label='№ '+(r.num||'—')+' · '+(r.client||'без клиента')+(r.date?' · '+fmtDate(r.date):'')+' · '+fmt(r.total||0)+' ₽';
+    return '<option value="'+esc(r.id)+'"'+(r.id===currentSavedId?' selected':'')+'>'+esc(label)+'</option>';
+  }).join('');
+}
+function _getSaved(id){ var a=getArchive(); for(var i=0;i<a.length;i++){ if(a[i].id===id)return a[i]; } return null; }
+function _loadRec(r){
+  applyData(r.data);
+  if(r.co){ Object.keys(COMPANY_DEFAULT).forEach(function(k){ if(r.co[k]!=null) set(k,r.co[k]); }); }
+  if(r.mgr){ set('m_mgr',r.mgr.n); set('m_mgr_phone',r.mgr.p); set('m_mgr_email',r.mgr.e); }
+  render();
+}
+function openSaved(){
+  var id=document.getElementById('savedSel').value; if(!id){alert('Сначала выберите КП в списке');return;}
+  var r=_getSaved(id); if(!r){alert('КП не найдено');return;}
+  if(kp.items.length && !confirm('Открыть КП № '+(r.num||'')+' для редактирования? Текущее, что в полях, будет заменено (если оно не сохранено — сначала нажмите «Сохранить КП в список»).'))return;
+  currentSavedId=r.id; _loadRec(r);
+  setCurSaved('Редактируется: № '+(r.num||'—')+' — после правок жмите «📁 Сохранить КП в список»');
+  window.scrollTo(0,0);
+}
+function dupSaved(){
+  var id=document.getElementById('savedSel').value; if(!id){alert('Сначала выберите КП в списке');return;}
+  var r=_getSaved(id); if(!r){alert('КП не найдено');return;}
+  currentSavedId=null; _loadRec(r);           // открыть как новое, не привязано к старой записи
+  commitSeq(val('m_num')); set('m_num', fmtSeq(peekSeq())); recalc();  // присвоить следующий свободный номер
+  setCurSaved('Копия КП (новый № '+val('m_num')+') — заполните и «Сохранить КП в список»');
+  window.scrollTo(0,0);
+}
+function delSaved(){
+  var id=document.getElementById('savedSel').value; if(!id){alert('Сначала выберите КП в списке');return;}
+  var r=_getSaved(id);
+  if(!confirm('Удалить из списка КП № '+((r&&r.num)||'')+'? На уже распечатанные/сохранённые PDF это не влияет.'))return;
+  setArchive(getArchive().filter(function(x){return x.id!==id}));
+  if(currentSavedId===id){ currentSavedId=null; setCurSaved(''); }
+  renderArchive();
 }
 var COMPANY_DEFAULT={co_name:'',co_site:'sd-kt.ru',co_inn:'',co_kpp:'',co_ogrn:'',co_addr:'г. Екатеринбург, ул. Николая Островского, 2/2',co_rs:'',co_bank:'',co_bik:'',co_ks:'',co_phone:'+7 343 266-40-66',co_email:'m2@sd-kt.ru'};
 function saveCompany(){ var o={}; Object.keys(COMPANY_DEFAULT).forEach(function(k){o[k]=val(k)}); try{localStorage.setItem(CKEY,JSON.stringify(o));}catch(e){} document.getElementById('coSaved').textContent='✓ сохранено'; setTimeout(function(){document.getElementById('coSaved').textContent=''},2000); }
@@ -592,10 +674,10 @@ function loadMgr(){ try{var m=JSON.parse(localStorage.getItem(MKEY)); if(m){set(
 function mgrLine(){ return [val('m_mgr'),val('m_mgr_phone'),val('m_mgr_email')].filter(Boolean).join(' · '); }
 
 function todayISO(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
-function clearKP(){ if(confirm('Начать новое КП? Позиции и данные клиента очистятся. Реквизиты и менеджер сохранятся, номер станет следующим.')){ kp.items=[]; ['m_valid','m_note','c_name','c_inn','c_contact','c_phone','c_email'].forEach(function(id){set(id,'')}); set('m_date', todayISO()); commitSeq(val('m_num')); set('m_num', fmtSeq(peekSeq())); render(); saveDraft(); } }
+function clearKP(){ if(confirm('Начать новое КП? Позиции и данные клиента очистятся. Реквизиты и менеджер сохранятся, номер станет следующим. (Сохранённые в списке КП не трогаются.)')){ kp.items=[]; ['m_valid','m_note','c_name','c_inn','c_contact','c_phone','c_email'].forEach(function(id){set(id,'')}); set('m_date', todayISO()); commitSeq(val('m_num')); set('m_num', fmtSeq(peekSeq())); currentSavedId=null; setCurSaved(''); render(); saveDraft(); } }
 
 // ---------- старт ----------
-loadCompany(); loadMgr(); renderStampSel(); renderCompanySel(); loadDraft();
+loadCompany(); loadMgr(); renderStampSel(); renderCompanySel(); renderArchive(); loadDraft();
 // дата по умолчанию — сегодня; если в черновике осталась вчерашняя/старая — обновляем на сегодня
 try{ var _t=todayISO(); if(!val('m_date') || val('m_date') < _t){ set('m_date', _t); } }catch(e){}
 ensureKpNum();   // подставить № сразу, чтобы был виден
